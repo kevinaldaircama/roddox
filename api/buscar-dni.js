@@ -2,14 +2,13 @@ export default async function handler(req, res) {
   const API_TOKEN = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpcCI6IjEzMi4xODQuNTUuMTIzIiwicGxhdGZvcm0iOiJBUEkiLCJ1c3VhcmlvIjp7Il9pZCI6IjY4OGUzNmNjMjIzYmJmOTI0OTcwMDAwNSIsIm5hbWUiOiJyb2RyaWdvIiwicmFuZ28iOiJ1c2VyIiwic3BhbSI6MzAsImNfZXhwaXJ5IjoxNzU2NzQzMDE3fSwiaWF0IjoxNzU0MTY1NTAxLCJleHAiOjE3NTY2NzExMDF9.4Hm0rEYtfukAsYWVQqIUpGib3VwNCNda8fdyikqvP4U8RitVF-RU9-II2qWZLcScxMVJyP-9CgSA7vs7sWzJXw";
 
   if (req.method === "GET") {
-    // Página HTML directamente servida
     res.setHeader("Content-Type", "text/html");
     return res.end(`
       <!DOCTYPE html>
       <html lang="es">
       <head>
         <meta charset="UTF-8">
-        <title>Buscar por DNI</title>
+        <title>Consulta por DNI</title>
         <style>
           body { font-family: sans-serif; margin: 2em; }
           input, button { font-size: 16px; padding: 8px; }
@@ -61,15 +60,24 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: "DNI requerido" });
       }
 
-      const response = await fetch(`https://lookfriends.xyz/api/dni/${dni}`, {
-        headers: { Authorization: `Bearer ${API_TOKEN}` },
+      const response = await fetch("https://lookfriends.xyz/api/sbs", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${API_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ dni })
       });
 
-      if (!response.ok) throw new Error("Error al consultar");
+      const result = await response.json();
 
-      const data = await response.json();
-      return res.status(200).json(data);
-    } catch (err) {
+      if (!response.ok) {
+        return res.status(response.status).json({ error: result?.message || "Error externo" });
+      }
+
+      return res.status(200).json(result);
+    } catch (error) {
+      console.error("❌ Error al consultar:", error);
       return res.status(500).json({ error: "Error al procesar la solicitud" });
     }
   }
