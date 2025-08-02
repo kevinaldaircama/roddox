@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel de Recarga de Créditos</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="icon" href="3440119_ico.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#121212" />
+  <link rel="icon" type="image/png" href="3440119_ico.png">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="¡Únete a Transferencia VIP y gana créditos!" />
+  <meta property="og:description" content="Regístrate con este enlace de referido y recibe hasta 10 créditos gratis. Empieza a ganar hoy." />
+  <meta property="og:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  <meta property="og:url" content="https://transferenciavip.xyz" />
+  <meta property="og:type" content="website" />
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="¡Gana créditos con Transferencia VIP!" />
+  <meta name="twitter:description" content="Regístrate con un referido y recibe bonificaciones instantáneas." />
+  <meta name="twitter:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  
+  <style>
+    body { background-color: #111; color: #fff; font-family: 'Segoe UI', sans-serif; }
+    .credit-box { background-color: #202d3a; padding: 1rem; border-radius: 10px; margin-top: 2rem; max-width: 500px; margin-left: auto; margin-right: auto; display: none; }
+    .form-control, .btn { margin-top: 0.5rem; }
+    #uidUsuario { font-size: 0.85rem; color: #aaa; }
+    .no-access { text-align: center; color: red; margin-top: 3rem; font-weight: bold; display: none; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="credit-box" id="adminPanel">
+    <h3 class="text-center">Panel de Recarga de Créditos</h3>
+    <hr>
+    <h5>Saldo Total</h5>
+    <p id="saldoUsuario">$0.00 <span class="text-muted">saldo actual a la fecha</span></p>
+    <p id="uidUsuario">UID: cargando...</p>
+    <p>Plan actual: <span class="text-warning" id="tipoPlan">FREE</span></p>
+    <div class="progress mb-3">
+      <div class="progress-bar bg-success" style="width:100%">Saldo</div>
+    </div>
+    <h5>Recargar Créditos</h5>
+    <input type="text" id="inputUid" class="form-control" placeholder="Ingrese UID del usuario">
+    <input type="text" id="inputMonto" class="form-control" placeholder="Ej: +50 para recargar, -50 para descontar">
+    <button class="btn btn-success w-100" onclick="recargarCreditos()">Procesar</button>
+  </div>
+  <div id="noAccessMsg" class="no-access">Acceso denegado: solo administradores autorizados pueden usar este panel.</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyB28uLNC-7NBDBSJeQJ1Li_bYR6ygbf0DI",
+    authDomain: "transferencia-88fd7.firebaseapp.com",
+    databaseURL: "https://transferencia-88fd7-default-rtdb.firebaseio.com",
+    projectId: "transferencia-88fd7",
+    storageBucket: "transferencia-88fd7.firebasestorage.app",
+    messagingSenderId: "343352831024",
+    appId: "1:343352831024:web:9ac2d08b41874b15e611f5",
+    measurementId: "G-LNX1B0RLK7"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.database();
+
+  const admins = ["admin1@gmail.com", "kevinaldaircamachoserna51@gmail.com"];
+
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      const email = user.email;
+      const uid = user.uid;
+      document.getElementById('uidUsuario').innerText = `UID: ${uid}`;
+
+      if (admins.includes(email)) {
+        document.getElementById('adminPanel').style.display = 'block';
+
+        db.ref(`usuarios/${uid}/comisionesTotales`).on('value', snapshot => {
+          const creditos = parseFloat(snapshot.val()) || 0;
+          document.getElementById('saldoUsuario').innerHTML =
+            `$${creditos.toFixed(2)} <span class="text-muted">saldo actual a la fecha</span>`;
+        });
+
+        db.ref(`usuarios/${uid}/plan`).on('value', snap => {
+          const plan = snap.val() || 'FREE';
+          const tipoPlanEl = document.getElementById('tipoPlan');
+          tipoPlanEl.innerText = plan;
+
+          tipoPlanEl.classList.remove(
+            'text-warning', 'text-info', 'text-danger', 'text-muted', 'text-primary', 'text-success'
+          );
+
+          if (plan === 'FREE') tipoPlanEl.classList.add('text-warning');
+          else if (plan === 'BRONCE') tipoPlanEl.classList.add('text-muted');
+          else if (plan === 'ORO') tipoPlanEl.classList.add('text-info');
+          else if (plan === 'PREMIUM') tipoPlanEl.classList.add('text-danger');
+          else if (plan === 'VIP') tipoPlanEl.classList.add('text-primary');
+          else if (plan === 'DIAMANTE') tipoPlanEl.classList.add('text-success');
+        });
+      } else {
+        document.getElementById('noAccessMsg').style.display = 'block';
+      }
+    } else {
+      document.getElementById('noAccessMsg').innerText = "No has iniciado sesión.";
+      document.getElementById('noAccessMsg').style.display = 'block';
+    }
+  });
+
+  function recargarCreditos() {
+    const uid = document.getElementById('inputUid').value.trim();
+    const input = document.getElementById('inputMonto').value.trim();
+    const signo = input.charAt(0);
+    const valor = parseFloat(input.substring(1));
+
+    if (!uid || (signo !== '+' && signo !== '-') || isNaN(valor) || valor <= 0) {
+      alert('Ingrese un UID válido y un monto con signo + o - al inicio.');
+      return;
+    }
+
+    const creditosRef = db.ref(`usuarios/${uid}/comisionesTotales`);
+
+    creditosRef.once('value')
+      .then(snapshot => {
+        const saldoActual = parseFloat(snapshot.val()) || 0;
+        const nuevoSaldo = signo === '+' ? saldoActual + valor : Math.max(0, saldoActual - valor);
+        return creditosRef.set(nuevoSaldo).then(() => nuevoSaldo);
+      })
+      .then(nuevoSaldo => {
+        alert('Operación exitosa.');
+
+        let nuevoPlan = "FREE";
+        if (nuevoSaldo >= 300 && nuevoSaldo <= 330) {
+          nuevoPlan = "DIAMANTE";
+        } else if (nuevoSaldo >= 200) {
+          nuevoPlan = "VIP";
+        } else if (nuevoSaldo >= 100 && nuevoSaldo < 120) {
+          nuevoPlan = "PREMIUM";
+        } else if (nuevoSaldo >= 80) {
+          nuevoPlan = "ORO";
+        } else if (nuevoSaldo >= 50) {
+          nuevoPlan = "BRONCE";
+        }
+
+        db.ref(`usuarios/${uid}/plan`).set(nuevoPlan).catch(err => console.warn("Error al guardar plan:", err));
+
+        db.ref(`usuarios/${uid}/notificacionRecarga`).set({
+          mensaje: `Tu saldo ha sido ${signo === '+' ? 'aumentado' : 'reducido'} en ${valor.toFixed(2)} créditos.`,
+          timestamp: Date.now(),
+          leido: false
+        }).catch(err => console.warn("Error al guardar notificación:", err));
+
+        if (auth.currentUser && auth.currentUser.uid === uid) {
+          document.getElementById('tipoPlan').innerText = nuevoPlan;
+        }
+
+        document.getElementById('inputUid').value = '';
+        document.getElementById('inputMonto').value = '';
+      })
+      .catch(error => {
+        console.error('Error durante la operación de saldo:', error);
+        alert('Error al procesar la operación.');
+      });
+  }
+</script>
+</body>
+  </html>

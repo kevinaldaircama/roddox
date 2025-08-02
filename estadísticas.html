@@ -1,0 +1,260 @@
+<!DOCTYPE html><html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Estadísticas del Sistema</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link rel="icon" href="3440119_ico.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#121212" />
+  <link rel="icon" type="image/png" href="3440119_ico.png">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="¡Únete a Transferencia VIP y gana créditos!" />
+  <meta property="og:description" content="Regístrate con este enlace de referido y recibe hasta 10 créditos gratis. Empieza a ganar hoy." />
+  <meta property="og:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  <meta property="og:url" content="https://transferenciavip.xyz" />
+  <meta property="og:type" content="website" />
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="¡Gana créditos con Transferencia VIP!" />
+  <meta name="twitter:description" content="Regístrate con un referido y recibe bonificaciones instantáneas." />
+  <meta name="twitter:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+    .panel {
+      max-width: 1000px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #e3e7f1;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .card h3 {
+      margin: 0;
+      font-size: 24px;
+      color: #3f51b5;
+    }
+    .card p {
+      margin: 5px 0 0;
+      font-size: 14px;
+      color: #555;
+    }
+    canvas {
+      margin-top: 40px;
+    }
+    .export-btn {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #filtro {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    select {
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="panel" id="panel">
+    <h2>Estadísticas del Sistema</h2>
+    <div id="filtro">
+      <select id="filtroMes"></select>
+      <select id="filtroAnio"></select>
+    </div>
+    <div class="stats">
+      <div class="card">
+        <h3 id="totalUsuarios">0</h3>
+        <p>Usuarios registrados</p>
+      </div>
+      <div class="card">
+        <h3 id="totalReferidos">0</h3>
+        <p>Total de referidos</p>
+      </div>
+      <div class="card">
+        <h3 id="totalCreditos">0</h3>
+        <p>Créditos en circulación</p>
+      </div>
+    </div>
+    <canvas id="chartRendimiento" height="100"></canvas>
+    <canvas id="chartReferidos" height="100"></canvas>
+    <button class="export-btn" onclick="exportarPDF()">Exportar PDF</button>
+  </div>  <script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyB28uLNC-7NBDBSJeQJ1Li_bYR6ygbf0DI",
+    authDomain: "transferencia-88fd7.firebaseapp.com",
+    databaseURL: "https://transferencia-88fd7-default-rtdb.firebaseio.com",
+    projectId: "transferencia-88fd7",
+    storageBucket: "transferencia-88fd7.firebasestorage.app",
+    messagingSenderId: "343352831024",
+    appId: "1:343352831024:web:9ac2d08b41874b15e611f5",
+    measurementId: "G-LNX1B0RLK7"
+  };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    let currentMes = new Date().getMonth();
+    let currentAnio = new Date().getFullYear();
+
+    function llenarFiltros() {
+      const mesSelect = document.getElementById('filtroMes');
+      const anioSelect = document.getElementById('filtroAnio');
+
+      const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+      meses.forEach((mes, i) => {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.text = mes;
+        if (i === currentMes) opt.selected = true;
+        mesSelect.appendChild(opt);
+      });
+
+      for (let y = currentAnio - 5; y <= currentAnio + 1; y++) {
+        const opt = document.createElement('option');
+        opt.value = y;
+        opt.text = y;
+        if (y === currentAnio) opt.selected = true;
+        anioSelect.appendChild(opt);
+      }
+    }
+
+    function cargarEstadisticas() {
+      const mes = parseInt(document.getElementById('filtroMes').value);
+      const anio = parseInt(document.getElementById('filtroAnio').value);
+      const labelsMes = [];
+      const datosUsuarios = {};
+      const datosReferidos = {};
+
+      db.ref('usuarios').once('value').then(snapshot => {
+        const data = snapshot.val();
+        let total = 0;
+        let creditos = 0;
+
+        for (let uid in data) {
+          total++;
+          const user = data[uid];
+          if (user.comisionesTotales) creditos += parseFloat(user.comisionesTotales);
+
+          const fecha = new Date(user.lastLogin || 0);
+          if (fecha.getFullYear() === anio && fecha.getMonth() === mes) {
+            const dia = fecha.getDate();
+            datosUsuarios[dia] = (datosUsuarios[dia] || 0) + 1;
+          }
+        }
+
+        document.getElementById('totalUsuarios').innerText = total;
+        document.getElementById('totalCreditos').innerText = creditos.toFixed(2);
+
+        const labels = Object.keys(datosUsuarios).map(n => parseInt(n)).sort((a,b) => a - b);
+        const datos = labels.map(d => datosUsuarios[d]);
+
+        new Chart(document.getElementById('chartRendimiento'), {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [{
+              label: 'Usuarios activos por día',
+              data: datos,
+              borderColor: '#3f51b5',
+              backgroundColor: 'rgba(63,81,181,0.1)',
+              fill: true,
+              tension: 0.3
+            }]
+          }
+        });
+      });
+
+      db.ref('referidos').once('value').then(snapshot => {
+        const data = snapshot.val();
+        let totalRef = 0;
+
+        for (let refId in data) {
+          for (let sub in data[refId]) {
+            const r = data[refId][sub];
+            const fecha = new Date(r.fecha || Date.now());
+            if (fecha.getFullYear() === anio && fecha.getMonth() === mes) {
+              const dia = fecha.getDate();
+              datosReferidos[dia] = (datosReferidos[dia] || 0) + 1;
+            }
+            totalRef++;
+          }
+        }
+        document.getElementById('totalReferidos').innerText = totalRef;
+
+        const refLabels = Object.keys(datosReferidos).map(n => parseInt(n)).sort((a,b) => a - b);
+        const refData = refLabels.map(d => datosReferidos[d]);
+
+        new Chart(document.getElementById('chartReferidos'), {
+          type: 'bar',
+          data: {
+            labels: refLabels,
+            datasets: [{
+              label: 'Referidos por día',
+              data: refData,
+              backgroundColor: '#2196f3'
+            }]
+          }
+        });
+      });
+    }
+
+    async function exportarPDF() {
+      const { jsPDF } = window.jspdf;
+      const panel = document.querySelector('.panel');
+      const canvas = await html2canvas(panel);
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF();
+      const width = 210;
+      const height = (canvas.height * width) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, width, height);
+      pdf.save('estadisticas.pdf');
+    }
+
+    window.onload = () => {
+      llenarFiltros();
+      document.getElementById('filtroMes').addEventListener('change', cargarEstadisticas);
+      document.getElementById('filtroAnio').addEventListener('change', cargarEstadisticas);
+      cargarEstadisticas();
+    };
+  </script></body>
+</html>

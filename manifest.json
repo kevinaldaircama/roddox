@@ -1,0 +1,21 @@
+{
+  "name": "transferencia vip",
+  "short_name": "transferencia vip",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2196f3",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "3440119_ico.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "3440119_ico.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

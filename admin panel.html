@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="icon" href="3440119_ico.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#121212" />
+  <link rel="icon" type="image/png" href="3440119_ico.png">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="¡Únete a Transferencia VIP y gana créditos!" />
+  <meta property="og:description" content="Regístrate con este enlace de referido y recibe hasta 10 créditos gratis. Empieza a ganar hoy." />
+  <meta property="og:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  <meta property="og:url" content="https://transferenciavip.xyz" />
+  <meta property="og:type" content="website" />
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="¡Gana créditos con Transferencia VIP!" />
+  <meta name="twitter:description" content="Regístrate con un referido y recibe bonificaciones instantáneas." />
+  <meta name="twitter:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  
+  <style>
+    body {
+      background-color: #0d1117;
+      color: #c9d1d9;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding-top: 56px;
+    }
+
+    .navbar {
+      background-color: #161b22;
+    }
+
+    .navbar-brand, .nav-link {
+      color: #58a6ff;
+    }
+
+    .nav-link:hover {
+      color: #79c0ff;
+    }
+
+    .btn-custom {
+      background-color: #238636;
+      color: #fff;
+      border: none;
+      margin: 10px 0;
+      padding: 15px;
+      font-size: 1rem;
+      border-radius: 10px;
+      width: 100%;
+      transition: all 0.3s ease;
+    }
+
+    .btn-custom:hover {
+      background-color: #2ea043;
+    }
+
+    .loader {
+      border: 4px solid #30363d;
+      border-top: 4px solid #58a6ff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 2rem auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .hidden { display: none !important; }
+
+    .access-denied {
+      color: #f85149;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    iframe {
+      border: none;
+      width: 100%;
+      min-height: 80vh;
+      background-color: #0d1117;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar con hamburguesa a la IZQUIERDA -->
+  <header>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark">
+      <div class="container-fluid">
+        <!-- Botón hamburguesa primero -->
+        <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin" aria-label="Abrir menú de navegación">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="#">Admin Panel</a>
+        <div class="collapse navbar-collapse" id="navbarAdmin">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link" href="#" onclick="cargarVista('cred.html')"><i class="bi bi-cash-stack"></i> Créditos</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="cargarVista('admin convertidor')"><i class="bi bi-credit-card-2-front"></i> Admin Créditos</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="cargarVista('mantenimiento.html')"><i class="bi bi-tools"></i> Mantenimiento</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="cargarVista('estadísticas.html')"><i class="bi bi-bar-chart-line"></i> Estadísticas</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="cargarVista('curso admin.html')"><i class="bi bi-bar-chart-line"></i> admin contenido</a></li>
+            <li class="nav-item"><a class="nav-link text-danger" href="#" onclick="cerrarSesion()"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="container mt-4">
+    <div id="loader" class="loader"></div>
+    <p id="bienvenida" class="text-center mb-4 hidden"></p>
+    <p id="accesoDenegado" class="access-denied hidden">Acceso denegado: No tienes permisos de administrador.</p>
+
+    <!-- VISTA INTERNA -->
+    <div id="vista">
+      <iframe id="iframeVista" title="Panel de administración"></iframe>
+    </div>
+  </main>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyB28uLNC-7NBDBSJeQJ1Li_bYR6ygbf0DI",
+      authDomain: "transferencia-88fd7.firebaseapp.com",
+      databaseURL: "https://transferencia-88fd7-default-rtdb.firebaseio.com",
+      projectId: "transferencia-88fd7",
+      storageBucket: "transferencia-88fd7.appspot.com",
+      messagingSenderId: "343352831024",
+      appId: "1:343352831024:web:9ac2d08b41874b15e611f5",
+      measurementId: "G-LNX1B0RLK7"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const ADMIN_EMAIL = "kevinaldaircamachoserna51@gmail.com";
+
+    auth.onAuthStateChanged(user => {
+      document.getElementById('loader').classList.add('hidden');
+      if (user && user.email === ADMIN_EMAIL) {
+        document.getElementById('bienvenida').textContent = `Bienvenido, ${user.email}`;
+        document.getElementById('bienvenida').classList.remove('hidden');
+      } else {
+        document.getElementById('accesoDenegado').classList.remove('hidden');
+        document.querySelector('.navbar').classList.add('hidden');
+        document.getElementById('vista').classList.add('hidden');
+      }
+    });
+
+    function cerrarSesion() {
+      auth.signOut().then(() => window.location.href = "index.html");
+    }
+
+    function cargarVista(pagina) {
+      document.getElementById('iframeVista').src = pagina;
+    }
+  </script>
+
+  <!-- Bootstrap Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+    </html>

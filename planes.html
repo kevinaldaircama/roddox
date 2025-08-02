@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Planes de Créditos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="3440119_ico.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#121212" />
+  <link rel="icon" type="image/png" href="3440119_ico.png">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="¡Únete a Transferencia VIP y gana créditos!" />
+  <meta property="og:description" content="Regístrate con este enlace de referido y recibe hasta 10 créditos gratis. Empieza a ganar hoy." />
+  <meta property="og:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  <meta property="og:url" content="https://transferenciavip.xyz" />
+  <meta property="og:type" content="website" />
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="¡Gana créditos con Transferencia VIP!" />
+  <meta name="twitter:description" content="Regístrate con un referido y recibe bonificaciones instantáneas." />
+  <meta name="twitter:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background-color: #f5f7fb;
+      color: #333;
+      line-height: 1.6;
+    }
+    .container {
+      padding: 2rem 1rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .header h2 {
+      color: #3f51b5;
+      font-size: clamp(1.5rem, 5vw, 2.5rem);
+      margin-bottom: 0.5rem;
+    }
+    .header p {
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+    .header .btn {
+      display: inline-block;
+      background-color: #3f51b5;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+    .header .btn:hover {
+      background-color: #2f3ba5;
+    }
+    .referral-box {
+      background: linear-gradient(90deg, #a200ff, #7c0bff);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    .referral-box span {
+      font-weight: bold;
+    }
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+    .plan {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .plan h3 {
+      margin: 0 0 0.5rem;
+      color: #333;
+      text-transform: capitalize;
+      font-size: 1.3rem;
+    }
+    .price {
+      color: #007bff;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0.5rem 0 1rem;
+    }
+    .plan ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1rem;
+    }
+    .plan ul li {
+      margin: 0.4rem 0;
+      font-size: 0.95rem;
+    }
+    .plan .btn {
+      align-self: start;
+      background-color: #007bff;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+    .plan .btn:hover {
+      background-color: #0056b3;
+    }
+    .badge {
+      background: #ff9800;
+      color: white;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+
+    /* Responsive spacing */
+    @media (max-width: 600px) {
+      .header .btn {
+        width: 100%;
+      }
+      .plan .btn {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Planes de Créditos</h2>
+      <p>Selecciona el plan que mejor se adapte a tus necesidades y empieza a crecer con nosotros</p>
+      <a href="info_creditos_planes.html" class="btn">Acerca de los créditos</a>
+    </div>
+
+    <div class="referral-box">
+      <h3>¡Gana con tus <span>REFERIDOS</span>!</h3>
+      <p>Invita a tus amigos y obtén comisiones por cada compra que realicen.</p>
+    </div>
+
+    <div class="plans">
+      <!-- Planes individuales -->
+      <div class="plan">
+        <h3>Plan Free</h3>
+        <p class="price">S/ 00</p>
+        <ul>
+          <li>10 créditos</li>
+          <li>Acceso instantáneo</li>
+          <li>Créditos sin caducidad</li>
+          <li>Soporte técnico 24/7</li>
+        </ul>
+        <a href="registro" class="btn">Seleccionar Plan</a>
+      </div>
+
+      <div class="plan">
+        <h3>Plan Bronce</h3>
+        <p class="price">S/ 45</p>
+        <ul>
+          <li>50 créditos</li>
+          <li>Acceso instantáneo</li>
+          <li>Créditos sin caducidad</li>
+          <li>Soporte técnico 24/7</li>
+        </ul>
+        <a href="https://wa.me/message/LEEIPCTGLOHIL1" class="btn">Seleccionar Plan</a>
+      </div>
+
+      <div class="plan">
+        <h3>Plan Oro <span class="badge">Precio promoción</span></h3>
+        <p class="price">S/ 60</p>
+        <ul>
+          <li>80 créditos</li>
+          <li>Acceso instantáneo</li>
+          <li>Créditos sin caducidad</li>
+          <li>Soporte técnico 24/7</li>
+          <li>Convertidor de créditos a soles</li>
+        </ul>
+        <a href="https://wa.me/message/LEEIPCTGLOHIL1" class="btn">Seleccionar Plan</a>
+      </div>
+
+      <div class="plan">
+        <h3>Plan Premium</h3>
+        <p class="price">S/ 100</p>
+        <ul>
+          <li>100 créditos</li>
+          <li>+20 créditos de regalo</li>
+          <li>Acceso instantáneo</li>
+          <li>Créditos sin caducidad</li>
+          <li>Soporte técnico 24/7</li>
+          <li>Cursos</li>
+        </ul>
+        <a href="https://wa.me/message/LEEIPCTGLOHIL1" class="btn">Seleccionar Plan</a>
+      </div>
+
+      <div class="plan">
+        <h3>Plan VIP</h3>
+        <p class="price">S/ 150</p>
+        <ul>
+          <li>200 créditos</li>
+          <li>Acceso instantáneo</li>
+          <li>Créditos sin caducidad</li>
+          <li>Soporte técnico 24/7</li>
+          <li>Compartir créditos</li>
+        </ul>
+        <a href="https://wa.me/message/LEEIPCTGLOHIL1" class="btn">Seleccionar Plan</a>
+      </div>
+
+      <div class="plan">
+        <h3>Plan Diamante</h3>
+        <p class="price">S/ 400</p>
+        <ul>
+          <li>300 créditos</li>
+          <li>+30 créditos de regalo</li>
+          <li>Acceso instantáneo</li>
+          <li>Créditos sin caducidad</li>
+          <li>Soporte técnico 24/7</li>
+          <li>yape fake apk</li>
+        </ul>
+        <a href="https://wa.me/message/LEEIPCTGLOHIL1" class="btn">Seleccionar Plan</a>
+      </div>
+    </div>
+  </div>
+  <!-- POP-UP 40% Descuento Responsive (con vencimiento al 31 de agosto) -->
+<style>
+  #popupDescuento {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 400px;
+    background: linear-gradient(135deg, #1e90ff, #ffffff, #1e90ff);
+    color: #000;
+    padding: 6vw;
+    border-radius: 16px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+    font-family: 'Segoe UI', sans-serif;
+    z-index: 99999;
+    text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  #popupDescuento h2 {
+    font-size: 1.5rem;
+    margin-top: 0;
+  }
+
+  #popupDescuento p {
+    font-size: 1rem;
+    margin: 0.6em 0;
+  }
+
+  #popupDescuento a {
+    display: inline-block;
+    background: #1e90ff;
+    color: #fff;
+    padding: 0.7em 1.5em;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 1rem;
+    margin-top: 0.7em;
+    transition: background 0.3s ease;
+  }
+
+  #popupDescuento a:hover {
+    background: #006fdc;
+  }
+
+  #popupDescuento button.close-btn {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    color: #000;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -60%); }
+    to { opacity: 1; transform: translate(-50%, -50%); }
+  }
+</style>
+
+<div id="popupDescuento">
+  <button class="close-btn" onclick="document.getElementById('popupDescuento').style.display='none'">×</button>
+  <h2>🎉 ¡40% de Descuento en Planes! 🎉</h2>
+  <p>Solo por tiempo limitado, obtén <strong>40% OFF</strong> en todos nuestros planes premium. 💡</p>
+  <p style="color: #d80000; font-weight: bold;">
+    ⏳ ¡Quedan <span id="diasDescuento"></span> días!
+  </p>
+  <a href="promociones" target="_blank">
+    🚀 ¡Aprovecha Ahora!
+  </a>
+  <p style="font-size: 0.9rem;">🔒 Válido hasta el <strong>31 de julio de 2025</strong>.</p>
+</div>
+
+<script>
+  (function () {
+    const hoy = new Date();
+    const finDescuento = new Date('2025-07-31T23:59:59');
+
+    if (hoy <= finDescuento) {
+      // Mostrar el pop-up si aún está vigente
+      document.getElementById('popupDescuento').style.display = 'block';
+
+      // Calcular y mostrar días restantes
+      const diferencia = finDescuento - hoy;
+      const dias = Math.ceil(diferencia / (1000 * 60 * 60 * 24));
+      document.getElementById('diasDescuento').textContent = dias > 0 ? dias : 0;
+    }
+    // Si ha vencido, no se muestra
+  })();
+</script>
+</body>
+</html>

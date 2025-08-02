@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="google-site-verification" content="f_TMiPlNgGr-BIXEVrhP4VjMyvIWFZ8p381VaNHA0pI">
+  <title>Iniciar sesión</title>
+  <link rel="icon" href="3440119_ico.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#121212" />
+  <link rel="icon" type="image/png" href="3440119_ico.png">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="¡Únete a Transferencia VIP y gana créditos!" />
+  <meta property="og:description" content="Regístrate con este enlace de referido y recibe hasta 10 créditos gratis. Empieza a ganar hoy." />
+  <meta property="og:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  <meta property="og:url" content="https://transferenciavip.xyz" />
+  <meta property="og:type" content="website" />
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="¡Gana créditos con Transferencia VIP!" />
+  <meta name="twitter:description" content="Regístrate con un referido y recibe bonificaciones instantáneas." />
+  <meta name="twitter:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #a1c4fd, #c2e9fb);
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      background: white;
+      padding: 40px 30px;
+      border-radius: 16px;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+    }
+    .logo { width: 80px; margin-bottom: 15px; }
+    h2 { margin: 10px 0 25px; color: #333; }
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 16px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+    button {
+      width: 100%;
+      background-color: #007bff;
+      color: white;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover { background-color: #0056b3; }
+    .google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+      padding: 10px;
+      width: 100%;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: box-shadow 0.3s ease;
+    }
+    .google-btn:hover {
+      box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    }
+    .google-icon {
+      height: 20px;
+      margin-right: 10px;
+    }
+    .g-recaptcha { margin: 10px 0 20px; }
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    .actions a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    .actions a:hover { text-decoration: underline; }
+    .remember {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 14px;
+      justify-content: flex-start;
+    }
+    .mantenimiento {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .mantenimiento img {
+      max-width: 200px;
+      margin-bottom: 20px;
+    }
+  </style>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+
+<body>
+
+  <div class="container" id="loginContainer">
+    <h2>Iniciar sesión</h2>
+    <img src="3440119_ico.png" alt="Logo" class="logo" />
+    <form id="loginForm">
+      <input type="text" id="loginEmail" placeholder="Correo o nombre de usuario" required />
+      <input type="password" id="loginPass" placeholder="Contraseña" required />
+      <div class="remember">
+        <input type="checkbox" id="rememberMe" style="margin-right: 6px;" />
+        <label for="rememberMe">Mantener sesión iniciada</label>
+      </div>
+      <div class="g-recaptcha" data-sitekey="6LcXu4IrAAAAAKC8vZ5ALC0BeHZRqeA25RTkX1sI"></div>
+      <button type="submit">Entrar</button>
+    </form>
+
+    <button id="googleLoginBtn" class="google-btn">
+      <img class="google-icon" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
+      Iniciar sesión con Google
+    </button>
+
+    <div class="actions">
+      <a href="registro.html">Regístrate</a>
+      <a href="reset.html">¿Olvidaste tu contraseña?</a>
+    </div>
+  </div>
+
+  <div class="mantenimiento" id="mantenimiento">
+    <img id="imgMant" src="" alt="Mantenimiento">
+    <h1 id="tituloMant"></h1>
+    <p id="mensajeMant"></p>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyB28uLNC-7NBDBSJeQJ1Li_bYR6ygbf0DI",
+      authDomain: "transferencia-88fd7.firebaseapp.com",
+      databaseURL: "https://transferencia-88fd7-default-rtdb.firebaseio.com",
+      projectId: "transferencia-88fd7",
+      storageBucket: "transferencia-88fd7.appspot.com",
+      messagingSenderId: "343352831024",
+      appId: "1:343352831024:web:9ac2d08b41874b15e611f5",
+      measurementId: "G-LNX1B0RLK7"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    // Modo mantenimiento
+    db.ref('mantenimiento').once('value').then(snapshot => {
+      const config = snapshot.val();
+      if (config && config.activo) {
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('mantenimiento').style.display = 'flex';
+        document.getElementById('imgMant').src = config.imagen || 'mantenimiento.png';
+        document.getElementById('tituloMant').innerText = config.titulo || 'En mantenimiento';
+        document.getElementById('mensajeMant').innerText = config.mensaje || 'Estamos trabajando para mejorar tu experiencia.';
+      }
+    });
+
+    // Login con usuario o correo
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const loginInput = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPass').value;
+      const rememberMe = document.getElementById('rememberMe').checked;
+      const recaptchaResponse = grecaptcha.getResponse();
+
+      if (!recaptchaResponse) {
+        alert('Por favor verifica que no eres un robot.');
+        return;
+      }
+
+      const persistence = rememberMe
+        ? firebase.auth.Auth.Persistence.LOCAL
+        : firebase.auth.Auth.Persistence.SESSION;
+
+      try {
+        await auth.setPersistence(persistence);
+
+        if (loginInput.includes("@")) {
+          // Login con correo
+          const result = await auth.signInWithEmailAndPassword(loginInput, password);
+          await db.ref('usuarios/' + result.user.uid).update({ lastLogin: Date.now() });
+          alert('Inicio de sesión exitoso.');
+          window.location.href = "inicio.html";
+        } else {
+          // Login con usuario
+          const snapshot = await db.ref('usuarios').orderByChild('nombre').equalTo(loginInput).once('value');
+          if (!snapshot.exists()) throw new Error("Usuario no encontrado.");
+          const userEntry = Object.entries(snapshot.val())[0];
+          const email = userEntry[1].correo;
+
+          const result = await auth.signInWithEmailAndPassword(email, password);
+          await db.ref('usuarios/' + result.user.uid).update({ lastLogin: Date.now() });
+          alert('Inicio de sesión exitoso.');
+          window.location.href = "inicio.html";
+        }
+      } catch (error) {
+        let msg = "Error desconocido.";
+        if (error.code === 'auth/wrong-password') msg = "Contraseña incorrecta.";
+        else if (error.code === 'auth/user-not-found') msg = "Correo no registrado.";
+        else if (error.message.includes('Usuario no encontrado')) msg = error.message;
+        else msg = error.message;
+        alert("Error: " + msg);
+      }
+    });
+
+    // Login con Google
+    document.getElementById('googleLoginBtn').addEventListener('click', () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then(result => {
+          const user = result.user;
+          db.ref('usuarios/' + user.uid).update({
+            email: user.email,
+            nombre: user.displayName,
+            google: true,
+            lastLogin: Date.now()
+          });
+          alert('Inicio de sesión con Google exitoso.');
+          window.location.href = "inicio.html";
+        })
+        .catch(error => {
+          alert("Error con Google Sign-In: " + error.message);
+        });
+    });
+  </script>
+</body>
+        </html>

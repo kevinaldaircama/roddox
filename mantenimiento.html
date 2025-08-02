@@ -1,0 +1,114 @@
+<!DOCTYPE html>  
+<html lang="es">  
+<head>  
+  <meta charset="UTF-8">  
+  <title>Control de Mantenimiento</title>  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>  
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>  
+  <style>  
+    body {  
+      font-family: Arial, sans-serif;  
+      background-color: #f4f4f4;  
+      padding: 20px;  
+    }  
+    .container {  
+      max-width: 600px;  
+      margin: auto;  
+      background: white;  
+      padding: 20px;  
+      border-radius: 10px;  
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);  
+    }  
+    label {  
+      font-weight: bold;  
+      display: block;  
+      margin-top: 15px;  
+    }  
+    input, textarea, select {  
+      width: 100%;  
+      padding: 10px;  
+      margin-top: 5px;  
+      border-radius: 5px;  
+      border: 1px solid #ccc;  
+    }  
+    button {  
+      margin-top: 20px;  
+      padding: 10px 20px;  
+      background: #5c6bc0;  
+      color: white;  
+      border: none;  
+      border-radius: 5px;  
+      cursor: pointer;  
+    }  
+  </style>  
+</head>  
+<body>  
+  <div class="container">  
+    <h2>Configuración de Mantenimiento</h2>  
+  
+    <label for="activo">¿Activar Mantenimiento?</label>  
+    <select id="activo">  
+      <option value="false">No</option>  
+      <option value="true">Sí</option>  
+    </select>  
+  
+    <label for="mensaje">Mensaje de Mantenimiento</label>  
+    <textarea id="mensaje" rows="4"></textarea>  
+  
+    <label for="titulo">Título</label>  
+    <input type="text" id="titulo">  
+  
+    <label for="imagen">URL de la Imagen</label>  
+    <input type="text" id="imagen">  
+  
+    <button onclick="guardarConfiguracion()">Guardar Configuración</button>  
+  </div>  
+  
+  <script>  
+    const firebaseConfig = {  
+        apiKey: "AIzaSyB28uLNC-7NBDBSJeQJ1Li_bYR6ygbf0DI",
+    authDomain: "transferencia-88fd7.firebaseapp.com",
+    databaseURL: "https://transferencia-88fd7-default-rtdb.firebaseio.com",
+    projectId: "transferencia-88fd7",
+    storageBucket: "transferencia-88fd7.firebasestorage.app",
+    messagingSenderId: "343352831024",
+    appId: "1:343352831024:web:9ac2d08b41874b15e611f5",
+    measurementId: "G-LNX1B0RLK7"
+  };
+    firebase.initializeApp(firebaseConfig);  
+    const db = firebase.database();  
+  
+    function guardarConfiguracion() {  
+      const activo = document.getElementById('activo').value === 'true';  
+      const mensaje = document.getElementById('mensaje').value;  
+      const titulo = document.getElementById('titulo').value;  
+      const imagen = document.getElementById('imagen').value;  
+  
+      db.ref("mantenimiento").set({  
+        activo,  
+        mensaje,  
+        titulo,  
+        imagen  
+      }).then(() => {  
+        alert("✅ Configuración guardada correctamente.");  
+      }).catch(err => {  
+        console.error("Error al guardar:", err);  
+        alert("❌ Error al guardar configuración.");  
+      });  
+    }  
+  
+    // Cargar configuración actual  
+    window.onload = () => {  
+      db.ref("mantenimiento").once("value").then(snapshot => {  
+        const data = snapshot.val();  
+        if (!data) return;  
+        document.getElementById('activo').value = data.activo ? "true" : "false";  
+        document.getElementById('mensaje').value = data.mensaje || "";  
+        document.getElementById('titulo').value = data.titulo || "";  
+        document.getElementById('imagen').value = data.imagen || "";  
+      });  
+    };  
+  </script>  
+</body>  
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Transferencia VIP - Inicio</title>
+  <link rel="icon" href="assets/3440119_ico.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&display=swap" rel="stylesheet">
+  <meta name="description" content="Transferencia VIP: Transfiere, gana y multiplica tu saldo con cada acción.">
+  <meta property="og:title" content="Transferencia VIP - Transfiere y gana" />
+  <meta property="og:description" content="Gana créditos al registrarte y compartir tu link. ¡Únete ahora!" />
+  <meta property="og:image" content="https://transferenciavip.xyz/logo-oficial.png" />
+  <meta property="og:url" content="https://transferenciavip.xyz/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #0f2027);
+      background-size: 400% 400%;
+      animation: gradientMove 15s ease infinite;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    #loaderOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: #0f2027;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    #loaderOverlay img {
+      width: 80px;
+      animation: pulse 1.5s infinite;
+    }
+    .hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    header {
+      text-align: center;
+      padding: 40px 20px 20px;
+      animation: fadeIn 1s ease;
+    }
+    header img {
+      width: 90px;
+      border-radius: 50%;
+      box-shadow: 0 0 15px rgba(255,255,255,0.2);
+    }
+    header h1 {
+      margin-top: 15px;
+      font-size: 2em;
+      font-weight: 600;
+    }
+    header p {
+      color: #bbb;
+      font-size: 1em;
+      margin-top: 10px;
+    }
+    main {
+      text-align: center;
+      padding: 30px 20px;
+      flex: 1;
+      animation: fadeIn 1s ease;
+      max-width: 500px;
+      margin: auto;
+    }
+    .btn-group {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+    }
+    .btn {
+      background: #00c6ff;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 10px;
+      font-size: 1em;
+      font-weight: 500;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    .btn:hover {
+      background: #0090d9;
+      transform: translateY(-2px);
+    }
+    .btn.secondary {
+      background: #c471f5;
+    }
+    .btn.secondary:hover {
+      background: #a551dc;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9em;
+      color: #aaa;
+      background-color: rgba(255,255,255,0.05);
+      animation: fadeIn 1.5s ease;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @media (max-width: 480px) {
+      .btn { width: 100%; }
+    }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+</head>
+<body>
+
+  <!-- Loader -->
+  <div id="loaderOverlay">
+    <img src="cargando.mp4" alt="Cargando..." />
+  </div>
+
+  <header>
+    <img src="3440119_ico.png" alt="Transferencia VIP Logo" />
+    <h1>Transferencia VIP</h1>
+    <p>gana servidores vps apk mod y mucho más totalmente gratis solo compartiendo el link de referido</p>
+  </header>
+
+  <main>
+    <div class="btn-group">
+      <button class="btn" onclick="location.href='login.html'">Iniciar Sesión</button>
+      <button class="btn secondary" onclick="location.href='planes.html'">Registrarse</button>
+    
+    </div>
+  </main>
+
+  <footer>
+    © 2025 Transferencia VIP · Todos los derechos reservados
+  </footer>
+
+  <script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyB28uLNC-7NBDBSJeQJ1Li_bYR6ygbf0DI",
+    authDomain: "transferencia-88fd7.firebaseapp.com",
+    databaseURL: "https://transferencia-88fd7-default-rtdb.firebaseio.com",
+    projectId: "transferencia-88fd7",
+    storageBucket: "transferencia-88fd7.firebasestorage.app",
+    messagingSenderId: "343352831024",
+    appId: "1:343352831024:web:9ac2d08b41874b15e611f5",
+    measurementId: "G-LNX1B0RLK7"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Redirección si el usuario ya está logueado
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        window.location.href = "inicio.html";
+      }
+    });
+
+    // Ocultar loader
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('loaderOverlay').classList.add('hidden');
+      }, 1500);
+    });
+  </script>
+</body>
+</html>

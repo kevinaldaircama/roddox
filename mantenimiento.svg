@@ -1,0 +1,59 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .gear {
+      transform-origin: 150px 150px;
+      animation: rotate 3s linear infinite;
+    }
+
+    .wrench {
+      transform-origin: 80px 220px;
+      animation: swing 2s ease-in-out infinite;
+    }
+
+    .text {
+      font-family: 'Arial', sans-serif;
+      font-size: 20px;
+      fill: #555;
+      animation: blink 2s infinite;
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes swing {
+      0%, 100% { transform: rotate(-10deg); }
+      50% { transform: rotate(10deg); }
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+  </style>
+
+  <!-- Gear -->
+  <g class="gear">
+    <circle cx="150" cy="150" r="40" stroke="#333" stroke-width="8" fill="none"/>
+    <g stroke="#333" stroke-width="8">
+      <line x1="150" y1="100" x2="150" y2="80"/>
+      <line x1="150" y1="200" x2="150" y2="220"/>
+      <line x1="100" y1="150" x2="80" y2="150"/>
+      <line x1="200" y1="150" x2="220" y2="150"/>
+      <line x1="180" y1="180" x2="195" y2="195"/>
+      <line x1="120" y1="180" x2="105" y2="195"/>
+      <line x1="120" y1="120" x2="105" y2="105"/>
+      <line x1="180" y1="120" x2="195" y2="105"/>
+    </g>
+  </g>
+
+  <!-- Wrench -->
+  <g class="wrench">
+    <rect x="75" y="200" width="10" height="50" fill="#666"/>
+    <path d="M75 200 Q60 190 75 180 Q90 190 75 200" fill="#666"/>
+  </g>
+
+  <!-- Text -->
+  <text class="text" x="50%" y="280" text-anchor="middle">Mantenimiento en curso...</text>
+</svg>
