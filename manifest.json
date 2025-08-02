@@ -1,6 +1,6 @@
 {
-  "name": "transferencia vip",
-  "short_name": "transferencia vip",
+  "name": "roddox",
+  "short_name": "roddox",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -8,12 +8,12 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "3440119_ico.png",
+      "src": "logo.jpg",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "3440119_ico.png",
+      "src": "logo.jpg",
       "sizes": "512x512",
       "type": "image/png"
     }
