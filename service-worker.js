@@ -1,9 +1,9 @@
-const CACHE_NAME = 'kevintech-cache-v1';
+const CACHE_NAME = 'roddox-cache-v1';
 const urlsToCache = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/icon-192.png',
+  '/logo.jpg',
   '/icon-512.png'
   '/Interbank pago.html'
   '/RTB.html'
