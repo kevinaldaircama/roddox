@@ -219,7 +219,7 @@
           const result = await auth.signInWithEmailAndPassword(email, password);
           await db.ref('usuarios/' + result.user.uid).update({ lastLogin: Date.now() });
           alert('Inicio de sesión exitoso.');
-          window.location.href = "inicio.html";
+          window.location.href = "inicio";
         }
       } catch (error) {
         let msg = "Error desconocido.";
@@ -244,7 +244,7 @@
             lastLogin: Date.now()
           });
           alert('Inicio de sesión con Google exitoso.');
-          window.location.href = "inicio.html";
+          window.location.href = "inicio";
         })
         .catch(error => {
           alert("Error con Google Sign-In: " + error.message);
