@@ -115,7 +115,7 @@
         return;
       }
 
-      const tieneCredito = await verificarYDescontarCreditos(uid, 4);
+      const tieneCredito = await verificarYDescontarCreditos(uid, 3); // DESCUENTA 3 CRÉDITOS
       if (!tieneCredito) {
         mostrarMensaje("❌ No tienes créditos suficientes para realizar esta consulta.");
         return;
@@ -184,10 +184,15 @@
       const snap = await ref.get();
 
       if (snap.exists) {
-        const actuales = parseInt(snap.data().comisionesTotales || 0);
+        let actuales = snap.data().comisionesTotales;
+
+        // Si viene como string, convertir a número
+        actuales = typeof actuales === 'string' ? parseFloat(actuales) : actuales;
+        if (isNaN(actuales)) actuales = 0;
+
         if (actuales >= monto) {
           await ref.update({
-            comisionesTotales: actuales - monto
+            comisionesTotales: firebase.firestore.FieldValue.increment(-monto)
           });
           return true;
         }
