@@ -195,10 +195,7 @@
 
         cerrarMensaje();
         document.getElementById('modal').style.display = 'block';
-
-        // Mostrar créditos restantes
         document.getElementById('creditosRestantes').innerText = `Créditos restantes: ${resultadoCredito.nuevoSaldo}`;
-
       } catch (error) {
         console.error("Error al buscar:", error);
         mostrarMensaje("⚠️ Ocurrió un error al consultar los datos.");
@@ -211,15 +208,21 @@
         const snap = await ref.get();
 
         if (!snap.exists) {
-          console.warn("No se encontró el documento del usuario.");
-          return { ok: false };
+          console.warn("Documento no encontrado. Asignando créditos iniciales...");
+          await ref.set({ comisionesTotales: 5 });
+          await ref.update({
+            comisionesTotales: firebase.firestore.FieldValue.increment(-monto)
+          });
+          return { ok: true, nuevoSaldo: 5 - monto };
         }
 
         let creditos = snap.data().comisionesTotales;
-        console.log("Créditos actuales:", creditos);
+        console.log("Créditos actuales desde Firestore:", creditos);
 
         creditos = typeof creditos === 'string' ? parseFloat(creditos) : creditos;
         if (isNaN(creditos)) creditos = 0;
+
+        document.getElementById('creditosRestantes').innerText = `Tienes actualmente: ${creditos} créditos`;
 
         if (creditos >= monto) {
           await ref.update({
@@ -227,11 +230,11 @@
           });
           return { ok: true, nuevoSaldo: creditos - monto };
         } else {
-          console.warn("Créditos insuficientes:", creditos);
           return { ok: false };
         }
       } catch (e) {
         console.error("Error al verificar créditos:", e);
+        document.getElementById('creditosRestantes').innerText = '❌ Error al acceder a los créditos.';
         return { ok: false };
       }
     }
