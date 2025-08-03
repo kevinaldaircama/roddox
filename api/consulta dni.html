@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Consulta DNI</title>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -91,6 +91,13 @@
       text-align: left;
     }
 
+    #creditosRestantes {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #007bff;
+      text-align: center;
+    }
+
     @media (max-width: 500px) {
       h2 {
         font-size: 20px;
@@ -110,11 +117,12 @@
 
   <div class="search-box">
     <h2>Consultar Datos por DNI</h2>
-    <input type="text" id="dniBuscar" placeholder="Ingresa DNI">
+    <input type="text" id="dniBuscar" placeholder="Ingresa DNI" />
     <button onclick="buscarDNI()">Buscar</button>
+    <div id="creditosRestantes"></div>
   </div>
 
-  <!-- Modal para mostrar datos -->
+  <!-- Modal de datos -->
   <div id="modal">
     <div class="modalContent">
       <h3>Datos del Ciudadano</h3>
@@ -123,7 +131,7 @@
     </div>
   </div>
 
-  <!-- Modal de mensajes -->
+  <!-- Modal de mensaje -->
   <div id="mensajeModal">
     <div class="modalContent">
       <p id="mensajeTexto">Verificando...</p>
@@ -188,9 +196,8 @@
         cerrarMensaje();
         document.getElementById('modal').style.display = 'block';
 
-        setTimeout(() => {
-          alert(`✅ Consulta exitosa. Te quedan ${resultadoCredito.nuevoSaldo} créditos.`);
-        }, 300);
+        // Mostrar créditos restantes
+        document.getElementById('creditosRestantes').innerText = `Créditos restantes: ${resultadoCredito.nuevoSaldo}`;
 
       } catch (error) {
         console.error("Error al buscar:", error);
@@ -199,23 +206,34 @@
     }
 
     async function verificarYDescontarCreditos(uid, monto) {
-      const ref = db.doc(`usuarios/${uid}/comisionesTotales`);
-      const snap = await ref.get();
+      try {
+        const ref = db.doc(`usuarios/${uid}`);
+        const snap = await ref.get();
 
-      if (!snap.exists) return { ok: false };
+        if (!snap.exists) {
+          console.warn("No se encontró el documento del usuario.");
+          return { ok: false };
+        }
 
-      let creditos = snap.data().comisionesTotales;
-      creditos = typeof creditos === 'string' ? parseFloat(creditos) : creditos;
-      if (isNaN(creditos)) creditos = 0;
+        let creditos = snap.data().comisionesTotales;
+        console.log("Créditos actuales:", creditos);
 
-      if (creditos >= monto) {
-        await ref.update({
-          comisionesTotales: firebase.firestore.FieldValue.increment(-monto)
-        });
-        return { ok: true, nuevoSaldo: creditos - monto };
+        creditos = typeof creditos === 'string' ? parseFloat(creditos) : creditos;
+        if (isNaN(creditos)) creditos = 0;
+
+        if (creditos >= monto) {
+          await ref.update({
+            comisionesTotales: firebase.firestore.FieldValue.increment(-monto)
+          });
+          return { ok: true, nuevoSaldo: creditos - monto };
+        } else {
+          console.warn("Créditos insuficientes:", creditos);
+          return { ok: false };
+        }
+      } catch (e) {
+        console.error("Error al verificar créditos:", e);
+        return { ok: false };
       }
-
-      return { ok: false };
     }
 
     async function registrarConsulta(uid, dni, resultado) {
@@ -257,4 +275,4 @@
     }
   </script>
 </body>
-  </html>
+</html>
