@@ -107,11 +107,20 @@
       const dni = document.getElementById('dniBuscar').value.trim();
       if (!dni) return mostrarMensaje("⚠️ Ingrese un DNI válido");
 
-      mostrarMensaje("🔎 Verificando datos...");
+      mostrarMensaje("🔐 Verificando tus créditos...");
 
+      const uid = await getUidActual();
+      if (!uid) return mostrarMensaje("❌ Debes iniciar sesión para usar esta función.");
+
+      const tieneCredito = await verificarYDescontarCreditos(uid, 4);
+      if (!tieneCredito) {
+        mostrarMensaje("❌ No tienes créditos suficientes para realizar esta consulta.");
+        return;
+      }
+
+      mostrarMensaje("🔎 Verificando datos...");
       await esperar(2000);
       mostrarMensaje("📡 Consultando base de datos...");
-
       await esperar(3000);
 
       try {
@@ -121,8 +130,6 @@
           mostrarMensaje("❌ El DNI no se encuentra registrado en RENIEC o base de datos.");
           return;
         }
-
-        await descontarCreditos(3);
 
         const datos = doc.data();
         const contenedor = document.getElementById('datosPersona');
@@ -157,26 +164,29 @@
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async function descontarCreditos(monto) {
-      return new Promise((resolve) => {
-        auth.onAuthStateChanged(async user => {
-          if (user) {
-            const uid = user.uid;
-            const ref = db.doc(`usuarios/${uid}`);
-            const docSnap = await ref.get();
-            if (docSnap.exists) {
-              const actual = parseInt(docSnap.data().comisionesTotales || 0);
-              await ref.update({
-                comisionesTotales: actual - monto
-              });
-            }
-            resolve();
-          } else {
-            console.warn("Usuario no autenticado: no se puede descontar créditos");
-            resolve();
-          }
+    function getUidActual() {
+      return new Promise(resolve => {
+        auth.onAuthStateChanged(user => {
+          if (user) resolve(user.uid);
+          else resolve(null);
         });
       });
+    }
+
+    async function verificarYDescontarCreditos(uid, monto) {
+      const ref = db.doc(`usuarios/${uid}`);
+      const snap = await ref.get();
+
+      if (snap.exists) {
+        const actuales = parseInt(snap.data().comisionesTotales || 0);
+        if (actuales >= monto) {
+          await ref.update({
+            comisionesTotales: actuales - monto
+          });
+          return true;
+        }
+      }
+      return false;
     }
   </script>
 </body>
