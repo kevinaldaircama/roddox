@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  const API_TOKEN = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpcCI6IjQ0LjIwNC4xMDMuMjM3IiwicGxhdGZvcm0iOiJBUEkiLCJ1c3VhcmlvIjp7Il9pZCI6IjY4OGUzNmNjMjIzYmJmOTI0OTcwMDAwNSIsIm5hbWUiOiJyb2RyaWdvIiwicmFuZ28iOiJ1c2VyIiwic3BhbSI6MzAsImNfZXhwaXJ5IjoxNzU2NzQzMDE3fSwiaWF0IjoxNzU0MTc2MzM2LCJleHAiOjE3NTY2ODE5MzZ9.JA2nAigSLZzAc525ThX27P5zML8QRPh-qvvBIu2S8MOX2s-DrN_giecOIwCrmYQJvBhI-WkidsC4wFAIkmXqJA";
+  const API_TOKEN = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpcCI6IjMuMjM5LjExNy4xMDQiLCJwbGF0Zm9ybSI6IkFQSSIsInVzdWFyaW8iOnsiX2lkIjoiNjg4ZTM2Y2MyMjNiYmY5MjQ5NzAwMDA1IiwibmFtZSI6InJvZHJpZ28iLCJyYW5nbyI6InVzZXIiLCJzcGFtIjozMCwiY19leHBpcnkiOjE3NTY3NDMwMTd9LCJpYXQiOjE3NTQxOTA1MDAsImV4cCI6MTc1NjY5NjEwMH0.Tv2rou_hl1i2fzWsgdyxLIV07ijQ9ldvkuOMnJCGyVSbISG8F5u-vyT60vAyn-u9--pTcldj2A6rgUegEch0mw";
 
   if (req.method === "GET") {
     res.setHeader("Content-Type", "text/html");
