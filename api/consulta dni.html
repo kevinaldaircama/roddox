@@ -89,15 +89,13 @@
 
   <script>
     const firebaseConfig = {
-      apiKey: "AIzaSyDFxkNJCVxwddZFsqPeXSdeYe87ExEdhQk",
-    authDomain: "roddox-27e1b.firebaseapp.com",
-    databaseURL: "https://roddox-27e1b-default-rtdb.firebaseio.com",
-    projectId: "roddox-27e1b",
-    storageBucket: "roddox-27e1b.firebasestorage.app",
-    messagingSenderId: "108259944325",
-    appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
-    measurementId: "G-MBQ5X9PLF8"
-  };
+      apiKey: "TU_API_KEY",
+      authDomain: "TU_AUTH_DOMAIN",
+      projectId: "TU_PROJECT_ID",
+      storageBucket: "TU_STORAGE_BUCKET",
+      messagingSenderId: "TU_MESSAGING_SENDER_ID",
+      appId: "TU_APP_ID"
+    };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
@@ -207,162 +205,6 @@
       } catch (e) {
         console.warn("⚠️ No se pudo registrar la consulta:", e);
       }
-    }
-  </script>
-</body>
-</html>      cursor: pointer;
-    }
-
-    #modal, #mensajeModal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.5);
-    }
-
-    .modalContent {
-      background: white;
-      margin: 10% auto;
-      padding: 20px;
-      width: 90%;
-      max-width: 500px;
-      border-radius: 8px;
-      text-align: center;
-    }
-
-    #datosPersona p {
-      margin: 10px 0;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 5px;
-    }
-  </style>
-</head>
-<body>
-  <div class="search-box">
-    <h2>Consultar Datos por DNI</h2>
-    <input type="text" id="dniBuscar" placeholder="Ingresa DNI">
-    <br>
-    <button onclick="buscarDNI()">Buscar</button>
-  </div>
-
-  <!-- Modal de datos -->
-  <div id="modal">
-    <div class="modalContent">
-      <h3>Datos del Ciudadano</h3>
-      <div id="datosPersona"></div>
-      <button onclick="cerrarModal()">Cerrar</button>
-    </div>
-  </div>
-
-  <!-- Modal de mensajes -->
-  <div id="mensajeModal">
-    <div class="modalContent">
-      <p id="mensajeTexto">Verificando...</p>
-    </div>
-  </div>
-
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDFxkNJCVxwddZFsqPeXSdeYe87ExEdhQk",
-    authDomain: "roddox-27e1b.firebaseapp.com",
-    databaseURL: "https://roddox-27e1b-default-rtdb.firebaseio.com",
-    projectId: "roddox-27e1b",
-    storageBucket: "roddox-27e1b.firebasestorage.app",
-    messagingSenderId: "108259944325",
-    appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
-    measurementId: "G-MBQ5X9PLF8"
-  };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const auth = firebase.auth();
-
-    async function buscarDNI() {
-      const dni = document.getElementById('dniBuscar').value.trim();
-      if (!dni) return mostrarMensaje("⚠️ Ingrese un DNI válido");
-
-      mostrarMensaje("🔐 Verificando tus créditos...");
-
-      const uid = await getUidActual();
-      if (!uid) return mostrarMensaje("❌ Debes iniciar sesión para usar esta función.");
-
-      const tieneCredito = await verificarYDescontarCreditos(uid, 4);
-      if (!tieneCredito) {
-        mostrarMensaje("❌ No tienes créditos suficientes para realizar esta consulta.");
-        return;
-      }
-
-      mostrarMensaje("🔎 Verificando datos...");
-      await esperar(2000);
-      mostrarMensaje("📡 Consultando base de datos...");
-      await esperar(3000);
-
-      try {
-        const doc = await db.collection("personas").doc(dni).get();
-
-        if (!doc.exists) {
-          mostrarMensaje("❌ El DNI no se encuentra registrado en RENIEC o base de datos.");
-          return;
-        }
-
-        const datos = doc.data();
-        const contenedor = document.getElementById('datosPersona');
-        contenedor.innerHTML = '';
-
-        for (const campo in datos) {
-          contenedor.innerHTML += `<p><strong>${campo.replace(/([A-Z])/g, ' $1')}:</strong> ${datos[campo]}</p>`;
-        }
-
-        cerrarMensaje();
-        document.getElementById('modal').style.display = 'block';
-      } catch (error) {
-        console.error("Error al buscar:", error);
-        mostrarMensaje("⚠️ Ocurrió un error al consultar los datos.");
-      }
-    }
-
-    function mostrarMensaje(texto) {
-      document.getElementById('mensajeTexto').textContent = texto;
-      document.getElementById('mensajeModal').style.display = 'block';
-    }
-
-    function cerrarMensaje() {
-      document.getElementById('mensajeModal').style.display = 'none';
-    }
-
-    function cerrarModal() {
-      document.getElementById('modal').style.display = 'none';
-    }
-
-    function esperar(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    function getUidActual() {
-      return new Promise(resolve => {
-        auth.onAuthStateChanged(user => {
-          if (user) resolve(user.uid);
-          else resolve(null);
-        });
-      });
-    }
-
-    async function verificarYDescontarCreditos(uid, monto) {
-      const ref = db.doc(`usuarios/${uid}`);
-      const snap = await ref.get();
-
-      if (snap.exists) {
-        const actuales = parseInt(snap.data().comisionesTotales || 0);
-        if (actuales >= monto) {
-          await ref.update({
-            comisionesTotales: actuales - monto
-          });
-          return true;
-        }
-      }
-      return false;
     }
   </script>
 </body>
