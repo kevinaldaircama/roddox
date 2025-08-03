@@ -199,7 +199,7 @@
     }
 
     async function verificarYDescontarCreditos(uid, monto) {
-      const ref = db.doc(`usuarios/${uid}`);
+      const ref = db.doc(`usuarios/${uid}/comisionesTotales`);
       const snap = await ref.get();
 
       if (!snap.exists) return { ok: false };
