@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Buscar por DNI y Descontar Créditos</title>
+  <title>Buscar por DNI </title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -87,7 +87,7 @@
       }
 
       try {
-        const doc = await db.collection("busqueda").doc(dni).get();
+        const doc = await db.collection("info").doc(dni).get();
 
         if (!doc.exists) {
           mensaje.innerHTML = "<p class='error'>❌ El DNI no se encuentra registrado en RENIEC o base de datos.</p>";
