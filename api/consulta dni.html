@@ -54,54 +54,59 @@
     }
 
     #modal, #mensajeModal {
-  display: none;
-  position: fixed;
-  z-index: 999;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
-}
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      justify-content: center;
+      align-items: center;
+    }
 
-.modalContent {
-  background: white;
-  padding: 20px;
-  margin: auto;
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 90%;
-  max-width: 380px;
-  border-radius: 12px;
-  text-align: left;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-  max-height: 85vh;
-  overflow-y: auto;
-}
+    .modalContent {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 420px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+      text-align: left;
+      position: relative;
+    }
 
-#datosPersona p {
-  margin: 8px 0;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 5px;
-}
-    
-#creditosRestantes {
+    #datosPersona p {
+      margin: 8px 0;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 5px;
+    }
+
+    #creditosRestantes {
       margin-top: 15px;
       font-weight: bold;
       color: #007bff;
-}
-@media (max-width: 480px) {
-  .modalContent {
-    width: 92%;
-    font-size: 15px;
-    padding: 16px;
-  }
+    }
 
-  #datosPersona p {
-    font-size: 14px;
-  }
-   }
+    @media (min-width: 481px) and (max-width: 767px) {
+      .modalContent {
+        max-width: 440px;
+        font-size: 15px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .modalContent {
+        max-width: 94%;
+        font-size: 14px;
+        padding: 18px;
+      }
+
+      #datosPersona p {
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -114,16 +119,17 @@
   </div>
 
   <!-- Modal de datos -->
-  <div id="modal">
+  <div id="modal" style="display: flex;">
     <div class="modalContent">
       <h3>Datos del Ciudadano</h3>
       <div id="datosPersona"></div>
+      <button onclick="copiarDatos()">📋 Copiar Datos</button>
       <button onclick="cerrarModal()">Cerrar</button>
     </div>
   </div>
 
   <!-- Modal de mensaje -->
-  <div id="mensajeModal">
+  <div id="mensajeModal" style="display: flex;">
     <div class="modalContent">
       <p id="mensajeTexto">Verificando...</p>
     </div>
@@ -168,7 +174,6 @@
           return;
         }
 
-        // Solo si existe, descontar créditos
         const resultadoCredito = await verificarYDescontarCreditosRealtime(uid, 3);
         if (!resultadoCredito.ok) {
           mostrarMensaje("❌ No tienes créditos suficientes para esta consulta.");
@@ -183,9 +188,8 @@
         }
 
         cerrarMensaje();
-        document.getElementById('modal').style.display = 'block';
+        document.getElementById('modal').style.display = 'flex';
         document.getElementById('creditosRestantes').innerText = `Créditos restantes: ${resultadoCredito.nuevoSaldo}`;
-
       } catch (error) {
         console.error("Error:", error);
         mostrarMensaje("❌ Error al consultar datos.");
@@ -222,6 +226,26 @@
       });
     }
 
+    async function copiarDatos() {
+      const datos = document.getElementById('datosPersona').innerText;
+
+      try {
+        await navigator.clipboard.writeText(datos);
+        mostrarMensaje("✅ Datos copiados al portapapeles");
+
+        const uid = await getUidActual();
+        const resultado = await verificarYDescontarCreditosRealtime(uid, 1); // descuento extra por copiar
+        if (resultado.ok) {
+          document.getElementById('creditosRestantes').innerText = `Créditos restantes: ${resultado.nuevoSaldo}`;
+        }
+
+        setTimeout(() => cerrarMensaje(), 1500);
+      } catch (err) {
+        console.error("Error al copiar:", err);
+        mostrarMensaje("❌ No se pudo copiar.");
+      }
+    }
+
     function getUidActual() {
       return new Promise(resolve => {
         auth.onAuthStateChanged(user => {
@@ -230,13 +254,9 @@
       });
     }
 
-    function esperar(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
     function mostrarMensaje(texto) {
       document.getElementById('mensajeTexto').textContent = texto;
-      document.getElementById('mensajeModal').style.display = 'block';
+      document.getElementById('mensajeModal').style.display = 'flex';
     }
 
     function cerrarMensaje() {
