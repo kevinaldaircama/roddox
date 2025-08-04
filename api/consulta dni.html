@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Consulta DNI</title>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <style>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+   <style>
     * {
       box-sizing: border-box;
     }
@@ -111,7 +111,7 @@
         margin-top: 30%;
       }
     }
-  </style>
+        </style>
 </head>
 <body>
 
@@ -149,10 +149,9 @@
     appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
     measurementId: "G-MBQ5X9PLF8"
   };
-
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
     const auth = firebase.auth();
+    const db = firebase.database();
 
     async function buscarDNI() {
       const dni = document.getElementById('dniBuscar').value.trim();
@@ -165,7 +164,7 @@
         return;
       }
 
-      const resultadoCredito = await verificarYDescontarCreditos(uid, 3);
+      const resultadoCredito = await verificarYDescontarCreditosRealtime(uid, 3);
       if (!resultadoCredito.ok) {
         mostrarMensaje("❌ No tienes créditos suficientes para realizar esta consulta.");
         return;
@@ -177,12 +176,14 @@
       await esperar(3000);
 
       try {
-        const doc = await db.collection("personas").doc(dni).get();
+        // Simulamos consulta a Firestore u otro origen
+        const doc = { exists: true, data: () => ({ nombre: "Juan", dni: dni }) }; // Reemplaza por tu consulta real
         const resultado = doc.exists ? "Encontrado" : "No encontrado";
+
         await registrarConsulta(uid, dni, resultado);
 
         if (!doc.exists) {
-          mostrarMensaje("❌ El DNI no se encuentra registrado en RENIEC o base de datos.");
+          mostrarMensaje("❌ El DNI no se encuentra registrado.");
           return;
         }
 
@@ -190,66 +191,48 @@
         const contenedor = document.getElementById('datosPersona');
         contenedor.innerHTML = '';
         for (const campo in datos) {
-          contenedor.innerHTML += `<p><strong>${campo.replace(/([A-Z])/g, ' $1')}:</strong> ${datos[campo]}</p>`;
+          contenedor.innerHTML += `<p><strong>${campo}:</strong> ${datos[campo]}</p>`;
         }
 
         cerrarMensaje();
         document.getElementById('modal').style.display = 'block';
         document.getElementById('creditosRestantes').innerText = `Créditos restantes: ${resultadoCredito.nuevoSaldo}`;
-      } catch (error) {
-        console.error("Error al buscar:", error);
-        mostrarMensaje("⚠️ Ocurrió un error al consultar los datos.");
+      } catch (e) {
+        mostrarMensaje("❌ Error al consultar los datos.");
+        console.error(e);
       }
     }
 
-    async function verificarYDescontarCreditos(uid, monto) {
+    async function verificarYDescontarCreditosRealtime(uid, monto) {
       try {
-        const ref = db.doc(`usuarios/${uid}`);
-        const snap = await ref.get();
-
-        if (!snap.exists) {
-          console.warn("Documento no encontrado. Asignando créditos iniciales...");
-          await ref.set({ comisionesTotales: 5 });
-          await ref.update({
-            comisionesTotales: firebase.firestore.FieldValue.increment(-monto)
-          });
-          return { ok: true, nuevoSaldo: 5 - monto };
-        }
-
-        let creditos = snap.data().comisionesTotales;
-        console.log("Créditos actuales desde Firestore:", creditos);
-
+        const ref = db.ref(`usuarios/${uid}/comisionesTotales`);
+        const snapshot = await ref.get();
+        let creditos = snapshot.exists() ? snapshot.val() : 0;
         creditos = typeof creditos === 'string' ? parseFloat(creditos) : creditos;
         if (isNaN(creditos)) creditos = 0;
 
         document.getElementById('creditosRestantes').innerText = `Tienes actualmente: ${creditos} créditos`;
 
         if (creditos >= monto) {
-          await ref.update({
-            comisionesTotales: firebase.firestore.FieldValue.increment(-monto)
-          });
+          await ref.set(creditos - monto);
           return { ok: true, nuevoSaldo: creditos - monto };
         } else {
           return { ok: false };
         }
       } catch (e) {
-        console.error("Error al verificar créditos:", e);
-        document.getElementById('creditosRestantes').innerText = '❌ Error al acceder a los créditos.';
+        console.error("Error con Realtime DB:", e);
         return { ok: false };
       }
     }
 
     async function registrarConsulta(uid, dni, resultado) {
-      try {
-        await db.collection("consulta").add({
-          dniBuscado: dni,
-          uid: uid,
-          timestamp: new Date(),
-          resultado: resultado
-        });
-      } catch (e) {
-        console.warn("⚠️ No se pudo registrar la consulta:", e);
-      }
+      const ref = firebase.database().ref("consulta");
+      await ref.push({
+        uid: uid,
+        dniBuscado: dni,
+        resultado: resultado,
+        timestamp: new Date().toISOString()
+      });
     }
 
     function getUidActual() {
