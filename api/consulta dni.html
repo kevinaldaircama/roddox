@@ -9,18 +9,17 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <style>
-    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(to bottom, #f5f7fa, #c3cfe2);
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 20px;
+      min-height: 100vh;
     }
-    h2 { text-align: center; color: #333; }
+
     .search-box {
       background: white;
       padding: 20px;
@@ -28,61 +27,69 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       max-width: 400px;
       width: 100%;
+      text-align: center;
     }
-    input {
+
+    input, button {
       width: 100%;
       padding: 12px;
-      margin: 10px 0;
+      margin-top: 10px;
       border-radius: 8px;
-      border: 1px solid #ccc;
       font-size: 16px;
     }
+
+    input {
+      border: 1px solid #ccc;
+    }
+
     button {
-      width: 100%;
-      padding: 12px;
       background-color: #007bff;
       color: white;
       border: none;
-      border-radius: 8px;
-      font-size: 16px;
       cursor: pointer;
-      transition: background-color 0.3s;
     }
-    button:hover { background-color: #0056b3; }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
     #modal, #mensajeModal {
       display: none;
       position: fixed;
       z-index: 999;
       left: 0; top: 0;
       width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.4);
     }
+
     .modalContent {
       background: white;
       padding: 20px;
-      margin: 10% auto;
+      margin: 15% auto;
       width: 90%;
-      max-width: 450px;
+      max-width: 360px;
       border-radius: 12px;
-      text-align: center;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      text-align: left;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
     }
+
     #datosPersona p {
       margin: 8px 0;
-      padding-bottom: 6px;
       border-bottom: 1px solid #eee;
-      text-align: left;
+      padding-bottom: 5px;
     }
+
     #creditosRestantes {
       margin-top: 15px;
       font-weight: bold;
       color: #007bff;
-      text-align: center;
     }
-    @media (max-width: 500px) {
-      h2 { font-size: 20px; }
-      input, button { font-size: 14px; }
-      .modalContent { margin-top: 30%; }
+
+    @media (max-width: 480px) {
+      .modalContent {
+        margin-top: 40%;
+        font-size: 14px;
+      }
     }
   </style>
 </head>
@@ -132,39 +139,34 @@
       const dni = document.getElementById('dniBuscar').value.trim();
       if (!dni || dni.length !== 8) return mostrarMensaje("⚠️ Ingresa un DNI válido (8 dígitos)");
 
-      mostrarMensaje("🔐 Verificando tus créditos...");
+      mostrarMensaje("📡 Buscando DNI...");
       const uid = await getUidActual();
       if (!uid) {
-        mostrarMensaje("❌ Debes iniciar sesión para usar esta función.");
+        mostrarMensaje("❌ Debes iniciar sesión.");
         return;
       }
-
-      const resultadoCredito = await verificarYDescontarCreditosRealtime(uid, 3);
-      if (!resultadoCredito.ok) {
-        mostrarMensaje("❌ No tienes créditos suficientes para realizar esta consulta.");
-        return;
-      }
-
-      mostrarMensaje("🔎 Verificando datos...");
-      await esperar(2000);
-      mostrarMensaje("📡 Consultando base de datos...");
-      await esperar(3000);
 
       try {
         const docSnap = await firestore.collection("personas").doc(dni).get();
-        const resultado = docSnap.exists ? "Encontrado" : "No encontrado";
+        const encontrado = docSnap.exists;
 
-        await registrarConsulta(uid, dni, resultado);
+        await registrarConsulta(uid, dni, encontrado ? "Encontrado" : "No encontrado");
 
-        if (!docSnap.exists) {
-          mostrarMensaje("❌ El DNI no se encuentra registrado en RENIEC o base de datos.");
+        if (!encontrado) {
+          mostrarMensaje("❌ El DNI no se encuentra registrado.");
+          return;
+        }
+
+        // Solo si existe, descontar créditos
+        const resultadoCredito = await verificarYDescontarCreditosRealtime(uid, 3);
+        if (!resultadoCredito.ok) {
+          mostrarMensaje("❌ No tienes créditos suficientes para esta consulta.");
           return;
         }
 
         const datos = docSnap.data();
         const contenedor = document.getElementById('datosPersona');
         contenedor.innerHTML = '';
-
         for (const campo in datos) {
           contenedor.innerHTML += `<p><strong>${campo.replace(/([A-Z])/g, ' $1')}:</strong> ${datos[campo]}</p>`;
         }
@@ -172,9 +174,10 @@
         cerrarMensaje();
         document.getElementById('modal').style.display = 'block';
         document.getElementById('creditosRestantes').innerText = `Créditos restantes: ${resultadoCredito.nuevoSaldo}`;
+
       } catch (error) {
-        console.error("Error al consultar DNI:", error);
-        mostrarMensaje("❌ Ocurrió un error al buscar en la base de datos.");
+        console.error("Error:", error);
+        mostrarMensaje("❌ Error al consultar datos.");
       }
     }
 
@@ -185,8 +188,6 @@
         let creditos = snapshot.exists() ? snapshot.val() : 0;
         creditos = typeof creditos === 'string' ? parseFloat(creditos) : creditos;
         if (isNaN(creditos)) creditos = 0;
-
-        document.getElementById('creditosRestantes').innerText = `Tienes actualmente: ${creditos} créditos`;
 
         if (creditos >= monto) {
           await ref.set(creditos - monto);
