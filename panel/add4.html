@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Registrar Números Telefónicos</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 30px; display: flex; justify-content: center; }
+    .formulario {
+      background: white; padding: 25px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 500px; width: 100%;
+    }
+    input, button {
+      width: 100%; padding: 12px; font-size: 16px; margin-bottom: 15px;
+      border-radius: 5px; border: 1px solid #ccc;
+    }
+    button {
+      background-color: #007bff; color: white; border: none;
+    }
+    button:hover { background-color: #0056b3; }
+  </style>
+</head>
+<body>
+  <div class="formulario">
+    <h2>Números Telefónicos Registrados</h2>
+    <input type="text" id="documento" placeholder="Número de Documento" required />
+    <input type="text" id="telefono" placeholder="Número Telefónico" required />
+    <input type="text" id="operador" placeholder="Operador" required />
+    <input type="text" id="periodo" placeholder="Periodo" required />
+    <input type="email" id="email" placeholder="Email" required />
+    <button onclick="guardarTelefono()">Guardar</button>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+apiKey: "AIzaSyDFxkNJCVxwddZFsqPeXSdeYe87ExEdhQk",
+    authDomain: "roddox-27e1b.firebaseapp.com",
+    databaseURL: "https://roddox-27e1b-default-rtdb.firebaseio.com",
+    projectId: "roddox-27e1b",
+    storageBucket: "roddox-27e1b.firebasestorage.app",
+    messagingSenderId: "108259944325",
+    appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
+    measurementId: "G-MBQ5X9PLF8"
+  };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    async function guardarTelefono() {
+      const documento = document.getElementById("documento").value.trim();
+      const telefono = document.getElementById("telefono").value.trim();
+      const operador = document.getElementById("operador").value.trim();
+      const periodo = document.getElementById("periodo").value.trim();
+      const email = document.getElementById("email").value.trim();
+
+      if (!documento || !telefono || !operador || !periodo || !email) {
+        alert("Todos los campos son obligatorios.");
+        return;
+      }
+
+      try {
+        await db.collection("telefonos").doc(telefono).set({
+          documento, operador, periodo, email
+        });
+
+        alert("✅ Datos guardados correctamente.");
+        document.querySelectorAll("input").forEach(input => input.value = "");
+      } catch (error) {
+        alert("❌ Error al guardar.");
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>
