@@ -7,11 +7,9 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-   <style>
-    * {
-      box-sizing: border-box;
-    }
-
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
@@ -22,12 +20,7 @@
       align-items: center;
       padding: 20px;
     }
-
-    h2 {
-      text-align: center;
-      color: #333;
-    }
-
+    h2 { text-align: center; color: #333; }
     .search-box {
       background: white;
       padding: 20px;
@@ -36,7 +29,6 @@
       max-width: 400px;
       width: 100%;
     }
-
     input {
       width: 100%;
       padding: 12px;
@@ -45,7 +37,6 @@
       border: 1px solid #ccc;
       font-size: 16px;
     }
-
     button {
       width: 100%;
       padding: 12px;
@@ -57,22 +48,15 @@
       cursor: pointer;
       transition: background-color 0.3s;
     }
-
-    button:hover {
-      background-color: #0056b3;
-    }
-
+    button:hover { background-color: #0056b3; }
     #modal, #mensajeModal {
       display: none;
       position: fixed;
       z-index: 999;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
       background: rgba(0, 0, 0, 0.5);
     }
-
     .modalContent {
       background: white;
       padding: 20px;
@@ -83,35 +67,24 @@
       text-align: center;
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
-
     #datosPersona p {
       margin: 8px 0;
       padding-bottom: 6px;
       border-bottom: 1px solid #eee;
       text-align: left;
     }
-
     #creditosRestantes {
       margin-top: 15px;
       font-weight: bold;
       color: #007bff;
       text-align: center;
     }
-
     @media (max-width: 500px) {
-      h2 {
-        font-size: 20px;
-      }
-
-      input, button {
-        font-size: 14px;
-      }
-
-      .modalContent {
-        margin-top: 30%;
-      }
+      h2 { font-size: 20px; }
+      input, button { font-size: 14px; }
+      .modalContent { margin-top: 30%; }
     }
-        </style>
+  </style>
 </head>
 <body>
 
@@ -149,13 +122,15 @@
     appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
     measurementId: "G-MBQ5X9PLF8"
   };
+
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
-    const db = firebase.database();
+    const rtdb = firebase.database();
+    const firestore = firebase.firestore();
 
     async function buscarDNI() {
       const dni = document.getElementById('dniBuscar').value.trim();
-      if (!dni) return mostrarMensaje("⚠️ Ingresa un DNI válido.");
+      if (!dni || dni.length !== 8) return mostrarMensaje("⚠️ Ingresa un DNI válido (8 dígitos)");
 
       mostrarMensaje("🔐 Verificando tus créditos...");
       const uid = await getUidActual();
@@ -176,36 +151,36 @@
       await esperar(3000);
 
       try {
-        // Simulamos consulta a Firestore u otro origen
-        const doc = { exists: true, data: () => ({ nombre: "Juan", dni: dni }) }; // Reemplaza por tu consulta real
-        const resultado = doc.exists ? "Encontrado" : "No encontrado";
+        const docSnap = await firestore.collection("personas").doc(dni).get();
+        const resultado = docSnap.exists ? "Encontrado" : "No encontrado";
 
         await registrarConsulta(uid, dni, resultado);
 
-        if (!doc.exists) {
-          mostrarMensaje("❌ El DNI no se encuentra registrado.");
+        if (!docSnap.exists) {
+          mostrarMensaje("❌ El DNI no se encuentra registrado en RENIEC o base de datos.");
           return;
         }
 
-        const datos = doc.data();
+        const datos = docSnap.data();
         const contenedor = document.getElementById('datosPersona');
         contenedor.innerHTML = '';
+
         for (const campo in datos) {
-          contenedor.innerHTML += `<p><strong>${campo}:</strong> ${datos[campo]}</p>`;
+          contenedor.innerHTML += `<p><strong>${campo.replace(/([A-Z])/g, ' $1')}:</strong> ${datos[campo]}</p>`;
         }
 
         cerrarMensaje();
         document.getElementById('modal').style.display = 'block';
         document.getElementById('creditosRestantes').innerText = `Créditos restantes: ${resultadoCredito.nuevoSaldo}`;
-      } catch (e) {
-        mostrarMensaje("❌ Error al consultar los datos.");
-        console.error(e);
+      } catch (error) {
+        console.error("Error al consultar DNI:", error);
+        mostrarMensaje("❌ Ocurrió un error al buscar en la base de datos.");
       }
     }
 
     async function verificarYDescontarCreditosRealtime(uid, monto) {
       try {
-        const ref = db.ref(`usuarios/${uid}/comisionesTotales`);
+        const ref = rtdb.ref(`usuarios/${uid}/comisionesTotales`);
         const snapshot = await ref.get();
         let creditos = snapshot.exists() ? snapshot.val() : 0;
         creditos = typeof creditos === 'string' ? parseFloat(creditos) : creditos;
@@ -226,7 +201,7 @@
     }
 
     async function registrarConsulta(uid, dni, resultado) {
-      const ref = firebase.database().ref("consulta");
+      const ref = rtdb.ref("consulta");
       await ref.push({
         uid: uid,
         dniBuscado: dni,
