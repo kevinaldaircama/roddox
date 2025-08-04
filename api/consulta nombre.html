@@ -72,7 +72,7 @@
 </head>
 <body>
   <h2>Buscar Persona por Apellidos o Nombre</h2>
-  <h3>costo de créditos: 6 créditos </h3>
+ <h3>costo de créditos: 6 créditos </h3>
     <h4> solo saca información no saca foto firma ni huella ni datos completos</h4>
   <input type="text" id="buscarInput" placeholder="Ingrese Apellido Paterno, Materno o Nombres">
   <br>
@@ -126,14 +126,14 @@
         return;
       }
 
-      const tieneCredito = await verificarYDescontarCreditos(uid, 6);
+      const tieneCredito = await verificarYDescontarCreditos(uid, 4);
       if (!tieneCredito) {
         mostrarMensaje("❌ No tiene los créditos suficientes para buscar");
         return;
       }
 
       const resultados = [];
-      const snapshot = await db.collection("personas").get();
+      const snapshot = await db.collection("busqueda").get(); // CAMBIO: antes era "personas"
 
       snapshot.forEach(doc => {
         const data = doc.data();
