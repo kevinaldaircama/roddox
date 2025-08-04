@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Consulta PDF - Modal Responsive</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f0f0f0;
+      text-align: center;
+    }
+
+    input, button {
+      width: 90%;
+      max-width: 400px;
+      padding: 12px;
+      font-size: 16px;
+      margin: 10px auto;
+      display: block;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+    }
+
+    .error {
+      color: red;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+      text-align: left;
+    }
+
+    .modal-content p {
+      font-size: 16px;
+      margin: 8px 0;
+    }
+
+    .close {
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Buscar por DNI</h2>
+  <input type="text" id="dniBuscar" placeholder="Ingrese DNI" />
+  <button onclick="consultar()">Buscar</button>
+  <div id="mensaje" class="error"></div>
+
+  <!-- Modal -->
+  <div id="modalDatos" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarModal()">&times;</span>
+      <p id="dni"></p>
+      <p id="nombres"></p>
+      <p id="apellidoPaterno"></p>
+      <p id="apellidoMaterno"></p>
+      <p id="linkPDF"></p>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFxkNJCVxwddZFsqPeXSdeYe87ExEdhQk",
+    authDomain: "roddox-27e1b.firebaseapp.com",
+    databaseURL: "https://roddox-27e1b-default-rtdb.firebaseio.com",
+    projectId: "roddox-27e1b",
+    storageBucket: "roddox-27e1b.firebasestorage.app",
+    messagingSenderId: "108259944325",
+    appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
+    measurementId: "G-MBQ5X9PLF8"
+  };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const rtdb = firebase.database();
+    const auth = firebase.auth();
+
+    async function consultar() {
+      const dni = document.getElementById("dniBuscar").value.trim();
+      const mensaje = document.getElementById("mensaje");
+      mensaje.innerHTML = "🔍 Verificando datos...";
+      document.getElementById("modalDatos").style.display = "none";
+
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      const uid = await obtenerUID();
+      if (!uid) {
+        mensaje.innerHTML = "⚠️ Debes iniciar sesión.";
+        return;
+      }
+
+      try {
+        const doc = await db.collection("descargas").doc(dni).get();
+
+        if (!doc.exists) {
+          mensaje.innerHTML = "❌ El DNI no se encuentra en la base de datos.";
+          return;
+        }
+
+        const ok = await descontar(uid, 5);
+        if (!ok) {
+          mensaje.innerHTML = "❌ No tienes créditos suficientes (5 requeridos).";
+          return;
+        }
+
+        const d = doc.data();
+        document.getElementById("dni").textContent = "DNI: " + dni;
+        document.getElementById("nombres").textContent = "Nombres: " + d.nombres;
+        document.getElementById("apellidoPaterno").textContent = "Apellido Paterno: " + d.apellidoPaterno;
+        document.getElementById("apellidoMaterno").textContent = "Apellido Materno: " + d.apellidoMaterno;
+        document.getElementById("linkPDF").innerHTML = `📥 <a href="${d.link}" target="_blank">Descargar PDF</a>`;
+        document.getElementById("modalDatos").style.display = "block";
+        mensaje.innerHTML = "";
+      } catch (err) {
+        console.error(err);
+        mensaje.innerHTML = "❌ Error al consultar.";
+      }
+    }
+
+    function cerrarModal() {
+      document.getElementById("modalDatos").style.display = "none";
+    }
+
+    function obtenerUID() {
+      return new Promise(resolve => {
+        auth.onAuthStateChanged(user => resolve(user ? user.uid : null));
+      });
+    }
+
+    async function descontar(uid, cantidad) {
+      const ref = rtdb.ref(`usuarios/${uid}/comisionesTotales`);
+      const snap = await ref.get();
+      if (snap.exists() && parseInt(snap.val()) >= cantidad) {
+        await ref.set(parseInt(snap.val()) - cantidad);
+        return true;
+      }
+      return false;
+    }
+  </script>
+</body>
+</html>
