@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Búsqueda de Persona</title>
+  <title>Buscar Persona</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -10,28 +11,26 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 30px;
+      padding: 20px;
       background: #f2f2f2;
       text-align: center;
     }
 
-    input {
-      width: 60%;
+    input, button {
+      width: 90%;
+      max-width: 500px;
       padding: 12px;
       font-size: 16px;
+      margin: 10px auto;
+      display: block;
       border-radius: 4px;
       border: 1px solid #ccc;
-      margin-bottom: 15px;
     }
 
     button {
-      padding: 12px 20px;
       background: #007bff;
       color: white;
       border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 16px;
     }
 
     #mensajeModal {
@@ -46,41 +45,45 @@
     .modalContent {
       background: white;
       padding: 20px;
-      margin: 15% auto;
-      width: 80%;
-      max-width: 500px;
+      margin: 30% auto;
+      width: 90%;
+      max-width: 400px;
       border-radius: 8px;
     }
 
     .card {
       background: white;
-      padding: 20px;
+      padding: 15px;
       margin: 15px auto;
-      width: 90%;
+      width: 95%;
       max-width: 600px;
       border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
       text-align: left;
     }
 
     .card div {
-      width: 48%;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    @media(min-width: 500px) {
+      .card div {
+        width: 48%;
+      }
     }
   </style>
 </head>
 <body>
-  <h2>Buscar Persona por Apellidos o Nombre</h2>
- <h3>costo de créditos: 6 créditos </h3>
-    <h4> solo saca información no saca foto firma ni huella ni datos completos</h4>
-  <input type="text" id="buscarInput" placeholder="Ingrese Apellido Paterno, Materno o Nombres">
-  <br>
+  <h2>Buscar por Apellido Paterno, Materno o Nombres</h2>
+  <input type="text" id="buscarInput" placeholder="Ej: Serna, Purizaca, Luz">
   <button onclick="buscar()">Buscar</button>
 
   <div id="resultados"></div>
 
-  <!-- Modal de mensajes -->
   <div id="mensajeModal">
     <div class="modalContent">
       <p id="mensajeTexto">Procesando...</p>
@@ -98,7 +101,6 @@
     appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
     measurementId: "G-MBQ5X9PLF8"
   };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const rtdb = firebase.database();
@@ -122,32 +124,30 @@
 
       const uid = await obtenerUid();
       if (!uid) {
-        mostrarMensaje("⚠️ Debes iniciar sesión para hacer búsquedas");
+        mostrarMensaje("⚠️ Debes iniciar sesión");
         return;
       }
 
       const tieneCredito = await verificarYDescontarCreditos(uid, 4);
       if (!tieneCredito) {
-        mostrarMensaje("❌ No tiene los créditos suficientes para buscar");
+        mostrarMensaje("❌ No tienes los créditos suficientes para buscar");
         return;
       }
 
+      const palabras = input.split(/\s+/); // separa por espacios
       const resultados = [];
-      const snapshot = await db.collection("busqueda").get(); // CAMBIO: antes era "personas"
+      const snapshot = await db.collection("busqueda").get(); // usa colección 'busqueda'
 
       snapshot.forEach(doc => {
         const data = doc.data();
-        const match = (data.apellidoPaterno || "").toLowerCase().includes(input) ||
-                      (data.apellidoMaterno || "").toLowerCase().includes(input) ||
-                      (data.nombres || "").toLowerCase().includes(input);
-        if (match) {
+        const texto = `${data.apellidoPaterno || ""} ${data.apellidoMaterno || ""} ${data.nombres || ""}`.toLowerCase();
+        const coincide = palabras.every(palabra => texto.includes(palabra));
+        if (coincide) {
           resultados.push({ id: doc.id, ...data });
         }
       });
 
-      const estadoConsulta = resultados.length > 0 ? "Encontrado" : "No encontrado";
-      await registrarConsulta(uid, input, estadoConsulta);
-
+      await registrarConsulta(uid, input, resultados.length > 0 ? "Encontrado" : "No encontrado");
       cerrarMensaje();
 
       if (resultados.length === 0) {
@@ -155,34 +155,17 @@
         return;
       }
 
-      resultados.forEach(persona => {
+      resultados.forEach(p => {
         const card = document.createElement('div');
         card.className = "card";
         card.innerHTML = `
-          <div>
-            <p><strong>DNI:</strong> ${persona.id}</p>
-            <p><strong>Apellido Paterno:</strong> ${persona.apellidoPaterno}</p>
-          </div>
-          <div>
-            <p><strong>Apellido Materno:</strong> ${persona.apellidoMaterno}</p>
-            <p><strong>Nombres:</strong> ${persona.nombres}</p>
-          </div>
+          <div><strong>DNI:</strong> ${p.id}</div>
+          <div><strong>Apellido Paterno:</strong> ${p.apellidoPaterno}</div>
+          <div><strong>Apellido Materno:</strong> ${p.apellidoMaterno}</div>
+          <div><strong>Nombres:</strong> ${p.nombres}</div>
         `;
         contenedor.appendChild(card);
       });
-    }
-
-    async function registrarConsulta(uid, termino, resultado) {
-      try {
-        await db.collection("consulta").add({
-          uid,
-          terminoBuscado: termino,
-          resultado,
-          timestamp: new Date()
-        });
-      } catch (e) {
-        console.warn("⚠️ No se pudo registrar la consulta:", e);
-      }
     }
 
     function mostrarMensaje(texto) {
@@ -219,6 +202,19 @@
         }
       }
       return false;
+    }
+
+    async function registrarConsulta(uid, termino, resultado) {
+      try {
+        await db.collection("consulta").add({
+          uid,
+          terminoBuscado: termino,
+          resultado,
+          timestamp: new Date()
+        });
+      } catch (e) {
+        console.warn("⚠️ Error al registrar la búsqueda:", e);
+      }
     }
   </script>
 </body>
