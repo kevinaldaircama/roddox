@@ -113,15 +113,20 @@
 
   <div class="search-box">
     <h2>Consultar Datos por DNI</h2>
-    <h3>costo de créditos: 4 créditos </h3>
-    <h4> solo saca información no saca foto firma ni huella </h4>
+
+    <!-- Textos aclaratorios -->
+    <h3 style="color:#444; margin-bottom: 5px;">Costo de créditos: 4 créditos</h3>
+    <h4 style="color:#777; font-weight: normal; font-size: 14px; margin-top: 0;">
+      Solo saca información. No incluye foto, firma ni huella.
+    </h4>
+
     <input type="text" id="dniBuscar" placeholder="Ingresa DNI" />
     <button onclick="buscarDNI()">Buscar</button>
     <div id="creditosRestantes"></div>
   </div>
 
   <!-- Modal de datos -->
-  <div id="modal" style="display: flex;">
+  <div id="modal">
     <div class="modalContent">
       <h3>Datos del Ciudadano</h3>
       <div id="datosPersona"></div>
@@ -131,7 +136,7 @@
   </div>
 
   <!-- Modal de mensaje -->
-  <div id="mensajeModal" style="display: flex;">
+  <div id="mensajeModal">
     <div class="modalContent">
       <p id="mensajeTexto">Verificando...</p>
     </div>
