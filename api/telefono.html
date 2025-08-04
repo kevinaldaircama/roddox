@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Buscar Teléfono con Créditos</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 30px; background: #f4f4f4; text-align: center; }
+    input, button {
+      width: 90%; max-width: 400px; padding: 12px;
+      margin: 10px auto; font-size: 16px; border-radius: 4px;
+      border: 1px solid #ccc; display: block;
+    }
+    button { background: #28a745; color: white; border: none; }
+    .datos-box {
+      margin-top: 20px; background: white; border-radius: 8px;
+      padding: 25px; box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: none; max-width: 500px; margin: auto;
+    }
+    .datos-box p {
+      font-size: 18px; font-weight: bold; margin: 10px 0;
+    }
+    .error { color: red; font-weight: bold; margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+  <h2>Buscar por Número Telefónico</h2>
+  <input type="text" id="telefonoBuscar" placeholder="Ingrese número telefónico">
+  <button onclick="buscarTelefono()">Buscar</button>
+
+  <div class="datos-box" id="resultadoBox">
+    <p id="docTexto"></p>
+    <p id="opTexto"></p>
+    <p id="perTexto"></p>
+    <p id="emailTexto"></p>
+  </div>
+
+  <div id="errorMensaje" class="error"></div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFxkNJCVxwddZFsqPeXSdeYe87ExEdhQk",
+    authDomain: "roddox-27e1b.firebaseapp.com",
+    databaseURL: "https://roddox-27e1b-default-rtdb.firebaseio.com",
+    projectId: "roddox-27e1b",
+    storageBucket: "roddox-27e1b.firebasestorage.app",
+    messagingSenderId: "108259944325",
+    appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
+    measurementId: "G-MBQ5X9PLF8"
+  };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const rtdb = firebase.database();
+    const auth = firebase.auth();
+
+    async function buscarTelefono() {
+      const telefono = document.getElementById("telefonoBuscar").value.trim();
+      const resultado = document.getElementById("resultadoBox");
+      const error = document.getElementById("errorMensaje");
+
+      resultado.style.display = "none";
+      error.innerHTML = "";
+
+      const uid = await obtenerUID();
+      if (!uid) {
+        error.innerHTML = "⚠️ Debes iniciar sesión para buscar.";
+        return;
+      }
+
+      try {
+        const doc = await db.collection("telefonos").doc(telefono).get();
+
+        if (!doc.exists) {
+          error.innerHTML = "❌ El número telefónico no está registrado.";
+          return;
+        }
+
+        // Si existe el número, descontar créditos
+        const creditoOk = await descontarCreditos(uid, 6);
+        if (!creditoOk) {
+          error.innerHTML = "❌ No tienes créditos suficientes para buscar.";
+          return;
+        }
+
+        const data = doc.data();
+        document.getElementById("docTexto").textContent = "Número de Documento: " + data.documento;
+        document.getElementById("opTexto").textContent = "Operador: " + data.operador;
+        document.getElementById("perTexto").textContent = "Periodo: " + data.periodo;
+        document.getElementById("emailTexto").textContent = "Email: " + data.email;
+        resultado.style.display = "block";
+      } catch (err) {
+        error.innerHTML = "⚠️ Error al buscar.";
+        console.error(err);
+      }
+    }
+
+    function obtenerUID() {
+      return new Promise(resolve => {
+        auth.onAuthStateChanged(user => {
+          resolve(user ? user.uid : null);
+        });
+      });
+    }
+
+    async function descontarCreditos(uid, cantidad) {
+      const ref = rtdb.ref(`usuarios/${uid}/comisionesTotales`);
+      const snap = await ref.get();
+
+      if (snap.exists()) {
+        const saldo = parseInt(snap.val());
+        if (saldo >= cantidad) {
+          await ref.set(saldo - cantidad);
+          return true;
+        }
+      }
+      return false;
+    }
+  </script>
+</body>
+</html>
