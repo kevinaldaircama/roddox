@@ -65,6 +65,7 @@
     appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
     measurementId: "G-MBQ5X9PLF8"
   };
+
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
@@ -80,12 +81,12 @@
       }
 
       try {
-        await db.collection("personas").doc(dni).set({
+        await db.collection("busqueda").doc(dni).set({
           apellidoPaterno,
           apellidoMaterno,
           nombres
         });
-        alert("✅ Datos guardados correctamente.");
+        alert("✅ Datos guardados correctamente en colección 'busqueda'.");
         document.getElementById('dni').value = "";
         document.getElementById('apellidoPaterno').value = "";
         document.getElementById('apellidoMaterno').value = "";
