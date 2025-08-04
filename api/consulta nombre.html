@@ -2,38 +2,39 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Consultar Persona</title>
+  <title>Búsqueda de Persona</title>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f2f2f2;
       padding: 30px;
+      background: #f2f2f2;
       text-align: center;
     }
 
     input {
-      padding: 12px;
       width: 60%;
-      margin-top: 10px;
+      padding: 12px;
       font-size: 16px;
       border-radius: 4px;
       border: 1px solid #ccc;
+      margin-bottom: 15px;
     }
 
     button {
       padding: 12px 20px;
-      font-size: 16px;
-      margin-top: 10px;
-      background-color: #28a745;
+      background: #007bff;
       color: white;
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      font-size: 16px;
     }
 
-    #modal {
+    #mensajeModal {
       display: none;
       position: fixed;
       z-index: 1000;
@@ -42,29 +43,47 @@
       background-color: rgba(0,0,0,0.5);
     }
 
-    #modalContent {
+    .modalContent {
       background: white;
-      margin: 10% auto;
       padding: 20px;
-      width: 90%;
+      margin: 15% auto;
+      width: 80%;
       max-width: 500px;
       border-radius: 8px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      margin: 15px auto;
+      width: 90%;
+      max-width: 600px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
       text-align: left;
+    }
+
+    .card div {
+      width: 48%;
     }
   </style>
 </head>
 <body>
-  <h2>Buscar Persona por DNI</h2>
-  <input type="text" id="buscarDni" placeholder="Número de Documento" />
+  <h2>Buscar Persona por Apellidos o Nombre</h2>
+  <h3>costo de créditos: 4 créditos </h3>
+    <h4> solo saca información no saca foto firma ni huella ni datos completos</h4>
+  <input type="text" id="buscarInput" placeholder="Ingrese Apellido Paterno, Materno o Nombres">
   <br>
-  <button onclick="consultarPersona()">Buscar</button>
+  <button onclick="buscar()">Buscar</button>
 
-  <div id="modal">
-    <div id="modalContent">
-      <h3>Datos Registrados</h3>
-      <div id="datos"></div>
-      <br>
-      <button onclick="cerrarModal()">Cerrar</button>
+  <div id="resultados"></div>
+
+  <!-- Modal de mensajes -->
+  <div id="mensajeModal">
+    <div class="modalContent">
+      <p id="mensajeTexto">Procesando...</p>
     </div>
   </div>
 
@@ -82,33 +101,124 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    const rtdb = firebase.database();
+    const auth = firebase.auth();
 
-    async function consultarPersona() {
-      const dni = document.getElementById('buscarDni').value.trim();
-      if (!dni) {
-        alert("Ingresa un número de documento.");
+    async function buscar() {
+      const input = document.getElementById('buscarInput').value.trim().toLowerCase();
+      const contenedor = document.getElementById('resultados');
+      contenedor.innerHTML = "";
+
+      if (!input) {
+        mostrarMensaje("⚠️ Ingrese un valor para buscar");
         return;
       }
 
-      const doc = await db.collection("personas").doc(dni).get();
-      const contenedor = document.getElementById('datos');
+      mostrarMensaje("⏳ Procesando datos...");
+      await esperar(2000);
 
-      if (!doc.exists) {
-        contenedor.innerHTML = "<p>❌ No se encontraron datos registrados para este DNI.</p>";
-      } else {
-        const datos = doc.data();
-        contenedor.innerHTML = `
-          <p><strong>Apellido Paterno:</strong> ${datos.apellidoPaterno}</p>
-          <p><strong>Apellido Materno:</strong> ${datos.apellidoMaterno}</p>
-          <p><strong>Nombres:</strong> ${datos.nombres}</p>
-        `;
+      mostrarMensaje("🔍 Buscando información...");
+      await esperar(2000);
+
+      const uid = await obtenerUid();
+      if (!uid) {
+        mostrarMensaje("⚠️ Debes iniciar sesión para hacer búsquedas");
+        return;
       }
 
-      document.getElementById('modal').style.display = 'block';
+      const tieneCredito = await verificarYDescontarCreditos(uid, 4);
+      if (!tieneCredito) {
+        mostrarMensaje("❌ No tiene los créditos suficientes para buscar");
+        return;
+      }
+
+      const resultados = [];
+      const snapshot = await db.collection("personas").get();
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const match = (data.apellidoPaterno || "").toLowerCase().includes(input) ||
+                      (data.apellidoMaterno || "").toLowerCase().includes(input) ||
+                      (data.nombres || "").toLowerCase().includes(input);
+        if (match) {
+          resultados.push({ id: doc.id, ...data });
+        }
+      });
+
+      const estadoConsulta = resultados.length > 0 ? "Encontrado" : "No encontrado";
+      await registrarConsulta(uid, input, estadoConsulta);
+
+      cerrarMensaje();
+
+      if (resultados.length === 0) {
+        contenedor.innerHTML = "<p style='color:red;font-weight:bold;'>❌ Sus datos no se encuentran registrados en RENIEC o base de datos.</p>";
+        return;
+      }
+
+      resultados.forEach(persona => {
+        const card = document.createElement('div');
+        card.className = "card";
+        card.innerHTML = `
+          <div>
+            <p><strong>DNI:</strong> ${persona.id}</p>
+            <p><strong>Apellido Paterno:</strong> ${persona.apellidoPaterno}</p>
+          </div>
+          <div>
+            <p><strong>Apellido Materno:</strong> ${persona.apellidoMaterno}</p>
+            <p><strong>Nombres:</strong> ${persona.nombres}</p>
+          </div>
+        `;
+        contenedor.appendChild(card);
+      });
     }
 
-    function cerrarModal() {
-      document.getElementById('modal').style.display = 'none';
+    async function registrarConsulta(uid, termino, resultado) {
+      try {
+        await db.collection("consulta").add({
+          uid,
+          terminoBuscado: termino,
+          resultado,
+          timestamp: new Date()
+        });
+      } catch (e) {
+        console.warn("⚠️ No se pudo registrar la consulta:", e);
+      }
+    }
+
+    function mostrarMensaje(texto) {
+      document.getElementById('mensajeTexto').innerText = texto;
+      document.getElementById('mensajeModal').style.display = 'block';
+    }
+
+    function cerrarMensaje() {
+      document.getElementById('mensajeModal').style.display = 'none';
+    }
+
+    function esperar(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function obtenerUid() {
+      return new Promise(resolve => {
+        auth.onAuthStateChanged(user => {
+          if (user) resolve(user.uid);
+          else resolve(null);
+        });
+      });
+    }
+
+    async function verificarYDescontarCreditos(uid, monto) {
+      const ref = rtdb.ref(`usuarios/${uid}/comisionesTotales`);
+      const snap = await ref.get();
+
+      if (snap.exists()) {
+        const actual = parseInt(snap.val());
+        if (actual >= monto) {
+          await ref.set(actual - monto);
+          return true;
+        }
+      }
+      return false;
     }
   </script>
 </body>
