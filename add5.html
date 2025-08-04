@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Registrar Datos SIS</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 30px;
+      display: flex;
+      justify-content: center;
+    }
+    .formulario {
+      background: white;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 600px;
+      width: 100%;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      margin-bottom: 12px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="formulario">
+    <h2>Registrar Datos SIS</h2>
+    <input id="dni" placeholder="Número de Documento" />
+    <input id="apellidoPaterno" placeholder="Apellido Paterno" />
+    <input id="apellidoMaterno" placeholder="Apellido Materno" />
+    <input id="nombres" placeholder="Nombres" />
+    <input id="fechaAfiliacion" placeholder="Fecha de Afiliación" />
+    <input id="establecimiento" placeholder="Establecimiento de Salud" />
+    <input id="ubigeo" placeholder="Ubigeo del Establecimiento (Dpto - Prov - Dist)" />
+    <input id="tipoSeguro" placeholder="Tipo de Seguro (SUBSIDIADO)" />
+    <input id="estado" placeholder="Estado" />
+    <input id="registro" placeholder="Número de Registro" />
+    <input id="fechaNacimiento" placeholder="Fecha de Nacimiento" />
+    <button onclick="guardarSIS()">Guardar</button>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFxkNJCVxwddZFsqPeXSdeYe87ExEdhQk",
+    authDomain: "roddox-27e1b.firebaseapp.com",
+    databaseURL: "https://roddox-27e1b-default-rtdb.firebaseio.com",
+    projectId: "roddox-27e1b",
+    storageBucket: "roddox-27e1b.firebasestorage.app",
+    messagingSenderId: "108259944325",
+    appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
+    measurementId: "G-MBQ5X9PLF8"
+  };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    async function guardarSIS() {
+      const datos = {
+        apellidoPaterno: dni("apellidoPaterno"),
+        apellidoMaterno: dni("apellidoMaterno"),
+        nombres: dni("nombres"),
+        fechaAfiliacion: dni("fechaAfiliacion"),
+        establecimiento: dni("establecimiento"),
+        ubigeo: dni("ubigeo"),
+        tipoSeguro: dni("tipoSeguro"),
+        estado: dni("estado"),
+        registro: dni("registro"),
+        fechaNacimiento: dni("fechaNacimiento")
+      };
+      const dniValor = dni("dni");
+
+      if (!dniValor) return alert("DNI requerido");
+
+      try {
+        await db.collection("sis").doc(dniValor).set(datos);
+        alert("✅ Datos SIS guardados correctamente.");
+        document.querySelectorAll("input").forEach(e => e.value = "");
+      } catch (err) {
+        console.error(err);
+        alert("❌ Error al guardar datos.");
+      }
+
+      function dni(id) {
+        return document.getElementById(id).value.trim();
+      }
+    }
+  </script>
+</body>
+</html>
