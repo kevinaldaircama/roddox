@@ -2,33 +2,72 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Buscar Teléfono con Créditos</title>
+  <title>Buscar Teléfono</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; padding: 30px; background: #f4f4f4; text-align: center; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
     input, button {
-      width: 90%; max-width: 400px; padding: 12px;
-      margin: 10px auto; font-size: 16px; border-radius: 4px;
-      border: 1px solid #ccc; display: block;
+      width: 100%;
+      max-width: 400px;
+      padding: 12px;
+      font-size: 16px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
     }
-    button { background: #28a745; color: white; border: none; }
+
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+    }
+
     .datos-box {
-      margin-top: 20px; background: white; border-radius: 8px;
-      padding: 25px; box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      display: none; max-width: 500px; margin: auto;
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: none;
+      width: 100%;
+      max-width: 500px;
     }
+
     .datos-box p {
-      font-size: 18px; font-weight: bold; margin: 10px 0;
+      font-size: 16px;
+      font-weight: bold;
+      margin: 8px 0;
     }
-    .error { color: red; font-weight: bold; margin-top: 20px; }
+
+    .error {
+      color: red;
+      font-weight: bold;
+      margin-top: 15px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
 
   <h2>Buscar por Número Telefónico</h2>
+  <h4>costo de créditos: 6 creditos</h4>
   <input type="text" id="telefonoBuscar" placeholder="Ingrese número telefónico">
   <button onclick="buscarTelefono()">Buscar</button>
 
@@ -52,6 +91,7 @@
     appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
     measurementId: "G-MBQ5X9PLF8"
   };
+
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const rtdb = firebase.database();
@@ -79,7 +119,6 @@
           return;
         }
 
-        // Si existe el número, descontar créditos
         const creditoOk = await descontarCreditos(uid, 6);
         if (!creditoOk) {
           error.innerHTML = "❌ No tienes créditos suficientes para buscar.";
