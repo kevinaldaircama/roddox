@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Registrar Datos con Link</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 30px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .formulario {
+      background: white;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="formulario">
+    <h2>Registrar Persona + Link de Descarga</h2>
+    <input type="text" id="dni" placeholder="DNI" required />
+    <input type="text" id="nombres" placeholder="Nombres" required />
+    <input type="text" id="apellidoPaterno" placeholder="Apellido Paterno" required />
+    <input type="text" id="apellidoMaterno" placeholder="Apellido Materno" required />
+    <input type="text" id="link" placeholder="Enlace de descarga (PDF u otro)" required />
+    <button onclick="guardarDatos()">Guardar</button>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFxkNJCVxwddZFsqPeXSdeYe87ExEdhQk",
+    authDomain: "roddox-27e1b.firebaseapp.com",
+    databaseURL: "https://roddox-27e1b-default-rtdb.firebaseio.com",
+    projectId: "roddox-27e1b",
+    storageBucket: "roddox-27e1b.firebasestorage.app",
+    messagingSenderId: "108259944325",
+    appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
+    measurementId: "G-MBQ5X9PLF8"
+  };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    async function guardarDatos() {
+      const dni = document.getElementById("dni").value.trim();
+      const nombres = document.getElementById("nombres").value.trim();
+      const apellidoPaterno = document.getElementById("apellidoPaterno").value.trim();
+      const apellidoMaterno = document.getElementById("apellidoMaterno").value.trim();
+      const link = document.getElementById("link").value.trim();
+
+      if (!dni || !nombres || !apellidoPaterno || !apellidoMaterno || !link) {
+        alert("Todos los campos son obligatorios.");
+        return;
+      }
+
+      try {
+        await db.collection("info").doc(dni).set({
+          nombres,
+          apellidoPaterno,
+          apellidoMaterno,
+          link
+        });
+
+        alert("✅ Datos guardados correctamente en 'busqueda'");
+        document.querySelectorAll("input").forEach(i => i.value = "");
+      } catch (error) {
+        console.error("Error al guardar:", error);
+        alert("❌ Error al guardar los datos.");
+      }
+    }
+  </script>
+</body>
+</html>
