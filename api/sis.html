@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Consulta SIS por DNI</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    h2 {
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    input, button {
+      width: 100%;
+      max-width: 400px;
+      padding: 12px;
+      margin-bottom: 15px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+    }
+
+    .resultado {
+      background: white;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .resultado p {
+      margin: 8px 0;
+      text-align: left;
+      font-size: 16px;
+    }
+
+    .error {
+      color: red;
+      font-weight: bold;
+      margin-top: 15px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Consulta SIS por DNI</h2>
+  <h4>costo de créditos: 8 créditos</h4>
+  <input type="text" id="dniInput" placeholder="Ingrese número de DNI" />
+  <button onclick="buscarSIS()">Buscar</button>
+
+  <div id="resultado" class="resultado" style="display:none;"></div>
+  <div id="mensaje" class="error"></div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFxkNJCVxwddZFsqPeXSdeYe87ExEdhQk",
+    authDomain: "roddox-27e1b.firebaseapp.com",
+    databaseURL: "https://roddox-27e1b-default-rtdb.firebaseio.com",
+    projectId: "roddox-27e1b",
+    storageBucket: "roddox-27e1b.firebasestorage.app",
+    messagingSenderId: "108259944325",
+    appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
+    measurementId: "G-MBQ5X9PLF8"
+  };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const rtdb = firebase.database();
+    const auth = firebase.auth();
+
+    async function buscarSIS() {
+      const dni = document.getElementById("dniInput").value.trim();
+      const msg = document.getElementById("mensaje");
+      const box = document.getElementById("resultado");
+      msg.innerHTML = "";
+      box.style.display = "none";
+
+      const uid = await obtenerUID();
+      if (!uid) {
+        msg.innerHTML = "⚠️ Inicia sesión para consultar.";
+        return;
+      }
+
+      try {
+        const doc = await db.collection("sis").doc(dni).get();
+        if (!doc.exists) {
+          msg.innerHTML = "❌ No está registrado en la base de datos SIS.";
+          return;
+        }
+
+        const ok = await descontarCreditos(uid, 8);
+        if (!ok) {
+          msg.innerHTML = "❌ No tienes créditos suficientes (8 necesarios).";
+          return;
+        }
+
+        const d = doc.data();
+        box.innerHTML = `
+          <p><strong>Resultado:</strong> DATOS EXITOSOS</p>
+          <p><strong>Número de Documento:</strong> ${dni}</p>
+          <p><strong>Apellido Paterno:</strong> ${d.apellidoPaterno || ""}</p>
+          <p><strong>Apellido Materno:</strong> ${d.apellidoMaterno || ""}</p>
+          <p><strong>Nombres:</strong> ${d.nombres || ""}</p>
+          <p><strong>Fecha de Afiliación:</strong> ${d.fechaAfiliacion || ""}</p>
+          <p><strong>Establecimiento de Salud:</strong> ${d.establecimiento || ""}</p>
+          <p><strong>Ubigeo del Establecimiento:</strong> ${d.ubigeo || ""}</p>
+          <p><strong>Tipo de Seguro:</strong> ${d.tipoSeguro || ""}</p>
+          <p><strong>Estado:</strong> ${d.estado || ""}</p>
+          <p><strong>Número de Registro:</strong> ${d.registro || ""}</p>
+          <p><strong>Fecha de Nacimiento:</strong> ${d.fechaNacimiento || ""}</p>
+        `;
+        box.style.display = "block";
+      } catch (e) {
+        msg.innerHTML = "⚠️ Error al consultar.";
+        console.error(e);
+      }
+    }
+
+    function obtenerUID() {
+      return new Promise(resolve => {
+        auth.onAuthStateChanged(user => resolve(user ? user.uid : null));
+      });
+    }
+
+    async function descontarCreditos(uid, cantidad) {
+      const ref = rtdb.ref(`usuarios/${uid}/comisionesTotales`);
+      const snap = await ref.get();
+      if (snap.exists() && parseInt(snap.val()) >= cantidad) {
+        await ref.set(parseInt(snap.val()) - cantidad);
+        return true;
+      }
+      return false;
+    }
+  </script>
+</body>
+</html>
