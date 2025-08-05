@@ -1,0 +1,14 @@
+{
+  "name": "firebase-api",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "api/index.js",
+  "scripts": {
+    "start": "node api/index.js"
+  },
+  "dependencies": {
+    "express": "4.19.2",
+    "firebase-admin": "12.5.0",
+    "cors": "2.8.5"
+  }
+}
