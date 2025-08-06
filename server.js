@@ -15,7 +15,7 @@ const app = express();
 // Ajusta esta lista según tus dominios válidos
 const allowedOrigins = [
   `http://localhost:${process.env.PORT || 3000}`,
-  'https://transferenciavip.xyz',
+  'https://roddox.es',
 ];
 
 app.use(cors({
