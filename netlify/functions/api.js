@@ -4,7 +4,7 @@ import { getFirestore, jsonResponse, textResponse } from "./firestore.js";
 function getResourceFromUrl(rawUrl) {
   const url = new URL(rawUrl);
   // path p.ej.: /.netlify/functions/api/telefonos
-  const cleaned = url.pathname.replace(/\/.netlify\/functions\/api\/?/, "");
+  const cleaned = url.pathname.replace(/\/\.netlify\/functions\/api\/?/, "");
   // si queda "" => raíz
   return cleaned.replace(/^\/+/, "");
 }
@@ -87,7 +87,7 @@ export async function handler(event) {
         const q = params.q;
         if (!q) return jsonResponse(400, { error: "Falta ?q=" });
         // Ajusta "termino" al campo real que guardas en tu colección
-        const collectionName = resource === "busqueda" ? "búsqueda" : "búsqueda";
+        const collectionName = "búsqueda";
         const snap = await db.collection(collectionName)
           .where("termino", "==", q)
           .limit(limit)
@@ -129,7 +129,6 @@ export async function handler(event) {
     }
   } catch (err) {
     console.error(err);
-    // Devuelve Response con texto para facilitar depuración en navegador/logs
     return jsonResponse(500, { error: "Error interno", detail: String(err?.message || err) });
   }
 }

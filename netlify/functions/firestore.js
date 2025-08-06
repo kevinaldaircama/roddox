@@ -14,7 +14,7 @@ export function getFirestore() {
     app = admin.initializeApp({
       credential: admin.credential.cert({ projectId, clientEmail, privateKey }),
       // Si luego necesitas RTDB, descomenta:
-      // databaseURL: "https://roddox-27e1b-default-rtdb.firebaseio.com"
+      // databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com"
     });
   }
   return admin.firestore();
