@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Restablecer Contraseña</title>
+  <link rel="icon" href="3440119_ico.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#121212" />
+  <link rel="icon" type="image/png" href="3440119_ico.png" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="¡Únete a Transferencia VIP y gana créditos!" />
+  <meta property="og:description" content="Regístrate con este enlace de referido y recibe hasta 10 créditos gratis. Empieza a ganar hoy." />
+  <meta property="og:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  <meta property="og:url" content="https://transferenciavip.xyz" />
+  <meta property="og:type" content="website" />
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="¡Gana créditos con Transferencia VIP!" />
+  <meta name="twitter:description" content="Regístrate con un referido y recibe bonificaciones instantáneas." />
+  <meta name="twitter:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+
+  <style>
+    body { font-family: Arial, sans-serif; background:#f2f2f2; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; }
+    .box { background:#fff; padding:30px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1); max-width:400px; width:100%; text-align:center; }
+    input[type=email] { width:100%; padding:10px; margin:15px 0; border:1px solid #ccc; border-radius:8px; }
+    button { background:#007bff; color:#fff; padding:12px 20px; border:none; border-radius:8px; font-size:16px; cursor:pointer; }
+    .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:10; }
+    .modal-content { background:#fff; padding:30px; border-radius:12px; text-align:center; max-width:300px; width:90%; }
+  </style>
+
+  <!-- Firebase (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
+  <!-- reCAPTCHA -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+  <!-- Config desde el servidor -->
+  <script src="/firebase/config.js"></script>
+</head>
+<body>
+  <div class="box">
+    <h2>¿Olvidaste tu contraseña?</h2>
+    <p>Para restablecer su contraseña, ingrese su dirección de correo electrónico.</p>
+    <input type="email" id="correo" placeholder="Tu correo" required />
+    <div class="g-recaptcha" data-sitekey="6LeZbpgrAAAAAN7hf7NYCGsEBvqTNvfxvERnuxi_"></div>
+    <button id="btnRestablecer">Enviar enlace</button>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-content" id="modalContent"><p>Procesando...</p></div>
+  </div>
+
+  <script>
+    const modal = document.getElementById('modal');
+    const modalContent = document.getElementById('modalContent');
+    const btn = document.getElementById('btnRestablecer');
+
+    function mostrarModal(mensaje) {
+      modalContent.innerHTML = `<p>${mensaje}</p>`;
+      modal.style.display = 'flex';
+    }
+    function cerrarModal() { modal.style.display = 'none'; }
+
+    function esEmailValido(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    async function restablecer() {
+      const email = document.getElementById('correo').value.trim();
+      const captcha = grecaptcha.getResponse();
+
+      if (!email || !esEmailValido(email)) {
+        alert('Ingrese un correo válido.');
+        return;
+      }
+      if (!captcha) {
+        alert('Verifica que no eres un robot.');
+        return;
+      }
+
+      try {
+        mostrarModal('Enviando enlace de restablecimiento...');
+        await window.firebaseReady;
+
+        const auth = window.firebaseAuth || firebase.auth();
+        await auth.sendPasswordResetEmail(email);
+        mostrarModal(`Por favor revise su correo<br><small>Enviamos enlace de confirmación a <b>${email}</b></small>`);
+      } catch (error) {
+        mostrarModal(`Error: ${error.message}`);
+      } finally {
+        // setTimeout(cerrarModal, 4000);
+      }
+    }
+
+    btn.addEventListener('click', restablecer);
+  </script>
+</body>
+</html>

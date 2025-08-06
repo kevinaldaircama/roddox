@@ -1,9 +1,9 @@
 // server.js
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import cors from 'cors';
 
 dotenv.config();
 
@@ -12,27 +12,22 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Ajusta esta lista según tus dominios válidos
 const allowedOrigins = [
   `http://localhost:${process.env.PORT || 3000}`,
-  'https://roddox.es',
+  'https://transferenciavip.xyz'
 ];
 
 app.use(cors({
-  origin: function (origin, cb) {
-    // permitir herramientas sin origin (curl, tests) y orígenes permitidos
+  origin: (origin, cb) => {
     if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
-    return cb(new Error('Origen no permitido por CORS'));
+    return cb(new Error('Origen no permitido'));
   }
 }));
 
-// Seguridad básica de cabeceras
 app.disable('x-powered-by');
 
-// Servir estáticos (HTML/CSS/JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Endpoint para enviar la config de Firebase
 app.get('/firebase-config', (req, res) => {
   res.json({
     apiKey: process.env.FIREBASE_API_KEY,
@@ -48,5 +43,5 @@ app.get('/firebase-config', (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`✅ Servidor listo en http://localhost:${PORT}`);
+  console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
 });
