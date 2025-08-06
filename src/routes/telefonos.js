@@ -1,0 +1,19 @@
+import { Router } from 'express';
+import { db } from '../lib/firebase.js';
+const router = Router();
+
+router.get('/', async (req, res) => {
+  try {
+    const { numero } = req.query;
+    if (!numero) return res.status(400).json({ ok:false, error: 'numero es requerido' });
+    const snap = await db.collection('telefonos').where('numero', '==', String(numero)).limit(1).get();
+    if (snap.empty) return res.json({ ok:true, data: null });
+    const doc = snap.docs[0];
+    res.json({ ok:true, data: { id: doc.id, ...doc.data() } });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ ok:false, error: 'Error interno' });
+  }
+});
+
+export default router;
