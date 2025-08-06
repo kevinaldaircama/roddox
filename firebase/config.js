@@ -1,14 +1,27 @@
-// firebase-config.js
-const firebaseConfig = {
-  apiKey: "AIzaSyDFxkNJCVxwddZFsqPeXSdeYe87ExEdhQk",
-  authDomain: "roddox-27e1b.firebaseapp.com",
-  databaseURL: "https://roddox-27e1b-default-rtdb.firebaseio.com",
-  projectId: "roddox-27e1b",
-  storageBucket: "roddox-27e1b.firebasestorage.app",
-  messagingSenderId: "108259944325",
-  appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
-  measurementId: "G-MBQ5X9PLF8"
-};
+// public/firebase/config.js
+(async function initFirebase() {
+  if (typeof window === 'undefined' || !window.firebase) {
+    console.error('Firebase SDK no cargado. Incluye los <script> de Firebase en el HTML.');
+    return;
+  }
+  try {
+    const res = await fetch('/firebase-config', { credentials: 'same-origin' });
+    if (!res.ok) throw new Error('No se pudo obtener la configuración de Firebase');
+    const config = await res.json();
 
-// Inicializar Firebase
-firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps || firebase.apps.length === 0) {
+      firebase.initializeApp(config);
+    }
+    window.firebaseApp = firebase.app();
+    window.firebaseAuth = firebase.auth();
+    window.firebaseReadyResolve && window.firebaseReadyResolve();
+  } catch (err) {
+    console.error('Error inicializando Firebase:', err);
+    window.firebaseReadyReject && window.firebaseReadyReject(err);
+  }
+})();
+
+window.firebaseReady = new Promise((resolve, reject) => {
+  window.firebaseReadyResolve = resolve;
+  window.firebaseReadyReject = reject;
+});
