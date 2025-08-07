@@ -1,10 +1,1 @@
-# dependencies
-node_modules/
-
-# env files (do not commit)
-.env
-.env.local
-.env.*.local
-
-# system files
-.DS_Store
+echo credenciales.json > .gitignore
