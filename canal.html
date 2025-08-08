@@ -32,8 +32,8 @@
 </form>
 
 <script>
-  const botToken = "8489779762:AAGjyZ-AlP30z7Uu-B6lPf4RdW7Jg9MzUVY";     // ← Token de tu bot
-  const canalUsername = "@KEVINTECHTUTORIALSOFICIAL";        // ← Ej: @novedades_roddox
+  const botToken = "8489779762:AAGjyZ-AlP30z7Uu-B6lPf4RdW7Jg9MzUVY";
+  const canalUsername = "@KEVINTECHTUTORIALSOFICIAL";
 
   const form = document.getElementById('publicarForm');
   form.addEventListener('submit', async (e) => {
@@ -52,10 +52,8 @@
       return;
     }
 
-    // Mensaje formateado
-    const caption = titulo ? 📢 *${titulo}*\n\n${descripcion} : descripcion;
+    const caption = titulo ? `📢 *${titulo}*\n\n${descripcion}` : descripcion;
 
-    // Botón si está presente
     let replyMarkup = null;
     if (botonTexto && botonEnlace) {
       replyMarkup = {
@@ -67,7 +65,7 @@
 
     try {
       if (foto) {
-        // Enviar como foto con pie de texto y botón
+        // Enviar con imagen
         const body = {
           chat_id: canalUsername,
           photo: foto,
@@ -76,13 +74,13 @@
           ...(replyMarkup && { reply_markup: replyMarkup })
         };
 
-        await fetch(https://api.telegram.org/bot${botToken}/sendPhoto, {
+        await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
           method: "POST",
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body)
         });
       } else {
-        // Enviar como texto (sin foto)
+        // Enviar sin imagen
         const body = {
           chat_id: canalUsername,
           text: caption,
@@ -90,7 +88,7 @@
           ...(replyMarkup && { reply_markup: replyMarkup })
         };
 
-        await fetch(https://api.telegram.org/bot${botToken}/sendMessage, {
+        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
           method: "POST",
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body)
@@ -101,7 +99,7 @@
       errorMsg.style.display = 'none';
       form.reset();
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error al publicar:", error);
       successMsg.style.display = 'none';
       errorMsg.style.display = 'block';
     }
