@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Soporte con Telegram</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    form { max-width: 400px; margin: auto; }
+    input, textarea, button {
+      width: 100%; padding: 10px; margin: 8px 0;
+      border: 1px solid #ccc; border-radius: 5px;
+    }
+    button { background-color: #28a745; color: white; font-weight: bold; }
+    .success, .error { text-align: center; display: none; }
+    .success { color: green; }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+
+<h2>Formulario de Soporte</h2>
+<form id="soporteForm">
+  <input type="text" id="nombre" placeholder="Tu nombre" required>
+  <input type="email" id="correo" placeholder="Tu correo" required>
+  <textarea id="mensaje" rows="5" placeholder="Escribe tu mensaje" required></textarea>
+  <button type="submit">Enviar</button>
+  <p class="success" id="successMsg">✅ Mensaje enviado correctamente</p>
+  <p class="error" id="errorMsg">❌ Error al enviar el mensaje</p>
+</form>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+<script>
+  // Configuración de Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyDFxkNJCVxwddZFsqPeXSdeYe87ExEdhQk",
+    authDomain: "roddox-27e1b.firebaseapp.com",
+    databaseURL: "https://roddox-27e1b-default-rtdb.firebaseio.com",
+    projectId: "roddox-27e1b",
+    storageBucket: "roddox-27e1b.firebasestorage.app",
+    messagingSenderId: "108259944325",
+    appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
+    measurementId: "G-MBQ5X9PLF8"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // Configuración de Telegram
+  const botToken = "8489779762:AAGjyZ-AlP30z7Uu-B6lPf4RdW7Jg9MzUVY";  // ← Reemplaza esto por el token de @BotFather
+  const chatId = "7516708714";              // ← Este es tu chat ID
+
+  const form = document.getElementById('soporteForm');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const nombre = document.getElementById('nombre').value.trim();
+    const correo = document.getElementById('correo').value.trim();
+    const mensaje = document.getElementById('mensaje').value.trim();
+    const successMsg = document.getElementById('successMsg');
+    const errorMsg = document.getElementById('errorMsg');
+
+    try {
+      // 1. Guardar en Firestore
+      await db.collection('soporte').add({
+        nombre,
+        correo,
+        mensaje,
+        fecha: new Date().toISOString()
+      });
+
+      // 2. Enviar notificación a Telegram
+      const textoTelegram = `
+📩 *Nuevo mensaje de soporte*
+👤 *Nombre:* ${nombre}
+📧 *Correo:* ${correo}
+📝 *Mensaje:* ${mensaje}
+🕒 *Fecha:* ${new Date().toLocaleString()}
+      `;
+
+      await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: textoTelegram,
+          parse_mode: "Markdown"
+        })
+      });
+
+      successMsg.style.display = 'block';
+      errorMsg.style.display = 'none';
+      form.reset();
+    } catch (error) {
+      console.error("Error:", error);
+      successMsg.style.display = 'none';
+      errorMsg.style.display = 'block';
+    }
+  });
+</script>
+
+</body>
+</html>
