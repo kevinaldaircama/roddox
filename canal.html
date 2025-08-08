@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Publicar en Canal Telegram</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    form { max-width: 500px; margin: auto; }
+    input, textarea, button {
+      width: 100%; padding: 10px; margin: 8px 0;
+      border: 1px solid #ccc; border-radius: 5px;
+    }
+    button { background-color: #007bff; color: white; font-weight: bold; }
+    .success, .error { text-align: center; display: none; }
+    .success { color: green; }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+
+<h2>Publicar en Canal de Telegram</h2>
+<form id="publicarForm">
+  <input type="text" id="titulo" placeholder="Título (opcional)">
+  <textarea id="descripcion" rows="4" placeholder="Descripción o mensaje" required></textarea>
+  <input type="url" id="foto" placeholder="URL de la imagen (opcional)">
+  <input type="text" id="botonTexto" placeholder="Texto del botón (opcional)">
+  <input type="url" id="botonEnlace" placeholder="Enlace del botón (opcional)">
+  <button type="submit">Publicar</button>
+  <p class="success" id="successMsg">✅ Publicado correctamente en el canal</p>
+  <p class="error" id="errorMsg">❌ Error al publicar en el canal</p>
+</form>
+
+<script>
+  const botToken = "8489779762:AAGjyZ-AlP30z7Uu-B6lPf4RdW7Jg9MzUVY";     // ← Token de tu bot
+  const canalUsername = "@KEVINTECHTUTORIALSOFICIAL";        // ← Ej: @novedades_roddox
+
+  const form = document.getElementById('publicarForm');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const titulo = document.getElementById('titulo').value.trim();
+    const descripcion = document.getElementById('descripcion').value.trim();
+    const foto = document.getElementById('foto').value.trim();
+    const botonTexto = document.getElementById('botonTexto').value.trim();
+    const botonEnlace = document.getElementById('botonEnlace').value.trim();
+    const successMsg = document.getElementById('successMsg');
+    const errorMsg = document.getElementById('errorMsg');
+
+    if (!descripcion) {
+      alert("La descripción es obligatoria.");
+      return;
+    }
+
+    // Mensaje formateado
+    const caption = titulo ? 📢 *${titulo}*\n\n${descripcion} : descripcion;
+
+    // Botón si está presente
+    let replyMarkup = null;
+    if (botonTexto && botonEnlace) {
+      replyMarkup = {
+        inline_keyboard: [
+          [{ text: botonTexto, url: botonEnlace }]
+        ]
+      };
+    }
+
+    try {
+      if (foto) {
+        // Enviar como foto con pie de texto y botón
+        const body = {
+          chat_id: canalUsername,
+          photo: foto,
+          caption: caption,
+          parse_mode: "Markdown",
+          ...(replyMarkup && { reply_markup: replyMarkup })
+        };
+
+        await fetch(https://api.telegram.org/bot${botToken}/sendPhoto, {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+      } else {
+        // Enviar como texto (sin foto)
+        const body = {
+          chat_id: canalUsername,
+          text: caption,
+          parse_mode: "Markdown",
+          ...(replyMarkup && { reply_markup: replyMarkup })
+        };
+
+        await fetch(https://api.telegram.org/bot${botToken}/sendMessage, {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+      }
+
+      successMsg.style.display = 'block';
+      errorMsg.style.display = 'none';
+      form.reset();
+    } catch (error) {
+      console.error("Error:", error);
+      successMsg.style.display = 'none';
+      errorMsg.style.display = 'block';
+    }
+  });
+</script>
+
+</body>
+</html>
