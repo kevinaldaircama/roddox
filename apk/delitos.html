@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Consulta delitos</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f0f0f0;
+      text-align: center;
+    }
+
+    input, button {
+      width: 90%;
+      max-width: 400px;
+      padding: 12px;
+      font-size: 16px;
+      margin: 10px auto;
+      display: block;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .error {
+      color: red;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+      text-align: left;
+    }
+
+    .modal-content p {
+      font-size: 16px;
+      margin: 8px 0;
+    }
+
+    .close {
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Buscar por DNI</h2>
+  <h4 style="background: #ffeeba; color: #856404; padding: 15px; border-radius: 8px;">
+    Recuerda que si la consulta no está disponible o falla, comunícate con nosotros a través de 
+    <a href="https://roddox.es/soporte app" target="_blank" style="color: #0c5460; font-weight: bold; text-decoration: underline;">
+      aquí
+    </a>.
+  </h4>
+
+  <input type="text" id="dniBuscar" placeholder="Ingrese DNI (8 dígitos)" />
+  <button onclick="consultar()">Buscar</button>
+  <div id="mensaje" class="error"></div>
+
+  <!-- Modal -->
+  <div id="modalDatos" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarModal()">&times;</span>
+      <p id="dni"></p>
+      <p id="nombres"></p>
+      <p id="apellidoPaterno"></p>
+      <p id="apellidoMaterno"></p>
+      <p id="linkPDF"></p>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFxkNJCVxwddZFsqPeXSdeYe87ExEdhQk",
+      authDomain: "roddox-27e1b.firebaseapp.com",
+      projectId: "roddox-27e1b",
+      storageBucket: "roddox-27e1b.firebasestorage.app",
+      messagingSenderId: "108259944325",
+      appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
+      measurementId: "G-MBQ5X9PLF8"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    async function consultar() {
+      const dni = document.getElementById("dniBuscar").value.trim();
+      const mensaje = document.getElementById("mensaje");
+      mensaje.innerHTML = "";
+
+      // Validación simple de DNI
+      if (!/^\d{8}$/.test(dni)) {
+        mensaje.textContent = "⚠️ Ingresa un DNI válido de 8 dígitos.";
+        return;
+      }
+
+      mensaje.innerHTML = "🔍 Verificando datos...";
+      document.getElementById("modalDatos").style.display = "none";
+
+      // Pequeña animación/espera
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      try {
+        const doc = await db.collection("descargas").doc(dni).get();
+
+        if (!doc.exists) {
+          mensaje.innerHTML = "❌ El DNI no se encuentra en la base de datos.";
+          return;
+        }
+
+        const d = doc.data();
+        const nombres = d.nombres || d.nombre || "";
+        const link = d.link || d.enlace || "#";
+
+        document.getElementById("dni").textContent = "DNI: " + dni;
+        document.getElementById("nombres").textContent = "Nombres: " + nombres;
+        document.getElementById("apellidoPaterno").textContent = "Apellido Paterno: " + (d.apellidoPaterno || "");
+        document.getElementById("apellidoMaterno").textContent = "Apellido Materno: " + (d.apellidoMaterno || "");
+        document.getElementById("linkPDF").innerHTML = link && link !== "#"
+          ? `📥 <a href="${link}" target="_blank" rel="noopener">Descargar PDF</a>`
+          : "Sin enlace de descarga";
+
+        document.getElementById("modalDatos").style.display = "block";
+        mensaje.innerHTML = "";
+      } catch (err) {
+        console.error(err);
+        mensaje.innerHTML = "❌ Error al consultar.";
+      }
+    }
+
+    function cerrarModal() {
+      document.getElementById("modalDatos").style.display = "none";
+    }
+  </script>
+</body>
+</html>
