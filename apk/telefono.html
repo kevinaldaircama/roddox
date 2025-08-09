@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Buscar Teléfono</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    h2 { text-align: center; }
+    input, button {
+      width: 100%;
+      max-width: 400px;
+      padding: 12px;
+      font-size: 16px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button { background-color: #28a745; color: white; border: none; cursor: pointer; }
+    .datos-box {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: none;
+      width: 100%;
+      max-width: 500px;
+    }
+    .datos-box p { font-size: 16px; font-weight: bold; margin: 8px 0; }
+    .error { color: red; font-weight: bold; margin-top: 15px; text-align: center; }
+    .loading { color: #333; font-weight: bold; margin-top: 15px; text-align: center; }
+  </style>
+</head>
+<body>
+
+  <h2>Buscar por Número Telefónico</h2>
+  <h4 style="background: #ffeeba; color: #856404; padding: 15px; border-radius: 8px;">
+    Recuerda que si la consulta no está disponible o falla, comunícate con nosotros a través de 
+    <a href="https://roddox.es/soporte app" target="_blank" style="color: #0c5460; font-weight: bold; text-decoration: underline;">
+      aquí
+    </a>.
+  </h4>
+
+  <input type="text" id="telefonoBuscar" placeholder="Ingrese número telefónico (9 dígitos)">
+  <button onclick="buscarTelefono()">Buscar</button>
+
+  <div class="datos-box" id="resultadoBox">
+    <p id="docTexto"></p>
+    <p id="opTexto"></p>
+    <p id="perTexto"></p>
+    <p id="emailTexto"></p>
+  </div>
+
+  <div id="mensaje" class="loading"></div>
+  <div id="errorMensaje" class="error"></div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFxkNJCVxwddZFsqPeXSdeYe87ExEdhQk",
+      authDomain: "roddox-27e1b.firebaseapp.com",
+      projectId: "roddox-27e1b",
+      storageBucket: "roddox-27e1b.firebasestorage.app",
+      messagingSenderId: "108259944325",
+      appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
+      measurementId: "G-MBQ5X9PLF8"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    async function buscarTelefono() {
+      const telefono = document.getElementById("telefonoBuscar").value.trim();
+      const resultado = document.getElementById("resultadoBox");
+      const error = document.getElementById("errorMensaje");
+      const mensaje = document.getElementById("mensaje");
+
+      resultado.style.display = "none";
+      error.textContent = "";
+      mensaje.textContent = "";
+
+      // Validación: exactamente 9 dígitos y que empiece con 9
+      if (!/^9\d{8}$/.test(telefono)) {
+        error.textContent = "⚠️ Ingrese un número válido de 9 dígitos que empiece con 9 (celular Perú).";
+        return;
+      }
+
+      // Mostrar mensaje de carga
+      mensaje.textContent = "🔍 Buscando...";
+
+      try {
+        const doc = await db.collection("telefonos").doc(telefono).get();
+
+        if (!doc.exists) {
+          mensaje.textContent = "";
+          error.textContent = "❌ El número telefónico no está registrado.";
+          return;
+        }
+
+        const data = doc.data() || {};
+        const documento = data.documento || data.doc || "";
+        const operador = data.operador || "";
+        const periodo = data.periodo || "";
+        const email = data.email || data.correo || "";
+
+        document.getElementById("docTexto").textContent = "Número de Documento: " + documento;
+        document.getElementById("opTexto").textContent = "Operador: " + operador;
+        document.getElementById("perTexto").textContent = "Periodo: " + periodo;
+        document.getElementById("emailTexto").textContent = "Email: " + email;
+
+        mensaje.textContent = "";
+        resultado.style.display = "block";
+      } catch (err) {
+        mensaje.textContent = "";
+        error.textContent = "⚠️ Error al buscar.";
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>
