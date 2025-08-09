@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Consulta DNI</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #f5f7fa, #c3cfe2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .search-box {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    input {
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #modal, #mensajeModal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      justify-content: center;
+      align-items: center;
+    }
+    .modalContent {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 420px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+      text-align: left;
+    }
+    #datosPersona p {
+      margin: 8px 0;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 5px;
+    }
+    @media (max-width: 480px) {
+      .modalContent {
+        max-width: 94%;
+        font-size: 14px;
+        padding: 18px;
+      }
+      #datosPersona p {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="search-box">
+    <h2>Consultar Datos por DNI</h2>
+    <h4 style="color:#777; font-weight: normal; font-size: 14px; margin-top: 0;">
+      Solo saca información. No incluye foto, firma ni huella.
+    </h4>
+    <h4 style="background: #ffeeba; color: #856404; padding: 15px; border-radius: 8px;">
+      Recuerda que si la consulta no está disponible o falla, comunícate con nosotros a través de
+      <a href="https://roddox.es/soporte app" target="_blank" style="color: #0c5460; font-weight: bold; text-decoration: underline;">
+        aquí
+      </a>.
+    </h4>
+    <input type="text" id="dniBuscar" placeholder="Ingresa DNI" />
+    <button onclick="buscarDNI()">Buscar</button>
+  </div>
+
+  <!-- Modal de datos -->
+  <div id="modal">
+    <div class="modalContent">
+      <h3>Datos del Ciudadano</h3>
+      <div id="datosPersona"></div>
+      <button onclick="copiarDatos()">📋 Copiar Datos</button>
+      <button onclick="cerrarModal()">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- Modal de mensaje -->
+  <div id="mensajeModal">
+    <div class="modalContent">
+      <p id="mensajeTexto">Verificando...</p>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFxkNJCVxwddZFsqPeXSdeYe87ExEdhQk",
+      authDomain: "roddox-27e1b.firebaseapp.com",
+      projectId: "roddox-27e1b",
+      storageBucket: "roddox-27e1b.firebasestorage.app",
+      messagingSenderId: "108259944325",
+      appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
+      measurementId: "G-MBQ5X9PLF8"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const firestore = firebase.firestore();
+
+    async function buscarDNI() {
+      const dni = document.getElementById('dniBuscar').value.trim();
+      if (!dni || dni.length !== 8) return mostrarMensaje("⚠️ Ingresa un DNI válido (8 dígitos)");
+
+      mostrarMensaje("📡 Buscando DNI...");
+
+      try {
+        const docSnap = await firestore.collection("personas").doc(dni).get();
+        if (!docSnap.exists) {
+          mostrarMensaje("❌ El DNI no se encuentra registrado.");
+          return;
+        }
+
+        const datos = docSnap.data();
+        const contenedor = document.getElementById('datosPersona');
+        contenedor.innerHTML = '';
+        for (const campo in datos) {
+          contenedor.innerHTML += `<p><strong>${campo.replace(/([A-Z])/g, ' $1')}:</strong> ${datos[campo]}</p>`;
+        }
+
+        cerrarMensaje();
+        document.getElementById('modal').style.display = 'flex';
+      } catch (error) {
+        console.error("Error:", error);
+        mostrarMensaje("❌ Error al consultar datos.");
+      }
+    }
+
+    async function copiarDatos() {
+      const datos = document.getElementById('datosPersona').innerText;
+      try {
+        await navigator.clipboard.writeText(datos);
+        mostrarMensaje("✅ Datos copiados al portapapeles");
+        setTimeout(() => cerrarMensaje(), 1500);
+      } catch (err) {
+        console.error("Error al copiar:", err);
+        mostrarMensaje("❌ No se pudo copiar.");
+      }
+    }
+
+    function mostrarMensaje(texto) {
+      document.getElementById('mensajeTexto').textContent = texto;
+      document.getElementById('mensajeModal').style.display = 'flex';
+    }
+
+    function cerrarMensaje() {
+      document.getElementById('mensajeModal').style.display = 'none';
+    }
+
+    function cerrarModal() {
+      document.getElementById('modal').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
