@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Consulta SIS por DNI</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    h2 { margin-bottom: 15px; text-align: center; }
+    input, button {
+      width: 100%;
+      max-width: 400px;
+      padding: 12px;
+      margin-bottom: 15px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button { background-color: #28a745; color: white; border: none; cursor: pointer; }
+    .resultado {
+      background: white; padding: 20px; margin-top: 20px; border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 100%; max-width: 600px;
+    }
+    .resultado p { margin: 8px 0; text-align: left; font-size: 16px; }
+    .error { color: red; font-weight: bold; margin-top: 15px; text-align: center; }
+  </style>
+</head>
+<body>
+
+  <h2>Consulta SIS por DNI</h2>
+  <h4 style="background: #ffeeba; color: #856404; padding: 15px; border-radius: 8px;">
+    Recuerda que si la consulta no está disponible o falla, comunícate con nosotros a través de 
+    <a href="https://roddox.es/soporte app" target="_blank" style="color: #0c5460; font-weight: bold; text-decoration: underline;">
+      aquí
+    </a>.
+  </h4>
+
+  <input type="text" id="dniInput" placeholder="Ingrese número de DNI (8 dígitos)" />
+  <button onclick="buscarSIS()">Buscar</button>
+
+  <div id="resultado" class="resultado" style="display:none;"></div>
+  <div id="mensaje" class="error"></div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFxkNJCVxwddZFsqPeXSdeYe87ExEdhQk",
+      authDomain: "roddox-27e1b.firebaseapp.com",
+      projectId: "roddox-27e1b",
+      storageBucket: "roddox-27e1b.firebasestorage.app",
+      messagingSenderId: "108259944325",
+      appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
+      measurementId: "G-MBQ5X9PLF8"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    async function buscarSIS() {
+      const dni = document.getElementById("dniInput").value.trim();
+      const msg = document.getElementById("mensaje");
+      const box = document.getElementById("resultado");
+      msg.textContent = "";
+      box.style.display = "none";
+
+      if (!/^\d{8}$/.test(dni)) {
+        msg.textContent = "⚠️ Ingresa un DNI válido de 8 dígitos.";
+        return;
+      }
+
+      msg.textContent = "🔍 Buscando información...";
+
+      try {
+        const doc = await db.collection("sis").doc(dni).get();
+        if (!doc.exists) {
+          msg.textContent = "❌ No está registrado en la base de datos SIS.";
+          return;
+        }
+
+        const d = doc.data() || {};
+        // Soporta claves alternativas comunes
+        const establecimiento = d.establecimientoSalud || d.establecimiento || "";
+        const ubigeoEst = d.ubigeoEstablecimientoSalud || d.ubigeo || "";
+        const tipoSeguro = d.tipoSeguro || "SUBSIDIADO";
+        const numeroRegistro = d.numeroRegistro || d.registro || "";
+
+        box.innerHTML = `
+          <p><strong>Resultado:</strong> DATOS EXITOSOS</p>
+          <p><strong>Número de Documento:</strong> ${dni}</p>
+          <p><strong>Apellido Paterno:</strong> ${d.apellidoPaterno || ""}</p>
+          <p><strong>Apellido Materno:</strong> ${d.apellidoMaterno || ""}</p>
+          <p><strong>Nombres:</strong> ${d.nombres || ""}</p>
+          <p><strong>Fecha de Afiliación:</strong> ${d.fechaAfiliacion || ""}</p>
+          <p><strong>Establecimiento de Salud:</strong> ${establecimiento}</p>
+          <p><strong>Ubigeo del Establecimiento:</strong> ${ubigeoEst}</p>
+          <p><strong>Tipo de Seguro:</strong> ${tipoSeguro}</p>
+          <p><strong>Estado:</strong> ${d.estado || ""}</p>
+          <p><strong>Número de Registro:</strong> ${numeroRegistro}</p>
+          <p><strong>Fecha de Nacimiento:</strong> ${d.fechaNacimiento || ""}</p>
+        `;
+        box.style.display = "block";
+        msg.textContent = "";
+      } catch (e) {
+        console.error(e);
+        msg.textContent = "⚠️ Error al consultar.";
+      }
+    }
+  </script>
+</body>
+</html>
