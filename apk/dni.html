@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Buscar c4 por DNI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 30px; background: #f4f4f4; text-align: center; }
+    input, button {
+      width: 90%; max-width: 400px; padding: 12px; margin: 10px auto;
+      font-size: 16px; border-radius: 4px; border: 1px solid #ccc; display: block;
+    }
+    button { background: #28a745; color: white; border: none; }
+    .mensaje, .datos-box { margin-top: 20px; }
+    .datos-box {
+      background: white; border-radius: 8px; padding: 25px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1); display: none;
+      max-width: 500px; margin: auto;
+    }
+    .datos-box p { font-size: 18px; font-weight: bold; margin: 10px 0; }
+    a.boton {
+      display: inline-block; margin-top: 20px; padding: 10px 18px;
+      background: #007bff; color: white; text-decoration: none; border-radius: 5px;
+    }
+    .error { color: red; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <h2>Consulta c4 por DNI</h2>
+  <h4 style="background: #ffeeba; color: #856404; padding: 15px; border-radius: 8px;">
+  Recuerda que si la consulta no está disponible o falla, comunícate con nosotros a través de 
+  <a href="https://roddox.es/soporte app" target="_blank" style="color: #0c5460; font-weight: bold; text-decoration: underline;">
+    aquí
+  </a>.
+  </h4>
+  <input type="text" id="dniInput" placeholder="Ingrese DNI">
+  <button onclick="buscarDNI()">Buscar</button>
+
+  <div class="mensaje" id="estadoMensaje"></div>
+
+  <div class="datos-box" id="resultadoBox">
+    <p id="dniTexto"></p>
+    <p id="nombresTexto"></p>
+    <p id="apellidoPaternoTexto"></p>
+    <p id="apellidoMaternoTexto"></p>
+    <a class="boton" id="descargarBtn" href="#" target="_blank">Descargar PDF</a>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFxkNJCVxwddZFsqPeXSdeYe87ExEdhQk",
+      authDomain: "roddox-27e1b.firebaseapp.com",
+      projectId: "roddox-27e1b",
+      storageBucket: "roddox-27e1b.firebasestorage.app",
+      messagingSenderId: "108259944325",
+      appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
+      measurementId: "G-MBQ5X9PLF8"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    async function buscarDNI() {
+      const dni = document.getElementById("dniInput").value.trim();
+      const mensaje = document.getElementById("estadoMensaje");
+      const resultado = document.getElementById("resultadoBox");
+      resultado.style.display = "none";
+      mensaje.innerHTML = "⏳ Verificando información...";
+
+      await esperar(3000);
+      mensaje.innerHTML = "⚙️ Generando C4...";
+
+      await esperar(4000);
+
+      try {
+        const doc = await db.collection("info").doc(dni).get();
+
+        if (!doc.exists) {
+          mensaje.innerHTML = "<p class='error'>❌ El DNI no se encuentra registrado en RENIEC o base de datos.</p>";
+          return;
+        }
+
+        const data = doc.data();
+
+        document.getElementById("dniTexto").textContent = "𝗗𝗡𝗜: " + dni;
+        document.getElementById("nombresTexto").textContent = "𝗡𝗢𝗠𝗕𝗥𝗘𝗦: " + (data.nombres || "");
+        document.getElementById("apellidoPaternoTexto").textContent = "𝗔𝗣𝗘𝗟𝗟𝗜𝗗𝗢 𝗣𝗔𝗧𝗘𝗥𝗡𝗢: " + (data.apellidoPaterno || "");
+        document.getElementById("apellidoMaternoTexto").textContent = "𝗔𝗣𝗘𝗟𝗟𝗜𝗗𝗢 𝗠𝗔𝗧𝗘𝗥𝗡𝗢: " + (data.apellidoMaterno || "");
+        document.getElementById("descargarBtn").href = data.link || "#";
+
+        mensaje.innerHTML = "";
+        resultado.style.display = "block";
+      } catch (error) {
+        console.error("Error al buscar DNI:", error);
+        mensaje.innerHTML = "<p class='error'>⚠️ Error al consultar los datos.</p>";
+      }
+    }
+
+    function esperar(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+  </script>
+</body>
+</html>
