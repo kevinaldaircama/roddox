@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="es">
+<!DOCTYPE html>
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <title>Estadísticas del Sistema</title>
@@ -14,12 +15,18 @@
   <meta name="theme-color" content="#121212" />
   <link rel="icon" type="image/png" href="3440119_ico.png">
 
-<meta name="description" content="roddox - doxeo al toke mas profesional que otras web.">
-  <meta property="og:title" content="roddox - doxeo al toke" />
-  <meta property="og:description" content="doxeo al toke mas profesional que otras web" />
-  <meta property="og:image" content="https://transferenciavip.xyz/logo-oficial.png" />
-  <meta property="og:url" content="https://transferenciavip.xyz/" />
+  <!-- Open Graph -->
+  <meta property="og:title" content="¡Únete a Transferencia VIP y gana créditos!" />
+  <meta property="og:description" content="Regístrate con este enlace de referido y recibe hasta 10 créditos gratis. Empieza a ganar hoy." />
+  <meta property="og:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  <meta property="og:url" content="https://transferenciavip.xyz" />
+  <meta property="og:type" content="website" />
+  <!-- Twitter Cards -->
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="¡Gana créditos con Transferencia VIP!" />
+  <meta name="twitter:description" content="Regístrate con un referido y recibe bonificaciones instantáneas." />
+  <meta name="twitter:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -112,16 +119,18 @@
     <canvas id="chartRendimiento" height="100"></canvas>
     <canvas id="chartReferidos" height="100"></canvas>
     <button class="export-btn" onclick="exportarPDF()">Exportar PDF</button>
-  </div>  <script>
+  </div>
+
+  <script>
     const firebaseConfig = {
-        apiKey: "AIzaSyDFxkNJCVxwddZFsqPeXSdeYe87ExEdhQk",
-    authDomain: "roddox-27e1b.firebaseapp.com",
-    databaseURL: "https://roddox-27e1b-default-rtdb.firebaseio.com",
-    projectId: "roddox-27e1b",
-    storageBucket: "roddox-27e1b.firebasestorage.app",
-    messagingSenderId: "108259944325",
-    appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
-    measurementId: "G-MBQ5X9PLF8"
+        apiKey: "AIzaSyCbL1fRbwVZRhdD88TeQSFgpvfjZOMwfIg",
+    authDomain: "multidoxnetfree.firebaseapp.com",
+    databaseURL: "https://multidoxnetfree-default-rtdb.firebaseio.com",
+    projectId: "multidoxnetfree",
+    storageBucket: "multidoxnetfree.firebasestorage.app",
+    messagingSenderId: "248995370956",
+    appId: "1:248995370956:web:455823a3778859bd4d2f69",
+    measurementId: "G-HDE68S5TYS"
   };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
@@ -250,5 +259,6 @@
       document.getElementById('filtroAnio').addEventListener('change', cargarEstadisticas);
       cargarEstadisticas();
     };
-  </script></body>
+  </script>
+</body>
 </html>

@@ -2,113 +2,375 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Política de Cookies</title>
-  <link rel="icon" href="3440119_ico.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Política de Cookies · Transferencia VIP</title>
+
+  <link rel="icon" href="3440119_ico.png" sizes="32x32" />
+  <link rel="apple-touch-icon" href="3440119_ico.png" />
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#121212" />
-  <link rel="icon" type="image/png" href="3440119_ico.png">
+  <meta name="theme-color" content="#0f2027" />
+  <link rel="canonical" href="https://transferenciavip.xyz/cookies.html" />
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="¡Únete a Transferencia VIP y gana créditos!" />
-  <meta property="og:description" content="Regístrate con este enlace de referido y recibe hasta 10 créditos gratis. Empieza a ganar hoy." />
+  <!-- Open Graph / Twitter -->
+  <meta property="og:site_name" content="Transferencia VIP" />
+  <meta property="og:title" content="Política de Cookies · Transferencia VIP" />
+  <meta property="og:description" content="Cómo y por qué usamos cookies y tecnologías similares." />
   <meta property="og:image" content="https://transferenciavip.xyz/3440119_ico.png" />
-  <meta property="og:url" content="https://transferenciavip.xyz" />
-  <meta property="og:type" content="website" />
-  <!-- Twitter Cards -->
+  <meta property="og:url" content="https://transferenciavip.xyz/cookies.html" />
+  <meta property="og:type" content="article" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="¡Gana créditos con Transferencia VIP!" />
-  <meta name="twitter:description" content="Regístrate con un referido y recibe bonificaciones instantáneas." />
-  <meta name="twitter:image" content="https://transferenciavip.xyz/3440119_ico.png" />
-  
+
+  <!-- Fuente -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-      color: #333;
+    :root{
+      --bg1:#0f2027; --bg2:#203a43; --bg3:#2c5364;
+      --card:#ffffff; --text:#0b1220; --muted:#5b708b; --border:#e5eaf0;
+      --link:#0d6efd; --linkHover:#0b5ed7; --ring: rgba(13,110,253,.25);
+      --brand1:#5c6bc0; --brand2:#3f51b5;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:linear-gradient(-45deg,var(--bg1),var(--bg2),var(--bg3),var(--bg1));
+      background-size:400% 400%; animation:bgmove 18s ease infinite;
+      margin:0; display:flex; justify-content:center; color:var(--text); padding:16px;
+    }
+    .wrapper{
+      width:min(1040px,96%); background:var(--card);
+      border:1px solid var(--border); border-radius:18px;
+      box-shadow:0 24px 60px rgba(0,0,0,.28);
+      padding: clamp(18px,3vw,32px);
+    }
+    header .title{display:flex; gap:12px; align-items:center; margin-bottom:8px}
+    header img{width:48px; height:48px; border-radius:12px}
+    h1{font-size:clamp(1.4rem,3vw,2rem); margin:0}
+    .meta{color:var(--muted); margin:6px 0 16px}
+    .toc{background:#f7f9fc; border:1px solid var(--border); border-radius:12px; padding:14px; margin:4px 0 18px}
+    .toc strong{display:block; margin-bottom:6px}
+    .toc a{color:var(--link); text-decoration:none}
+    .toc a:hover{text-decoration:underline}
+    main h2{margin-top:28px; font-size:1.2rem}
+    main p, main li{line-height:1.65}
+    main a{color:var(--link); text-decoration:none}
+    main a:hover{text-decoration:underline}
+    .notice{
+      background:#fff8e5; border:1px solid #ffe5a3; color:#6b4e00;
+      padding:12px 14px; border-radius:10px; margin:14px 0;
+    }
+    footer{
+      margin-top:22px; padding-top:14px; border-top:1px solid var(--border);
+      color:var(--muted); display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;
     }
 
-    header {
-      background-color: #007bff;
-      color: white;
-      padding: 20px;
-      text-align: center;
+    /* Banner cookies */
+    .cookie-banner{
+      position:fixed; inset:auto 0 0 0; z-index:50;
+      background:#0e1525; color:#e6edff; padding:16px;
+      box-shadow:0 -10px 30px rgba(0,0,0,.3);
     }
+    .cookie-inner{max-width:1040px; margin:0 auto; display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .cookie-inner p{margin:0; flex:1}
+    .btn{border:none; border-radius:10px; padding:10px 14px; cursor:pointer; font-weight:700}
+    .btn.primary{background:linear-gradient(135deg,var(--brand1),var(--brand2)); color:#fff}
+    .btn.secondary{background:#fff; color:#102033; border:1px solid #cfd7e3}
+    .btn.link{background:transparent; color:#e6edff; text-decoration:underline}
 
-    main {
-      max-width: 900px;
-      margin: 40px auto;
-      background: white;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
+    /* Modal preferencias */
+    .modal{position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; z-index:60; align-items:center; justify-content:center; padding:16px}
+    .modal-card{background:#fff; color:var(--text); width:min(620px, 96%); border-radius:16px; border:1px solid var(--border); padding:18px}
+    .modal-head{display:flex; justify-content:space-between; align-items:center; gap:10px}
+    .close{background:#fff; border:1px solid #cfd7e3; border-radius:8px; padding:8px 10px; cursor:pointer}
+    .pref{display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border); border-radius:12px; padding:12px; margin:10px 0}
+    .pref small{color:var(--muted)}
+    .switch{position:relative; width:46px; height:26px}
+    .switch input{display:none}
+    .slider{position:absolute; cursor:pointer; inset:0; background:#d7dce3; border-radius:999px; transition:.2s}
+    .slider:before{content:""; position:absolute; height:20px; width:20px; left:3px; top:3px; background:#fff; border-radius:50%; transition:.2s}
+    input:checked + .slider{background:linear-gradient(135deg,var(--brand1),var(--brand2))}
+    input:checked + .slider:before{transform:translateX(20px)}
+    .pref.disabled{opacity:.6}
+    .pref.disabled .switch{pointer-events:none}
 
-    h1 {
-      font-size: 28px;
-      margin-bottom: 10px;
+    @media (prefers-color-scheme: dark){
+      :root{ --card:#0e1525; --text:#e6edff; --muted:#9fb3ce; --border:#1f2940 }
+      .toc{ background:#0c1220 }
+      .modal-card{ background:#0e1525 }
     }
-
-    h2 {
-      color: #007bff;
-      margin-top: 25px;
+    @media print{
+      body{animation:none; background:#fff}
+      .wrapper{box-shadow:none; border:none}
+      .cookie-banner, .modal{display:none !important}
     }
-
-    p {
-      line-height: 1.6;
-    }
-
-    footer {
-      text-align: center;
-      padding: 15px;
-      background-color: #eee;
-      margin-top: 40px;
-      font-size: 14px;
-    }
-
-    @media (max-width: 600px) {
-      main {
-        margin: 20px;
-        padding: 20px;
-      }
-    }
+    @keyframes bgmove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
   </style>
 </head>
 <body>
+  <article class="wrapper">
+    <header>
+      <div class="title">
+        <img src="3440119_ico.png" alt="Logo Transferencia VIP" />
+        <h1>Política de Cookies</h1>
+      </div>
+      <p class="meta">Explicamos cómo usamos cookies y tecnologías similares en nuestro sitio.</p>
+      <nav class="toc" aria-label="Índice de contenidos">
+        <strong>Contenido</strong>
+        <ol>
+          <li><a href="#que-son">¿Qué son las cookies?</a></li>
+          <li><a href="#tipos">Tipos de cookies que utilizamos</a></li>
+          <li><a href="#gestionar">Cómo gestionar tus preferencias</a></li>
+          <li><a href="#cambios">Cambios en esta política</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+        </ol>
+      </nav>
+    </header>
 
-<header>
-  <h1>Política de Cookies</h1>
-</header>
+    <main>
+      <section id="que-son">
+        <h2>1. ¿Qué son las cookies?</h2>
+        <p>Las <strong>cookies</strong> son pequeños archivos que se almacenan en tu dispositivo cuando visitas un sitio web. Permiten, por ejemplo, recordar tus preferencias, mantener tu sesión o entender cómo se utiliza la plataforma. También usamos tecnologías similares (por ejemplo, <em>localStorage</em> o <em>pixels</em>).</p>
+      </section>
 
-<main>
-  <p>Esta Política de Cookies explica cómo usamos cookies y tecnologías similares en nuestro sitio web. Al continuar navegando, aceptas su uso conforme a esta política.</p>
+      <section id="tipos">
+        <h2>2. Tipos de cookies que utilizamos</h2>
+        <ul>
+          <li><strong>Estrictamente necesarias (esenciales):</strong> imprescindibles para el funcionamiento básico del sitio (p. ej., iniciar sesión, seguridad). No pueden desactivarse desde nuestro gestor.</li>
+          <li><strong>Funcionales:</strong> recuerdan tus preferencias (idioma, región) para una experiencia personalizada.</li>
+          <li><strong>Analíticas:</strong> nos ayudan a medir el uso del sitio para mejorar contenido y rendimiento.</li>
+          <li><strong>Marketing:</strong> utilizadas para mostrar contenido y ofertas relevantes, y medir su efectividad.</li>
+        </ul>
+        <div class="notice">
+          Algunos proveedores externos podrían establecer cookies propias. Solo las cargaremos si nos das tu consentimiento.
+        </div>
+      </section>
 
-  <h2>¿Qué son las cookies?</h2>
-  <p>Las cookies son pequeños archivos de texto que se almacenan en tu dispositivo cuando visitas un sitio web. Se usan para mejorar tu experiencia, recordar tus preferencias y analizar el uso del sitio.</p>
+      <section id="gestionar">
+        <h2>3. Cómo gestionar tus preferencias</h2>
+        <p>Puedes aceptar todas, rechazar o ajustar categorías. También puedes borrar o bloquear cookies desde la configuración de tu navegador. Respetamos la preferencia del navegador <strong>“No rastrear” (Do Not Track)</strong> cuando esté activada.</p>
+        <p><button class="btn secondary" id="openPrefs">Abrir preferencias de cookies</button></p>
+      </section>
 
-  <h2>¿Qué tipos de cookies utilizamos?</h2>
-  <ul>
-    <li><strong>Cookies esenciales:</strong> necesarias para el funcionamiento del sitio.</li>
-    <li><strong>Cookies de análisis:</strong> nos ayudan a entender cómo se usa nuestro sitio para mejorarlo.</li>
-    <li><strong>Cookies de funcionalidad:</strong> recuerdan tus preferencias para ofrecer funciones personalizadas.</li>
-    <li><strong>Cookies de terceros:</strong> servicios como Google Analytics o redes sociales pueden establecer cookies.</li>
-  </ul>
+      <section id="cambios">
+        <h2>4. Cambios en esta política</h2>
+        <p>Podemos actualizar esta política para reflejar cambios tecnológicos, legales o de negocio. La fecha de “Última actualización” se ajustará automáticamente.</p>
+      </section>
 
-  <h2>¿Cómo puedes controlar las cookies?</h2>
-  <p>Puedes configurar tu navegador para rechazar o eliminar cookies. Ten en cuenta que algunas funciones del sitio podrían dejar de funcionar correctamente.</p>
+      <section id="contacto">
+        <h2>5. Contacto</h2>
+        <p>Si tienes dudas, escríbenos a: <a href="mailto:soporte@transferenciavip.xyz">soporte@transferenciavip.xyz</a>. También puedes consultar nuestra <a href="politica.html">Política de Privacidad</a> y los <a href="terminos.html">Términos y Condiciones</a>.</p>
+      </section>
+    </main>
 
-  <h2>Modificaciones</h2>
-  <p>Podemos actualizar esta política ocasionalmente. Te recomendamos revisarla periódicamente para estar informado sobre cómo usamos las cookies.</p>
+    <footer>
+      <span>Última actualización: <time id="lastUpdate" datetime="">—</time></span>
+      <a href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'})">Volver arriba ↑</a>
+    </footer>
+  </article>
 
-  <h2>Contacto</h2>
-  <p>Si tienes preguntas sobre esta política, puedes escribirnos a: <a href="mailto:kevinaldaircamachoserna51@gmail.com">soporte@transferenciavip.com</a></p>
-</main>
+  <!-- Banner de consentimiento -->
+  <div class="cookie-banner" id="cookieBanner" role="dialog" aria-live="polite" aria-label="Consentimiento de cookies" hidden>
+    <div class="cookie-inner">
+      <p>Usamos cookies para mejorar tu experiencia, analizar el uso y, si lo autorizas, para personalización y marketing. Puedes cambiar tu elección en cualquier momento.</p>
+      <button class="btn secondary" id="denyAll">Rechazar</button>
+      <button class="btn" id="prefs">Configurar</button>
+      <button class="btn primary" id="acceptAll">Aceptar todas</button>
+    </div>
+  </div>
 
-<footer>
-  © 2025 transferencia vip - Todos los derechos reservados
-</footer>
+  <!-- Modal de preferencias -->
+  <div class="modal" id="prefsModal" aria-modal="true" aria-hidden="true" role="dialog" aria-labelledby="prefsTitle">
+    <div class="modal-card" role="document">
+      <div class="modal-head">
+        <h3 id="prefsTitle">Preferencias de cookies</h3>
+        <button class="close" id="closePrefs" aria-label="Cerrar">✕</button>
+      </div>
 
+      <div class="pref disabled" aria-disabled="true">
+        <div>
+          <strong>Esenciales</strong><br/>
+          <small>Necesarias para el funcionamiento básico. Siempre activas.</small>
+        </div>
+        <label class="switch" aria-label="Esenciales (siempre activas)">
+          <input type="checkbox" checked disabled />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="pref">
+        <div>
+          <strong>Funcionales</strong><br/>
+          <small>Guardan ajustes de experiencia (ej. idioma).</small>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="c_func" />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="pref">
+        <div>
+          <strong>Analíticas</strong><br/>
+          <small>Nos ayudan a entender el uso del sitio para mejorarlo.</small>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="c_ana" />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="pref">
+        <div>
+          <strong>Marketing</strong><br/>
+          <small>Personalización y medición de campañas.</small>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="c_mkt" />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:14px">
+        <button class="btn secondary" id="savePrefs">Guardar</button>
+        <button class="btn primary" id="acceptAll2">Aceptar todas</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- Utilidades ----------
+    const $ = (s)=>document.querySelector(s);
+    const storageKey = 'cookie-consent-v1';
+
+    const defaultState = { // por defecto: solo esenciales
+      func:false, ana:false, mkt:false, setAt: null
+    };
+
+    function getConsent(){
+      try{
+        const raw = localStorage.getItem(storageKey);
+        return raw ? JSON.parse(raw) : null;
+      }catch(e){ return null; }
+    }
+    function saveConsent(state){
+      try{ localStorage.setItem(storageKey, JSON.stringify(state)); }catch(e){}
+    }
+    function respectsDNT(){
+      return (navigator.doNotTrack === '1') || (window.doNotTrack === '1');
+    }
+
+    // ---------- Hooks para scripts condicionales ----------
+    function enableAnalytics(){
+      // Sustituye por tu ID de GA4 (o elimina esta función si no lo usarás)
+      const GA_ID = 'G-XXXXXXXX';
+      if (!GA_ID || document.getElementById('ga4-src')) return;
+      const s1 = document.createElement('script');
+      s1.id='ga4-src';
+      s1.async = true;
+      s1.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
+      document.head.appendChild(s1);
+
+      const s2 = document.createElement('script');
+      s2.id='ga4-init';
+      s2.text = `
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '${GA_ID}', { anonymize_ip: true });
+      `;
+      document.head.appendChild(s2);
+    }
+    function disableAnalytics(){
+      // Opcional: limpiar objetos o cookies propias de analytics si fuese necesario
+      const s = document.getElementById('ga4-src'); if (s) s.remove();
+      const i = document.getElementById('ga4-init'); if (i) i.remove();
+      // Nota: las cookies de terceros solo pueden borrarlas los propios dominios que las hayan puesto.
+    }
+
+    // ---------- UI Fecha ----------
+    (function(){
+      const el = document.getElementById('lastUpdate');
+      const d = new Date();
+      const f = new Intl.DateTimeFormat('es-PE', { day:'2-digit', month:'long', year:'numeric' }).format(d);
+      el.textContent = f.charAt(0).toUpperCase() + f.slice(1);
+      el.setAttribute('datetime', d.toISOString());
+    })();
+
+    // ---------- Banner & Preferencias ----------
+    const banner = $('#cookieBanner');
+    const modal  = $('#prefsModal');
+    const c_func = $('#c_func');
+    const c_ana  = $('#c_ana');
+    const c_mkt  = $('#c_mkt');
+
+    function openModal(){
+      modal.style.display = 'flex';
+      modal.setAttribute('aria-hidden','false');
+    }
+    function closeModal(){
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden','true');
+    }
+
+    // Inicialización
+    (function initConsent(){
+      const saved = getConsent();
+      // Si DNT está activo y no hay consentimiento guardado, mostramos todo desactivado
+      if (!saved){
+        if (respectsDNT()){
+          const state = { ...defaultState, setAt: Date.now() };
+          saveConsent(state);
+        } else {
+          banner.hidden = false;
+        }
+      } else {
+        applyConsent(saved);
+      }
+    })();
+
+    function applyConsent(state){
+      // Sincroniza switches
+      c_func.checked = !!state.func;
+      c_ana.checked  = !!state.ana;
+      c_mkt.checked  = !!state.mkt;
+
+      // Activa / desactiva scripts según categorías
+      if (state.ana) enableAnalytics(); else disableAnalytics();
+
+      // Oculta banner
+      banner.hidden = true;
+    }
+
+    function acceptAll(){
+      const state = { func:true, ana:true, mkt:true, setAt: Date.now() };
+      saveConsent(state); applyConsent(state);
+    }
+    function denyAll(){
+      const state = { func:false, ana:false, mkt:false, setAt: Date.now() };
+      saveConsent(state); applyConsent(state);
+    }
+    function savePrefs(){
+      const state = { func:c_func.checked, ana:c_ana.checked, mkt:c_mkt.checked, setAt: Date.now() };
+      saveConsent(state); applyConsent(state); closeModal();
+    }
+
+    // Banner actions
+    document.getElementById('acceptAll').addEventListener('click', acceptAll);
+    document.getElementById('denyAll').addEventListener('click', denyAll);
+    document.getElementById('prefs').addEventListener('click', openModal);
+
+    // Modal actions
+    document.getElementById('openPrefs').addEventListener('click', openModal);
+    document.getElementById('closePrefs').addEventListener('click', closeModal);
+    document.getElementById('savePrefs').addEventListener('click', savePrefs);
+    document.getElementById('acceptAll2').addEventListener('click', ()=>{ acceptAll(); closeModal(); });
+
+    // Cerrar con ESC / click fuera
+    window.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closeModal(); });
+    modal.addEventListener('click', (e)=>{ if (e.target === modal) closeModal(); });
+  </script>
 </body>
-</html>
+  </html>

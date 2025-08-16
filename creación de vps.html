@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Generador de VPS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+  <link rel="icon" href="3440119_ico.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#121212" />
+  <link rel="icon" type="image/png" href="3440119_ico.png">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="¡Únete a Transferencia VIP y gana créditos!" />
+  <meta property="og:description" content="Regístrate con este enlace de referido y recibe hasta 10 créditos gratis. Empieza a ganar hoy." />
+  <meta property="og:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  <meta property="og:url" content="https://transferenciavip.xyz" />
+  <meta property="og:type" content="website" />
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="¡Gana créditos con Transferencia VIP!" />
+  <meta name="twitter:description" content="Regístrate con un referido y recibe bonificaciones instantáneas." />
+  <meta name="twitter:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .form-control, .form-select {
+      background-color: #222;
+      color: #fff;
+      border: 1px solid #444;
+    }
+    .btn-primary {
+      background-color: #007bff;
+      border: none;
+    }
+    .modal-content {
+      background-color: #1e1e1e;
+      color: #fff;
+      border-radius: 10px;
+    }
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.5rem;
+      color: #fff;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h2 class="mb-4">Generador de VPS</h2>
+  <h2 class="mb-4">Costo de créditos: 6 créditos 🪙</h2>
+  <div class="mb-3">
+    <label class="form-label">Localización</label>
+    <select id="localizacion" class="form-select">
+      <option value="Perú">Perú</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Nombre de Usuario</label>
+    <input type="text" id="usuario" class="form-control" placeholder="Escribe un nombre de usuario"/>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Contraseña</label>
+    <input type="text" id="contrasena" class="form-control" placeholder="Escribe una contraseña"/>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Días de duración (máx 30)</label>
+    <input type="number" id="dias" class="form-control" max="30" />
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Límite de conexión (máx 500)</label>
+    <input type="number" id="limite" class="form-control" max="500" />
+  </div>
+  <button class="btn btn-primary" onclick="generarVPS()">Generar VPS</button>
+
+  <!-- Modal -->
+  <div class="modal fade" id="modalVPS" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content p-4 position-relative">
+        <span class="close" onclick="cerrarModal()">&times;</span>
+        <div id="modalContenido"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbL1fRbwVZRhdD88TeQSFgpvfjZOMwfIg",
+    authDomain: "multidoxnetfree.firebaseapp.com",
+    databaseURL: "https://multidoxnetfree-default-rtdb.firebaseio.com",
+    projectId: "multidoxnetfree",
+    storageBucket: "multidoxnetfree.firebasestorage.app",
+    messagingSenderId: "248995370956",
+    appId: "1:248995370956:web:455823a3778859bd4d2f69",
+    measurementId: "G-HDE68S5TYS"
+  };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+    let UID = null;
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        UID = user.uid;
+      } else {
+        window.location.href = "index.html";
+      }
+    });
+
+    function mostrarModal(mensaje) {
+      document.getElementById('modalContenido').innerHTML = `<p>${mensaje}</p>`;
+      new bootstrap.Modal(document.getElementById('modalVPS')).show();
+    }
+
+    function cerrarModal() {
+      bootstrap.Modal.getInstance(document.getElementById('modalVPS')).hide();
+    }
+
+    function generarVPS() {
+      const loc = document.getElementById('localizacion').value;
+      const diasInput = parseInt(document.getElementById('dias').value);
+      const limiteInput = parseInt(document.getElementById('limite').value);
+
+      const dias = Math.min(diasInput, 30);
+      const limite = Math.min(limiteInput, 500);
+
+      if (!dias || !limite) {
+        return alert("Todos los campos son obligatorios.");
+      }
+
+      mostrarModal("Procesando datos...");
+      setTimeout(() => {
+        mostrarModal("Procesando créditos...");
+        setTimeout(async () => {
+          const creditosRef = db.ref(`usuarios/${UID}/comisionesTotales`);
+          const snapshot = await creditosRef.get();
+          let creditos = parseFloat(snapshot.val()) || 0;
+
+          if (creditos < 6) {
+            mostrarModal("Créditos insuficientes para generar un VPS.");
+            return;
+          }
+
+          // Descontar créditos
+          await creditosRef.set((creditos - 6).toFixed(2));
+
+          const fechaExp = new Date();
+          fechaExp.setDate(fechaExp.getDate() + dias);
+          const fechaFormateada = fechaExp.toLocaleDateString('es-ES');
+
+          const ip = "kevin.golbert-vps.fun";
+          const payload = `GET / HTTP/1.1[crlf]Host: ${ip}[crlf]Upgrade: websocket[crlf][crlf]`;
+
+          mostrarModal(`
+            <h5 class="text-success">🎉 Felicidades, tu VPS fue creado con éxito</h5>
+            <hr>
+            <pre>
+IP de Servidor: ${ip}
+Usuario: internert
+Contraseña: internert
+Días de Duración: ${dias}
+Fecha de Expiración: ${fechaFormateada}
+Límite de Conexión: ${limite}
+------------------------------
+SSH: 22
+DROPBEAR: 80 90
+SSL: 443
+SQUID: 3128
+Bad VPN: 7300
+Python: 100
+------------------------------
+PAYLOAD WEBSOCKET:
+${payload}
+            </pre>
+          `);
+        }, 2000);
+      }, 3000);
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html><html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Suscripción VIP</title>
+  <link rel="icon" href="3440119_ico.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#121212" />
+  <link rel="icon" type="image/png" href="3440119_ico.png">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="¡Únete a Transferencia VIP y gana créditos!" />
+  <meta property="og:description" content="Regístrate con este enlace de referido y recibe hasta 10 créditos gratis. Empieza a ganar hoy." />
+  <meta property="og:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  <meta property="og:url" content="https://transferenciavip.xyz" />
+  <meta property="og:type" content="website" />
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="¡Gana créditos con Transferencia VIP!" />
+  <meta name="twitter:description" content="Regístrate con un referido y recibe bonificaciones instantáneas." />
+  <meta name="twitter:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #1e1e2f;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+    .topbar {
+      background-color: #2c2c3c;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .btn-cursos {
+      background: #8b5cf6;
+      border: none;
+      padding: 8px 16px;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .container {
+      padding: 20px;
+    }
+    .section-title {
+      background: #8b5cf6;
+      padding: 10px 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .card-grid {
+      display: none;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 15px;
+    }
+    .card {
+      background: #2c2c3c;
+      border-radius: 10px;
+      text-decoration: none;
+      color: white;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    .card img {
+      width: 100%;
+      height: auto;
+    }
+    .card-content {
+      padding: 10px 15px;
+    }
+    .completado {
+      color: #4ade80;
+      font-weight: bold;
+    }
+    .error-msg {
+      color: red;
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo">KTT</div>
+    <div class="topbar-actions">
+      <button class="btn-cursos">Usuario Premium</button>
+    </div>
+  </header>  <main class="container">
+    <h2 class="section-title">Curso y mucho más</h2>
+    <div class="card-grid" id="cardGrid"></div>
+<div class="error-msg" id="errorMsg"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCbL1fRbwVZRhdD88TeQSFgpvfjZOMwfIg",
+    authDomain: "multidoxnetfree.firebaseapp.com",
+    databaseURL: "https://multidoxnetfree-default-rtdb.firebaseio.com",
+    projectId: "multidoxnetfree",
+    storageBucket: "multidoxnetfree.firebasestorage.app",
+    messagingSenderId: "248995370956",
+    appId: "1:248995370956:web:455823a3778859bd4d2f69",
+    measurementId: "G-HDE68S5TYS"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.database();
+
+  window.addEventListener('DOMContentLoaded', () => {
+    auth.onAuthStateChanged(user => {
+      const cardGrid = document.getElementById('cardGrid');
+      const errorMsg = document.getElementById('errorMsg');
+
+      if (!user) return window.location.href = 'index.html';
+
+      db.ref(`usuarios/${user.uid}/plan`).once('value').then(snapshot => {
+        const plan = snapshot.val() || 'FREE';
+        if (['PREMIUM', 'VIP', 'DIAMANTE'].includes(plan)) {
+          db.ref('contenido').once('value').then(snapshot => {
+            cardGrid.style.display = 'grid';
+            snapshot.forEach(child => {
+              const data = child.val();
+              const key = child.key;
+              const card = document.createElement('a');
+              card.className = 'card';
+              card.href = `tutorial.html?id=${key}`;
+              card.innerHTML = `
+                <img src="${data.imagen}" alt="${data.titulo}">
+                <div class="card-content">
+                  <h3>${data.titulo}</h3>
+                  <span class="completado">${data.boton || 'Ver ahora'}</span>
+                </div>
+              `;
+              cardGrid.appendChild(card);
+            });
+          });
+        } else {
+          errorMsg.textContent = '❌ Acceso denegado: necesitas el plan PREMIUM para acceder a este contenido.';
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

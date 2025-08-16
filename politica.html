@@ -1,103 +1,175 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Política de Privacidad y Términos de Uso | Transferencia VIP</title>
-  <link rel="icon" href="3440119_ico.png" />
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#121212" />
-  <link rel="icon" type="image/png" href="3440119_ico.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Política de Privacidad y Términos de Uso</title>
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="¡Únete a Transferencia VIP y gana créditos!" />
-  <meta property="og:description" content="Regístrate con este enlace de referido y recibe hasta 10 créditos gratis. Empieza a ganar hoy." />
-  <meta property="og:image" content="https://transferenciavip.xyz/3440119_ico.png" />
-  <meta property="og:url" content="https://transferenciavip.xyz" />
-  <meta property="og:type" content="website" />
-  <!-- Twitter Cards -->
+  <link rel="icon" href="3440119_ico.png" sizes="32x32" />
+  <link rel="apple-touch-icon" href="3440119_ico.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0f2027" />
+  <link rel="canonical" href="politica.html" />
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:site_name" content="Transferencia VIP" />
+  <meta property="og:title" content="Política de Privacidad y Términos de Uso · Transferencia VIP" />
+  <meta property="og:description" content="Lee la política de privacidad y términos de uso de Transferencia VIP." />
+  <meta property="og:image" content="3440119_ico.png" />
+  <meta property="og:url" content="politica.html" />
+  <meta property="og:type" content="article" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="¡Gana créditos con Transferencia VIP!" />
-  <meta name="twitter:description" content="Regístrate con un referido y recibe bonificaciones instantáneas." />
-  <meta name="twitter:image" content="https://transferenciavip.xyz/3440119_ico.png" />
-  
+
+  <!-- Fuente -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f7f9fc;
-      padding: 40px 20px;
-      max-width: 900px;
-      margin: auto;
-      line-height: 1.7;
-      color: #333;
+    :root{
+      --bg1:#0f2027; --bg2:#203a43; --bg3:#2c5364;
+      --card:#ffffff; --text:#0b1220; --muted:#5b708b;
+      --link:#0d6efd; --linkHover:#0b5ed7; --border:#e5eaf0;
     }
-    h1, h2 {
-      color: #007bff;
+    *{box-sizing:border-box}
+    body{
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: linear-gradient(-45deg, var(--bg1), var(--bg2), var(--bg3), var(--bg1));
+      background-size: 400% 400%;
+      animation: bgmove 18s ease infinite;
+      margin:0; display:flex; justify-content:center; padding:16px;
+      color: var(--text);
     }
-    a {
-      color: #007bff;
-      text-decoration: none;
+    .wrapper{
+      width:min(1040px, 96%); background: var(--card); border-radius: 18px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.28);
+      padding: clamp(18px, 3vw, 32px);
+      border: 1px solid var(--border);
     }
-    a:hover {
-      text-decoration: underline;
+    header .title{
+      display:flex; align-items:center; gap:12px; margin-bottom:8px;
     }
-    ul {
-      padding-left: 20px;
+    header img{ width:48px; height:48px; border-radius:12px }
+    h1{ font-size: clamp(1.4rem, 3vw, 2rem); margin:0 }
+    .meta{ color: var(--muted); margin: 6px 0 16px }
+    .toc{
+      background: #f7f9fc; border:1px solid var(--border); border-radius:12px;
+      padding:14px; margin: 4px 0 18px;
     }
+    .toc strong{ display:block; margin-bottom:6px }
+    .toc a{ color: var(--link); text-decoration:none }
+    .toc a:hover{ text-decoration:underline }
+    main h2{ margin-top:28px; font-size:1.2rem }
+    main p, main li{ line-height:1.65 }
+    main a{ color: var(--link); text-decoration:none }
+    main a:hover{ text-decoration:underline }
+    footer{
+      margin-top: 22px; padding-top: 14px; border-top:1px solid var(--border);
+      color: var(--muted); display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    }
+    @keyframes bgmove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
   </style>
 </head>
 <body>
+  <article class="wrapper">
+    <header>
+      <div class="title">
+        <img src="3440119_ico.png" alt="Logo"/>
+        <h1>Política de Privacidad y Términos de Uso</h1>
+      </div>
+      <p class="meta">Conoce cómo protegemos tus datos y las condiciones para usar multi dox netfree.</p>
+      <nav class="toc" aria-label="Índice de contenidos">
+        <strong>Contenido</strong>
+        <ol>
+          <li><a href="#aceptacion">Aceptación de los términos</a></li>
+          <li><a href="#recompensas">Cómo funciona el sistema de recompensas</a></li>
+          <li><a href="#privacidad">Privacidad y uso de datos</a></li>
+          <li><a href="#seguridad">Seguridad de la cuenta</a></li>
+          <li><a href="#canje">Canje de recompensas</a></li>
+          <li><a href="#uso">Uso de la plataforma</a></li>
+          <li><a href="#modificaciones">Modificaciones</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+        </ol>
+      </nav>
+    </header>
 
-  <h1>Política de Privacidad y Términos de Uso</h1>
+    <main>
+      <section id="aceptacion">
+        <h2>1. Aceptación de los términos</h2>
+        <p>Al registrarte o utilizar <strong>multi dox netfree</strong></strong>, aceptas esta política y los términos de uso. Si no estás de acuerdo, no utilices la plataforma.</p>
+      </section>
 
-  <p>Bienvenido a <strong>Transferencia VIP</strong>. Esta plataforma ofrece a los usuarios la posibilidad de ganar recompensas digitales como <strong>servidores VPS, APKs modificadas, recargas, herramientas premium y mucho más</strong>, simplemente por invitar a otros a registrarse con su enlace de referido.</p>
+      <section id="recompensas">
+        <h2>2. Cómo funciona el sistema de recompensas</h2>
+        <ul>
+          <li>Recibirás créditos gratis al registrarte (5 o 10 según uso de referido).</li>
+          <li>Por cada registro con tu enlace, obtendrás comisiones automáticas.</li>
+          <li>Los créditos pueden canjearse por <strong>VPS, apps modificadas, regalos, cuentas premium</strong> y más.</li>
+          <li>Premios sujetos a disponibilidad y promociones vigentes.</li>
+        </ul>
+      </section>
 
-  <h2>1. Aceptación de los términos</h2>
-  <p>Al registrarte o utilizar Transferencia VIP, aceptas los presentes términos de uso y políticas de privacidad. Si no estás de acuerdo, por favor no utilices esta plataforma.</p>
+      <section id="privacidad">
+        <h2>3. Privacidad y uso de datos</h2>
+        <p>Recopilamos:</p>
+        <ul>
+          <li>Correo electrónico</li>
+          <li>Nombre de usuario y nombre completo</li>
+          <li>Fecha de registro, historial de referidos, saldo y comisiones</li>
+          <li>Datos de navegación anónimos para estadísticas</li>
+        </ul>
+        <p>No compartimos tu información con terceros sin tu consentimiento. Los datos se almacenan en servidores de Firebase de forma segura.</p>
+      </section>
 
-  <h2>2. ¿Cómo funciona el sistema de recompensas?</h2>
-  <ul>
-    <li>Al registrarte, recibes créditos gratis (5 o 10 dependiendo si usaste referido).</li>
-    <li>Por cada persona que se registre con tu enlace, ganas comisiones automáticas.</li>
-    <li>Acumula créditos para canjear <strong>VPS gratuitos, apps modificadas, regalos, cuentas premium y más.</strong></li>
-    <li>Los premios pueden cambiar o variar según disponibilidad y promociones activas.</li>
-  </ul>
+      <section id="seguridad">
+        <h2>4. Seguridad de la cuenta</h2>
+        <p>No se permite:</p>
+        <ul>
+          <li>Crear múltiples cuentas para beneficio propio en referidos.</li>
+          <li>Manipular o automatizar registros.</li>
+          <li>Compartir enlaces engañosos o maliciosos.</li>
+        </ul>
+      </section>
 
-  <h2>3. Privacidad y uso de datos</h2>
-  <p>Recopilamos y almacenamos los siguientes datos:</p>
-  <ul>
-    <li>Correo electrónico</li>
-    <li>Nombre de usuario y nombre completo</li>
-    <li>Fecha de registro, historial de referidos, saldo y comisiones</li>
-    <li>Datos de navegación anónimos para estadísticas</li>
-  </ul>
-  <p>No compartimos tu información con terceros sin tu consentimiento. Todos los datos son almacenados de forma segura en servidores administrados por Firebase.</p>
+      <section id="canje">
+        <h2>5. Canje de recompensas</h2>
+        <ul>
+          <li>Las recompensas pueden requerir verificación de identidad.</li>
+          <li>Podemos modificar o eliminar recompensas ante fraude o mal uso.</li>
+          <li>Créditos transferibles solo con plan VIP activo.</li>
+        </ul>
+      </section>
 
-  <h2>4. Seguridad de la cuenta</h2>
-  <p>Debes mantener la confidencialidad de tus credenciales de acceso. No se permite:</p>
-  <ul>
-    <li>Crear múltiples cuentas para beneficiarse del sistema de referidos</li>
-    <li>Manipular o automatizar registros</li>
-    <li>Difundir enlaces con contenido engañoso, malicioso o ilegal</li>
-  </ul>
+      <section id="uso">
+        <h2>6. Uso de la plataforma</h2>
+        <p>El uso debe ser legal y respetuoso. Actividades sospechosas pueden derivar en suspensión y pérdida de recompensas.</p>
+      </section>
 
-  <h2>5. Canje de recompensas</h2>
-  <ul>
-    <li>Las recompensas están sujetas a disponibilidad y pueden requerir verificación de identidad.</li>
-    <li>Transferencia VIP se reserva el derecho de modificar, suspender o eliminar recompensas sin previo aviso si se detectan fraudes o mal uso del sistema.</li>
-    <li>Los créditos obtenidos por referidos se pueden transferir a otras cuentas pero teniendo el plan vip hacia delante.</li>
-  </ul>
+      <section id="modificaciones">
+        <h2>7. Modificaciones</h2>
+        <p>Podemos actualizar esta política en cualquier momento. Te recomendamos revisarla periódicamente.</p>
+      </section>
 
-  <h2>6. Uso de la plataforma</h2>
-  <p>El uso de Transferencia VIP debe ser legal y respetuoso. Cualquier intento de abuso, manipulación del sistema o actividad sospechosa resultará en la suspensión de la cuenta y pérdida de recompensas acumuladas.</p>
+      <section id="contacto">
+        <h2>8. Contacto</h2>
+        <p>Consultas o soporte: <a href="mailto:soporte@transferenciavip.xyz">soporte@transferenciavip.xyz</a></p>
+      </section>
+    </main>
 
-  <h2>7. Modificaciones</h2>
-  <p>Nos reservamos el derecho de actualizar esta política en cualquier momento. Recomendamos revisar esta página periódicamente para estar al tanto de los cambios.</p>
+    <footer>
+      <span>Última actualización: <time id="lastUpdate" datetime="">—</time></span>
+      <a href="#top">Volver arriba ↑</a>
+    </footer>
+  </article>
 
-  <h2>8. Contacto</h2>
-  <p>Para consultas o soporte, puedes escribirnos a: <a href="mailto: kevinaldaircamachoserna51@gmail.com">soporte@transferenciavip.xyz</a></p>
-
-  <p><strong>Última actualización:</strong> 20 de julio de 2025</p>
-
+  <script>
+    (function(){
+      const el = document.getElementById('lastUpdate');
+      const d = new Date();
+      const f = new Intl.DateTimeFormat('es-PE', { day:'2-digit', month:'long', year:'numeric' }).format(d);
+      el.textContent = f.charAt(0).toUpperCase() + f.slice(1);
+      el.setAttribute('datetime', d.toISOString());
+    })();
+  </script>
 </body>
 </html>

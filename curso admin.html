@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel Admin VIP</title>
+  <link rel="icon" href="3440119_ico.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#121212" />
+  <link rel="icon" type="image/png" href="3440119_ico.png">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="¡Únete a Transferencia VIP y gana créditos!" />
+  <meta property="og:description" content="Regístrate con este enlace de referido y recibe hasta 10 créditos gratis. Empieza a ganar hoy." />
+  <meta property="og:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  <meta property="og:url" content="https://transferenciavip.xyz" />
+  <meta property="og:type" content="website" />
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="¡Gana créditos con Transferencia VIP!" />
+  <meta name="twitter:description" content="Regístrate con un referido y recibe bonificaciones instantáneas." />
+  <meta name="twitter:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  
+  <style>
+    body {
+      background: #121212;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h2 { color: #8b5cf6; }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0 15px;
+      border: none;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background: #8b5cf6;
+      color: white;
+      cursor: pointer;
+    }
+    .item {
+      background: #1e1e2f;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+    }
+    .actions button {
+      margin-right: 10px;
+      background: #3b82f6;
+    }
+    .delete-btn {
+      background: #ef4444;
+    }
+    img { max-width: 100%; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <h2>Panel de Administración VIP</h2>
+
+  <form id="adminForm">
+    <input type="text" id="titulo" placeholder="Título (obligatorio)" required>
+    <input type="url" id="imagen" placeholder="URL de la imagen (obligatorio)" required>
+    <textarea id="descripcion" placeholder="Descripción (opcional)"></textarea>
+    <input type="url" id="video" placeholder="URL del video (opcional)">
+    <input type="text" id="boton" placeholder="Texto del botón (opcional)">
+    <input type="url" id="descarga" placeholder="URL de descarga (opcional)">
+    <button type="submit">Agregar contenido</button>
+  </form>
+
+  <hr>
+  <h3>Contenido VIP</h3>
+  <div id="contenidoList"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbL1fRbwVZRhdD88TeQSFgpvfjZOMwfIg",
+    authDomain: "multidoxnetfree.firebaseapp.com",
+    databaseURL: "https://multidoxnetfree-default-rtdb.firebaseio.com",
+    projectId: "multidoxnetfree",
+    storageBucket: "multidoxnetfree.firebasestorage.app",
+    messagingSenderId: "248995370956",
+    appId: "1:248995370956:web:455823a3778859bd4d2f69",
+    measurementId: "G-HDE68S5TYS"
+  };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const form = document.getElementById('adminForm');
+    const list = document.getElementById('contenidoList');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const data = {
+        titulo: document.getElementById('titulo').value.trim(),
+        imagen: document.getElementById('imagen').value.trim(),
+        descripcion: document.getElementById('descripcion').value.trim(),
+        video: document.getElementById('video').value.trim(),
+        boton: document.getElementById('boton').value.trim(),
+        descarga: document.getElementById('descarga').value.trim()
+      };
+
+      if (!data.titulo || !data.imagen) return alert("Título e imagen son obligatorios");
+      db.ref('contenido').push(data);
+      form.reset();
+    });
+
+    db.ref('contenido').on('value', snapshot => {
+      list.innerHTML = '';
+      snapshot.forEach(child => {
+        const data = child.val();
+        const key = child.key;
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <input value="${data.titulo}" onchange="update('${key}', 'titulo', this.value)">
+          <input value="${data.imagen}" onchange="update('${key}', 'imagen', this.value)">
+          <textarea onchange="update('${key}', 'descripcion', this.value)">${data.descripcion || ''}</textarea>
+          <input value="${data.video || ''}" onchange="update('${key}', 'video', this.value)">
+          <input value="${data.boton || ''}" onchange="update('${key}', 'boton', this.value)">
+          <input value="${data.descarga || ''}" onchange="update('${key}', 'descarga', this.value)">
+          <div class="actions">
+            <button class="delete-btn" onclick="deleteItem('${key}')">Eliminar</button>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    });
+
+    function update(key, field, value) {
+      db.ref(`contenido/${key}/${field}`).set(value);
+    }
+
+    function deleteItem(key) {
+      if (confirm("¿Eliminar este contenido?")) {
+        db.ref('contenido/' + key).remove();
+      }
+    }
+  </script>
+</body>
+</html>

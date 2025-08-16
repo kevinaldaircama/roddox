@@ -1,0 +1,154 @@
+<!DOCTYPE html><html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador de Servidores</title>
+  <link rel="icon" href="3440119_ico.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#121212" />
+  <link rel="icon" type="image/png" href="3440119_ico.png">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="¡Únete a Transferencia VIP y gana créditos!" />
+  <meta property="og:description" content="Regístrate con este enlace de referido y recibe hasta 10 créditos gratis. Empieza a ganar hoy." />
+  <meta property="og:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  <meta property="og:url" content="https://transferenciavip.xyz" />
+  <meta property="og:type" content="website" />
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="¡Gana créditos con Transferencia VIP!" />
+  <meta name="twitter:description" content="Regístrate con un referido y recibe bonificaciones instantáneas." />
+  <meta name="twitter:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+    .hidden {
+      display: none;
+    }
+    .mensaje {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    .success {
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Generador de Servidores</h2>
+    <h6>costo de créditos: 10 creditos 🪙.</h6>
+    <select id="operador">
+      <option value="">Selecciona un operador</option>
+      <option value="Movistar">Movistar</option>
+      <option value="Claro">Claro</option>
+      <option value="Bitel">Bitel</option>
+      <option value="Entel">Entel</option>
+    </select>
+    <input type="number" id="dias" placeholder="Días (7 - 30)" min="7" max="30">
+    <input type="text" id="usuario" placeholder="Usuario">
+    <input type="password" id="clave" placeholder="Contraseña">
+    <button onclick="generarServidor()">Generar</button><div class="mensaje" id="mensaje"></div>
+<div class="mensaje hidden" id="resultado"></div>
+
+  </div>  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>  <script>
+    // Firebase Config
+    const firebaseConfig = {
+        apiKey: "AIzaSyCbL1fRbwVZRhdD88TeQSFgpvfjZOMwfIg",
+    authDomain: "multidoxnetfree.firebaseapp.com",
+    databaseURL: "https://multidoxnetfree-default-rtdb.firebaseio.com",
+    projectId: "multidoxnetfree",
+    storageBucket: "multidoxnetfree.firebasestorage.app",
+    messagingSenderId: "248995370956",
+    appId: "1:248995370956:web:455823a3778859bd4d2f69",
+    measurementId: "G-HDE68S5TYS"
+  };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    function generarServidor() {
+      const operador = document.getElementById('operador').value;
+      const dias = parseInt(document.getElementById('dias').value);
+      const usuario = document.getElementById('usuario').value;
+      const clave = document.getElementById('clave').value;
+      const mensaje = document.getElementById('mensaje');
+      const resultado = document.getElementById('resultado');
+
+      if (!operador || isNaN(dias) || dias < 7 || dias > 30 || !usuario || !clave) {
+        alert('Por favor completa todos los campos correctamente.');
+        return;
+      }
+
+      mensaje.textContent = 'Procesando datos...';
+      mensaje.classList.remove('hidden');
+
+      setTimeout(() => {
+        mensaje.textContent = 'Generando servidor...';
+
+        setTimeout(() => {
+          const user = auth.currentUser;
+          if (!user) {
+            mensaje.textContent = 'Debes iniciar sesión para continuar.';
+            return;
+          }
+
+          const creditosRef = db.ref(`usuarios/${user.uid}/comisionesTotales`);
+          creditosRef.once('value').then(snapshot => {
+            const saldo = parseFloat(snapshot.val()) || 0;
+
+            if (saldo < 10) {
+              mensaje.textContent = 'No tienes suficientes créditos (10 necesarios).';
+              return;
+            }
+
+            // Descontar 10 créditos
+            creditosRef.set(saldo - 10).then(() => {
+              mensaje.classList.add('hidden');
+              resultado.classList.remove('hidden');
+              resultado.classList.add('success');
+              resultado.innerHTML = `
+                <p>✨ <strong>Felicidades, tu servidor fue creado con éxito.</strong></p>
+                <p>Operador: <strong>${operador}</strong></p>
+                <p>Días: <strong>${dias}</strong></p>
+                <p>Usuario: <strong>internet</strong></p>
+                <p>Contraseña: <strong>internet</strong></p>
+                <br><button onclick="location.href='https://www.mediafire.com/folder/rta2q5o3n81sj/internet'">Ir al servidor</button>
+              `;
+            });
+          });
+        }, 2000);
+      }, 2000);
+    }
+  </script></body>
+</html>

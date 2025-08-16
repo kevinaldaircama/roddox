@@ -1,60 +1,53 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Redirigiendo...</title>
-  <meta name="robots" content="noindex">
-  <link rel="icon" href="3440119_ico.png" />
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#121212" />
-  <link rel="icon" type="image/png" href="3440119_ico.png">
-
-  <!-- Open Graph -->
-  <meta property="og:title" content="¡Únete a Transferencia VIP y gana créditos!" />
-  <meta property="og:description" content="Regístrate con este enlace de referido y recibe hasta 10 créditos gratis. Empieza a ganar hoy." />
-  <meta property="og:image" content="https://transferenciavip.xyz/3440119_ico.png" />
-  <meta property="og:url" content="https://transferenciavip.xyz" />
-  <meta property="og:type" content="website" />
-  <!-- Twitter Cards -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="¡Gana créditos con Transferencia VIP!" />
-  <meta name="twitter:description" content="Regístrate con un referido y recibe bonificaciones instantáneas." />
-  <meta name="twitter:image" content="https://transferenciavip.xyz/3440119_ico.png" />
-  
-  <script>
-    const pathParts = window.location.pathname.split('/');
-    if (pathParts[1] === 'referido' && pathParts[2]) {
-      const refId = pathParts[2].replace(/[.#$[\]/]/g, '');
-      localStorage.setItem('idReferido', refId);
-      window.location.href = '/registro.html';
-    } else {
-      // Si no es ruta /referido, redirige al inicio
-      window.location.href = '/';
-    }
-  </script>
-  <style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Página no encontrada - Error 404</title>
+<style>
     body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #a1c4fd, #c2e9fb);
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #333;
-      text-align: center;
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #4e54c8, #8f94fb);
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        text-align: center;
+        flex-direction: column;
     }
-    .container {
-      max-width: 400px;
+    h1 {
+        font-size: 6rem;
+        margin: 0;
+        animation: bounce 1s infinite;
     }
-  </style>
+    p {
+        font-size: 1.2rem;
+        margin: 10px 0 20px;
+    }
+    a {
+        background: #fff;
+        color: #4e54c8;
+        padding: 12px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    a:hover {
+        background: #f1f1f1;
+        transform: translateY(-2px);
+    }
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>Redirigiendo...</h1>
-    <p>Por favor espera un momento mientras procesamos tu invitación.</p>
-  </div>
+    <h1>404</h1>
+    <p>Oops... La página que buscas no existe.</p>
+    <a href="index.html">Volver al inicio</a>
 </body>
 </html>

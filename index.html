@@ -2,186 +2,231 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>roddox - doxeo al toke</title>
-  <link rel="icon" href="logo.jpg" />
-  <link rel="manifest" href="manifest.json" />      
-  <meta name="theme-color" content="#121212" />      
-  <link rel="icon" type="image/png" href="logo.jpg">
-  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&display=swap" rel="stylesheet">
-  <meta name="description" content="roddox - doxeo al toke mas profesional que otras web.">
-  <meta property="og:title" content="roddox - doxeo al toke" />
-  <meta property="og:description" content="doxeo al toke mas profesional que otras web" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>multi dox netfree</title>
+  <meta name="description" content="multi dox netfree: Transfiere, gana y multiplica tu saldo con cada acción." />
+  <link rel="canonical" href="https://transferenciavip.xyz/" />  
+
+  <!-- Favicon & App Icons -->
+  <link rel="icon" href="3440119_ico.png" sizes="32x32" />
+  <link rel="apple-touch-icon" href="3440119_ico.png" />
+  <meta name="theme-color" content="#0f2027" />  
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:site_name" content="Transferencia VIP" />
+  <meta property="og:title" content="multi dox netfree– Transfiere y gana" />
+  <meta property="og:description" content="Gana créditos al registrarte. ¡Únete ahora!" />
   <meta property="og:image" content="https://transferenciavip.xyz/logo-oficial.png" />
   <meta property="og:url" content="https://transferenciavip.xyz/" />
-  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:card" content="summary_large_image" />  
+
+  <!-- Preconnects & Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />  
+
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #0f2027);
-      background-size: 400% 400%;
-      animation: gradientMove 15s ease infinite;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
+    :root{
+      --bg1:#0f2027; --bg2:#203a43; --bg3:#2c5364; --accent:#00c6ff; --accent2:#c471f5; --glass:rgba(255,255,255,.08);
+      --txt:#fff; --muted:#c7d2fe; --shadow:0 10px 30px rgba(0,0,0,.25);
     }
-    #loaderOverlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: #0f2027;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      transition: opacity 0.5s ease;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:var(--txt);
+      background:linear-gradient(-45deg,var(--bg1),var(--bg2),var(--bg3),var(--bg1)); background-size:400% 400%;
+      animation:gradientMove 18s ease infinite; display:grid; grid-template-rows:auto 1fr auto; min-height:100vh;
     }
-    #loaderOverlay img {
-      width: 80px;
-      animation: pulse 1.5s infinite;
+    #loaderOverlay{position:fixed; inset:0; background:#0f2027; display:grid; place-items:center; z-index:9999; transition:opacity .45s ease, visibility .45s ease}
+    #loaderOverlay.hidden{opacity:0; visibility:hidden}
+    .spinner{width:88px; height:88px; display:grid; place-items:center}
+    .spinner svg{width:100%; height:100%; animation:spin 1.1s linear infinite}
+    .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0}
+    header{ text-align:center; padding:32px 16px 8px }
+    .brand{display:inline-flex; align-items:center; gap:14px; padding:12px 18px; background:var(--glass); border-radius:16px; box-shadow:var(--shadow)}
+    .brand img{ width:64px; height:64px; border-radius:50%; box-shadow:0 0 0 3px rgba(255,255,255,.08) }
+    .brand h1{ font-size:1.8rem; line-height:1.1; margin:0; font-weight:800 }
+    .tagline{ color:#d1e7ff; opacity:.95; margin-top:10px; font-size:1rem }
+    main{ display:grid; place-items:center; padding:24px; }
+    .card{
+      width:min(96%, 960px); margin:auto; background:backdrop-filter(saturate(1.2) blur(10px));
+      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.14); border-radius:20px; padding:24px; box-shadow:var(--shadow);
     }
-    .hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-    header {
-      text-align: center;
-      padding: 40px 20px 20px;
-      animation: fadeIn 1s ease;
+    .cta{ display:grid; gap:14px; grid-template-columns:1fr; margin-top:18px }
+    .btn{
+      --bg: var(--accent); --bgHover:#0090d9; --ring: rgba(0,198,255,.35);
+      display:inline-flex; align-items:center; justify-content:center; gap:10px; width:100%;
+      padding:14px 18px; border-radius:12px; border:none; cursor:pointer; color:white; font-weight:600; font-size:1rem;
+      background: var(--bg); box-shadow:0 6px 16px var(--ring); transition: transform .15s ease, filter .15s ease, background .2s ease;
     }
-    header img {
-      width: 90px;
-      border-radius: 50%;
-      box-shadow: 0 0 15px rgba(255,255,255,0.2);
-    }
-    header h1 {
-      margin-top: 15px;
-      font-size: 2em;
-      font-weight: 600;
-    }
-    header p {
-      color: #bbb;
-      font-size: 1em;
-      margin-top: 10px;
-    }
-    main {
-      text-align: center;
-      padding: 30px 20px;
-      flex: 1;
-      animation: fadeIn 1s ease;
-      max-width: 500px;
-      margin: auto;
-    }
-    .btn-group {
-      margin-top: 30px;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      align-items: center;
-    }
-    .btn {
-      background: #00c6ff;
-      color: white;
-      border: none;
-      padding: 15px 30px;
-      border-radius: 10px;
-      font-size: 1em;
-      font-weight: 500;
-      cursor: pointer;
-      width: 100%;
-      transition: background 0.3s ease, transform 0.2s ease;
-    }
-    .btn:hover {
-      background: #0090d9;
-      transform: translateY(-2px);
-    }
-    .btn.secondary {
-      background: #c471f5;
-    }
-    .btn.secondary:hover {
-      background: #a551dc;
-    }
-    footer {
-      text-align: center;
-      padding: 20px;
-      font-size: 0.9em;
-      color: #aaa;
-      background-color: rgba(255,255,255,0.05);
-      animation: fadeIn 1.5s ease;
-    }
-    @keyframes pulse {
-      0% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.1); opacity: 0.8; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes gradientMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    @media (max-width: 480px) {
-      .btn { width: 100%; }
-    }
-  </style>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    .btn:hover{ transform: translateY(-1.5px); filter:saturate(1.05); background:var(--bgHover) }
+    .btn.secondary{ --bg: var(--accent2); --bgHover:#a551dc; --ring: rgba(196,113,245,.35) }
+    .btn.ghost{ background:transparent; border:1px solid rgba(255,255,255,.2); box-shadow:none }
+    .features{ display:grid; gap:14px; margin-top:16px; grid-template-columns:repeat(12, 1fr) }
+    .pill{ grid-column: span 12; padding:12px 14px; border-radius:999px; background:var(--glass); border:1px solid rgba(255,255,255,.14); text-align:center; color:#e7f3ff }
+    .grid{ display:grid; gap:16px; grid-template-columns: repeat(12, 1fr); margin-top:18px }
+    .feature-card{ grid-column: span 12; padding:18px; background:var(--glass); border:1px solid rgba(255,255,255,.14); border-radius:16px }
+    .feature-card h3{ margin:0 0 8px; font-size:1.05rem }
+    .feature-card p{ margin:0; color:#dbecff }
+    footer{ text-align:center; padding:20px; color:#c7d2fe; background-color:rgba(255,255,255,.04) }
+    @media (min-width: 640px){ .cta{ grid-template-columns: repeat(2, 1fr) } .grid .feature-card{ grid-column: span 6 } }
+    @media (min-width: 960px){ .grid .feature-card{ grid-column: span 4 } }
+    @keyframes gradientMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @media (prefers-reduced-motion: reduce){ body{animation:none} .spinner svg{animation:none} }
+  </style>  
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics-compat.js" defer></script>
 </head>
 <body>
-
   <!-- Loader -->
-  <div id="loaderOverlay">
-    <img src="logo.jpg" alt="Cargando..." />
+  <div id="loaderOverlay" aria-live="polite" aria-busy="true">
+    <div class="spinner" role="status" aria-label="Cargando">
+      <svg viewBox="0 0 50 50" fill="none" aria-hidden="true">
+        <circle cx="25" cy="25" r="20" stroke="rgba(255,255,255,.22)" stroke-width="6" />
+        <path d="M45 25a20 20 0 0 0-20-20" stroke="white" stroke-width="6" stroke-linecap="round" />
+      </svg>
+      <span class="sr-only">Cargando…</span>
+    </div>
   </div>
 
   <header>
-    <img src="logo.jpg" alt="Transferencia VIP Logo" />
-    <h1>roddox</h1>
-    <p> bienvenido a roddox la mejor página para poder doxear a la gente que quieras, únete y disfruta a la Ventura del doxin</p>
- 
-  </header>
+    <div class="brand" aria-label="Transferencia VIP">
+      <img src="3440119_ico.png" width="64" height="64" alt="Logo de Transferencia VIP" loading="lazy" decoding="async" />
+      <h1>multi dox netfree</h1>
+    </div>
+    <p class="tagline">Gana servidores VPS, APK mod y mucho más totalmente gratis.</p>
+  </header>  
 
   <main>
-    <div class="btn-group">
-      <button class="btn" onclick="location.href='login.html'">Iniciar Sesión</button>
-      <button class="btn secondary" onclick="location.href='planes.html'">Registrarse</button>
-    
-    </div>
-  </main>
+    <section class="card" aria-label="Acciones principales">
+      <div class="cta">
+        <button class="btn" id="btnLogin" type="button">Iniciar sesión</button>
+        <button class="btn secondary" id="btnRegister" type="button">Registrarse</button>
+        <button class="btn ghost" id="btnInstall" type="button" hidden>Instalar App</button>
+      </div>
+
+      <div class="features" aria-label="Beneficios">
+        <div class="pill">Créditos de bienvenida · Retos semanales</div>
+      </div>
+
+      <div class="grid" aria-label="Resumen de ventajas">
+        <article class="feature-card">
+          <h3>Regístrate en segundos</h3>
+          <p>Crea tu cuenta y recibe créditos iniciales para explorar la plataforma.</p>
+        </article>
+        <article class="feature-card">
+          <h3>Contenido VIP</h3>
+          <p>Accede a servidores VPS, apps modificadas y más beneficios exclusivos.</p>
+        </article>
+      </div>
+    </section>
+  </main>  
 
   <footer>
-    © 2025 roddox · Todos los derechos reservados
-  </footer>
+    © <span id="y"></span> multi dox netfree · Todos los derechos reservados
+  </footer>  
 
   <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyDFxkNJCVxwddZFsqPeXSdeYe87ExEdhQk",
-    authDomain: "roddox-27e1b.firebaseapp.com",
-    databaseURL: "https://roddox-27e1b-default-rtdb.firebaseio.com",
-    projectId: "roddox-27e1b",
-    storageBucket: "roddox-27e1b.firebasestorage.app",
-    messagingSenderId: "108259944325",
-    appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
-    measurementId: "G-MBQ5X9PLF8"
-  };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    // Redirección si el usuario ya está logueado
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        window.location.href = "inicio.html";
-      }
+    window.addEventListener('DOMContentLoaded', () => {
+      const yEl = document.getElementById('y');
+      if (yEl) yEl.textContent = new Date().getFullYear();
     });
 
-    // Ocultar loader
     window.addEventListener('load', () => {
-      setTimeout(() => {
-        document.getElementById('loaderOverlay').classList.add('hidden');
-      }, 1500);
+      try{
+        const firebaseConfig = {
+          apiKey: "AIzaSyCbL1fRbwVZRhdD88TeQSFgpvfjZOMwfIg",
+          authDomain: "multidoxnetfree.firebaseapp.com",
+          databaseURL: "https://multidoxnetfree-default-rtdb.firebaseio.com",
+          projectId: "multidoxnetfree",
+          storageBucket: "multidoxnetfree.firebasestorage.app",
+          messagingSenderId: "248995370956",
+          appId: "1:248995370956:web:455823a3778859bd4d2f69",
+          measurementId: "G-HDE68S5TYS"
+        };
+        firebase.initializeApp(firebaseConfig);
+        if (firebase.analytics) { try{ firebase.analytics(); }catch(e){} }
+        const auth = firebase.auth();
+        auth.onAuthStateChanged((user) => {
+          if (user) window.location.replace('inicio.html');
+        });
+      }catch(err){ console.error('Firebase init error:', err); }
     });
+
+    document.addEventListener('click', (e)=>{
+      const id = e.target.closest('button')?.id;
+      if(!id) return;
+      if (id === 'btnLogin') window.location.href = 'login';
+      if (id === 'btnRegister') window.location.href = 'registro';
+    });
+
+    window.addEventListener('load', () => {
+      setTimeout(() => document.getElementById('loaderOverlay')?.classList.add('hidden'), 900);
+    });
+
+    (function setupPWA(){
+      try{
+        const manifest = {
+          name: "multi dox netfree",
+          short_name: "multidox-netfree",
+          start_url: "/",
+          scope: "/",
+          display: "standalone",
+          background_color: "#0f2027",
+          theme_color: "#0f2027",
+          icons: [
+            { src: "3440119_ico.png", sizes: "192x192", type: "image/png" },
+            { src: "3440119_ico.png", sizes: "512x512", type: "image/png" }
+          ]
+        };
+        const blob = new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('link');
+        link.rel = 'manifest';
+        link.href = url;
+        document.head.appendChild(link);
+        if ('serviceWorker' in navigator) {
+          const swCode = `
+            const CACHE = 'multidox-netfree-v1';
+            const ASSETS = ['/', '/index.html', '/3440119_ico.png'];
+            self.addEventListener('install', e=>{
+              e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()));
+            });
+            self.addEventListener('activate', e=>{
+              e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+            });
+            self.addEventListener('fetch', e=>{
+              const url = new URL(e.request.url);
+              if (url.origin === location.origin) {
+                e.respondWith(caches.match(e.request).then(r=> r || fetch(e.request)));
+              }
+            });
+          `;
+          const swBlob = new Blob([swCode], {type:'text/javascript'});
+          const swUrl = URL.createObjectURL(swBlob);
+          navigator.serviceWorker.register(swUrl).catch(console.warn);
+        }
+        let deferredPrompt;
+        const installBtn = document.getElementById('btnInstall');
+        window.addEventListener('beforeinstallprompt', (e) => {
+          e.preventDefault();
+          deferredPrompt = e;
+          installBtn.hidden = false;
+        });
+        installBtn?.addEventListener('click', async() => {
+          if (!deferredPrompt) return;
+          deferredPrompt.prompt();
+          await deferredPrompt.userChoice;
+          deferredPrompt = null;
+          installBtn.hidden = true;
+        });
+      }catch(err){ console.warn('PWA setup error', err); }
+    })();
   </script>
 </body>
 </html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Admin · Pagos Yape</title>
+<style>
+  body{font-family:Arial, sans-serif;background:#f8f8f8;margin:0;padding:0}
+  .wrap{max-width:1100px;margin:20px auto;background:#fff;padding:20px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+  header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+  h1{margin:0}
+  .tabs{display:flex;gap:8px;margin:15px 0}
+  .tab{padding:8px 12px;border-radius:6px;border:1px solid #ccc;cursor:pointer}
+  .tab.active{background:#007bff;color:#fff;border-color:#007bff}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:8px;border-bottom:1px solid #ddd;text-align:left}
+  .btn{padding:6px 10px;border:none;border-radius:6px;cursor:pointer}
+  .ok{background:#16a34a;color:#fff}
+  .warn{background:#f59e0b;color:#fff}
+  .danger{background:#e11d48;color:#fff}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Panel de Pagos Yape</h1>
+    <button id="logoutBtn" class="btn">Cerrar sesión</button>
+  </header>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="pendientes">Pendientes (<span id="countPend">0</span>)</div>
+    <div class="tab" data-tab="aceptados">Aceptados (<span id="countOk">0</span>)</div>
+    <div class="tab" data-tab="rechazados">Rechazados (<span id="countBad">0</span>)</div>
+  </div>
+
+  <div class="bar">
+    <input type="search" id="q" placeholder="Buscar..." />
+    <select id="orden">
+      <option value="recientes">Más recientes</option>
+      <option value="antiguos">Más antiguos</option>
+    </select>
+    <button id="refreshBtn" class="btn">Actualizar</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>ID</th>
+        <th>UID</th>
+        <th>Titular</th>
+        <th>Código</th>
+        <th>Monto</th>
+        <th>Créditos</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="tbody">
+      <tr><td colspan="9">Cargando...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getDatabase, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB28uLNC-7NBDBSJeQJ1Li_bYR6ygbf0DI",
+  apiKey: "AIzaSyCbL1fRbwVZRhdD88TeQSFgpvfjZOMwfIg",
+    authDomain: "multidoxnetfree.firebaseapp.com",
+    databaseURL: "https://multidoxnetfree-default-rtdb.firebaseio.com",
+    projectId: "multidoxnetfree",
+    storageBucket: "multidoxnetfree.firebasestorage.app",
+    messagingSenderId: "248995370956",
+    appId: "1:248995370956:web:455823a3778859bd4d2f69",
+    measurementId: "G-HDE68S5TYS"
+  };
+
+const ADMIN_EMAILS = [
+  "kevinaldaircamachoserna51@gmail.com",
+  "admin2@midominio.com"
+]; // 🔹 Pon aquí los correos permitidos
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+let currentTab = 'pendientes';
+let cache = { pendientes: [], aceptados: [], rechazados: [] };
+
+function fmtDate(ts){
+  const d = new Date(ts || Date.now());
+  return new Intl.DateTimeFormat('es-PE',{dateStyle:'medium',timeStyle:'short'}).format(d);
+}
+
+function render(){
+  const query = document.getElementById("q").value.toLowerCase();
+  let list = [...cache[currentTab]];
+  if(query){
+    list = list.filter(r =>
+      (r.uid||'').toLowerCase().includes(query) ||
+      (r.titular||'').toLowerCase().includes(query) ||
+      (r.codigo||'').toLowerCase().includes(query) ||
+      (r.id||'').toLowerCase().includes(query)
+    );
+  }
+  list.sort((a,b)=>{
+    return document.getElementById("orden").value === 'antiguos'
+      ? (a.createdAt - b.createdAt) : (b.createdAt - a.createdAt);
+  });
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = "";
+  if(!list.length){
+    tbody.innerHTML = `<tr><td colspan="9">Sin registros</td></tr>`;
+    return;
+  }
+  list.forEach(r=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${fmtDate(r.createdAt)}</td>
+      <td>${r.id}</td>
+      <td>${r.uid}</td>
+      <td>${r.titular||'-'}</td>
+      <td>${r.codigo||'-'}</td>
+      <td>S/ ${(Number(r.monto)||0).toFixed(2)}</td>
+      <td>${r.creditos||0}</td>
+      <td>${r.estado||'pendiente'}</td>
+      <td>
+        ${currentTab==='pendientes'
+          ? `<button class="btn ok" data-action="aceptar" data-id="${r.id}">Aceptar</button>
+             <button class="btn warn" data-action="rechazar" data-id="${r.id}">Rechazar</button>`
+          : `<button class="btn danger" data-action="eliminar" data-id="${r.id}">Eliminar</button>`}
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function bindList(path, bucket){
+  onValue(ref(db, path), snap=>{
+    const data = snap.val() || {};
+    cache[bucket] = Object.entries(data).map(([id,v])=>({id,...v}));
+    document.getElementById("countPend").textContent = cache.pendientes.length;
+    document.getElementById("countOk").textContent = cache.aceptados.length;
+    document.getElementById("countBad").textContent = cache.rechazados.length;
+    render();
+  });
+}
+
+document.querySelectorAll(".tab").forEach(tab=>{
+  tab.addEventListener("click",()=>{
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    currentTab = tab.getAttribute("data-tab");
+    render();
+  });
+});
+
+document.getElementById("tbody").addEventListener("click", async e=>{
+  const btn = e.target.closest("button[data-action]");
+  if(!btn) return;
+  const id = btn.getAttribute("data-id");
+  const item = cache[currentTab].find(x=>x.id===id);
+  if(btn.dataset.action==="aceptar"){
+    await update(ref(db), {
+      [`pagos-aceptados/${id}`]: {...item, estado:"aceptado"},
+      [`pagos-pendientes/${id}`]: null
+    });
+  }
+  if(btn.dataset.action==="rechazar"){
+    await update(ref(db), {
+      [`pagos-rechazados/${id}`]: {...item, estado:"rechazado"},
+      [`pagos-pendientes/${id}`]: null
+    });
+  }
+  if(btn.dataset.action==="eliminar"){
+    await remove(ref(db, `${currentTab==='aceptados'?'pagos-aceptados':'pagos-rechazados'}/${id}`));
+  }
+});
+
+document.getElementById("refreshBtn").addEventListener("click",()=>{
+  bindAll();
+});
+document.getElementById("q").addEventListener("input",render);
+document.getElementById("orden").addEventListener("change",render);
+
+document.getElementById("logoutBtn").addEventListener("click", async ()=>{
+  await signOut(auth);
+  location.href = "login.html";
+});
+
+function bindAll(){
+  bindList("pagos-pendientes","pendientes");
+  bindList("pagos-aceptados","aceptados");
+  bindList("pagos-rechazados","rechazados");
+}
+
+onAuthStateChanged(auth, user=>{
+  if(!user){
+    location.href = "login.html";
+    return;
+  }
+  if(!ADMIN_EMAILS.includes(user.email)){
+    alert("Acceso denegado. No estás autorizado.");
+    location.href = "inicio.html";
+    return;
+  }
+  bindAll();
+});
+</script>
+</body>
+</html>

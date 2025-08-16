@@ -21,11 +21,9 @@
   <meta name="twitter:title" content="¡Gana créditos con Transferencia VIP!" />
   <meta name="twitter:description" content="Regístrate con un referido y recibe bonificaciones instantáneas." />
   <meta name="twitter:image" content="https://transferenciavip.xyz/3440119_ico.png" />
-  
+
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       font-family: 'Inter', sans-serif;
       margin: 0;
@@ -38,109 +36,91 @@
       max-width: 1200px;
       margin: auto;
     }
-    .header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    .header h2 {
-      color: #3f51b5;
-      font-size: clamp(1.5rem, 5vw, 2.5rem);
-      margin-bottom: 0.5rem;
-    }
-    .header p {
-      margin-bottom: 1rem;
-      font-size: 1rem;
-    }
+    .header { text-align: center; margin-bottom: 2rem; }
+    .header h2 { color: #3f51b5; font-size: clamp(1.5rem, 5vw, 2.5rem); margin-bottom: 0.5rem; }
+    .header p { margin-bottom: 1rem; font-size: 1rem; }
     .header .btn {
-      display: inline-block;
-      background-color: #3f51b5;
-      color: white;
-      padding: 0.6rem 1.2rem;
-      border-radius: 8px;
-      text-decoration: none;
-      transition: background 0.3s;
+      display: inline-block; background-color: #3f51b5; color: white;
+      padding: 0.6rem 1.2rem; border-radius: 8px; text-decoration: none; transition: background 0.3s;
     }
-    .header .btn:hover {
-      background-color: #2f3ba5;
-    }
+    .header .btn:hover { background-color: #2f3ba5; }
+
     .referral-box {
       background: linear-gradient(90deg, #a200ff, #7c0bff);
-      color: white;
-      padding: 1.5rem;
-      border-radius: 12px;
-      margin-bottom: 2rem;
-      text-align: center;
+      color: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; text-align: center;
     }
-    .referral-box span {
-      font-weight: bold;
-    }
+    .referral-box span { font-weight: bold; }
+
     .plans {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.5rem;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem;
     }
     .plan {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
+      background: white; border-radius: 12px; padding: 1.5rem;
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      display: flex; flex-direction: column; justify-content: space-between;
     }
-    .plan h3 {
-      margin: 0 0 0.5rem;
-      color: #333;
-      text-transform: capitalize;
-      font-size: 1.3rem;
+    .plan h3 { margin: 0 0 0.5rem; color: #333; text-transform: capitalize; font-size: 1.3rem; }
+    .price { color: #007bff; font-size: 1.5rem; font-weight: 600; margin: 0.5rem 0 1rem; }
+    .plan ul { list-style: none; padding: 0; margin: 0 0 1rem; }
+    .plan ul li { margin: 0.4rem 0; font-size: 0.95rem; }
+
+    .plan .btn, .plan button.btn {
+      align-self: start; background-color: #007bff; color: white; padding: 0.6rem 1.2rem;
+      border-radius: 8px; text-decoration: none; transition: background 0.3s; cursor: pointer; border: none;
     }
-    .price {
-      color: #007bff;
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin: 0.5rem 0 1rem;
-    }
-    .plan ul {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 1rem;
-    }
-    .plan ul li {
-      margin: 0.4rem 0;
-      font-size: 0.95rem;
-    }
-    .plan .btn {
-      align-self: start;
-      background-color: #007bff;
-      color: white;
-      padding: 0.6rem 1.2rem;
-      border-radius: 8px;
-      text-decoration: none;
-      transition: background 0.3s;
-    }
-    .plan .btn:hover {
-      background-color: #0056b3;
-    }
+    .plan .btn:hover, .plan button.btn:hover { background-color: #0056b3; }
+
     .badge {
-      background: #ff9800;
-      color: white;
-      font-size: 0.75rem;
-      padding: 0.2rem 0.6rem;
-      border-radius: 6px;
-      margin-left: 0.5rem;
-      vertical-align: middle;
+      background: #ff9800; color: white; font-size: 0.75rem; padding: 0.2rem 0.6rem;
+      border-radius: 6px; margin-left: 0.5rem; vertical-align: middle;
     }
 
-    /* Responsive spacing */
     @media (max-width: 600px) {
-      .header .btn {
-        width: 100%;
-      }
-      .plan .btn {
-        width: 100%;
-        text-align: center;
-      }
+      .header .btn { width: 100%; }
+      .plan .btn, .plan button.btn { width: 100%; text-align: center; }
     }
+
+    /* POP-UP 40% Descuento */
+    #popupDescuento {
+      display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 90%; max-width: 400px; background: linear-gradient(135deg, #1e90ff, #ffffff, #1e90ff);
+      color: #000; padding: 6vw; border-radius: 16px; box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+      font-family: 'Segoe UI', sans-serif; z-index: 99999; text-align: center; animation: fadeIn 0.5s ease-in-out;
+    }
+    #popupDescuento h2 { font-size: 1.5rem; margin-top: 0; }
+    #popupDescuento p { font-size: 1rem; margin: 0.6em 0; }
+    #popupDescuento a {
+      display: inline-block; background: #1e90ff; color: #fff; padding: 0.7em 1.5em;
+      border-radius: 10px; text-decoration: none; font-size: 1rem; margin-top: 0.7em; transition: background 0.3s ease;
+    }
+    #popupDescuento a:hover { background: #006fdc; }
+    #popupDescuento button.close-btn {
+      position: absolute; top: 12px; right: 16px; background: transparent; border: none;
+      font-size: 1.4rem; cursor: pointer; color: #000;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -60%); } to { opacity: 1; transform: translate(-50%, -50%); } }
+
+    /* MODAL del Checkout */
+    #modalCheckout{
+      display:none; position:fixed; inset:0; background:rgba(0,0,0,.6);
+      z-index:9999; justify-content:center; align-items:center; padding:12px;
+    }
+    #modalCheckout .box{
+      width: 95%; max-width: 980px; height: 85vh; background:#fff; border-radius:14px;
+      overflow:hidden; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,.35);
+    }
+    #modalCheckout header{
+      background:#0f2027; color:#fff; padding:10px 14px; display:flex; align-items:center; gap:10px; justify-content:space-between;
+    }
+    #modalCheckout header .title{ font-weight:700 }
+    #modalCheckout header .muted{opacity:.85; font-size:.9rem}
+    #modalCheckout .actions{ display:flex; gap:8px; align-items:center }
+    #modalCheckout .actions button{
+      border:none; border-radius:8px; padding:8px 10px; cursor:pointer; font-weight:600;
+    }
+    #modalCheckout .actions .close{ background:#ffffff22; color:#fff; }
+    #modalCheckout .actions .close:hover{ background:#ffffff33; }
+    #modalCheckout iframe{ flex:1; border:0; width:100% }
   </style>
 </head>
 <body>
@@ -157,7 +137,7 @@
     </div>
 
     <div class="plans">
-      <!-- Planes individuales -->
+      <!-- FREE: mantiene enlace normal -->
       <div class="plan">
         <h3>Plan Free</h3>
         <p class="price">S/ 00</p>
@@ -167,9 +147,10 @@
           <li>Créditos sin caducidad</li>
           <li>Soporte técnico 24/7</li>
         </ul>
-        <a href="registro" class="btn">Seleccionar Plan</a>
+        <a href="inicio" class="btn">plan atual</a>
       </div>
 
+      <!-- RESTO: abren modal con iframe y rutas distintas -->
       <div class="plan">
         <h3>Plan Bronce</h3>
         <p class="price">S/ 45</p>
@@ -179,7 +160,10 @@
           <li>Créditos sin caducidad</li>
           <li>Soporte técnico 24/7</li>
         </ul>
-        <a href="https://wa.me/message/LEEIPCTGLOHIL1" class="btn">Seleccionar Plan</a>
+        <button class="btn btn-checkout"
+          data-plan="Plan Bronce" data-precio="45" data-url="pagos/pago">
+          Seleccionar Plan
+        </button>
       </div>
 
       <div class="plan">
@@ -190,9 +174,12 @@
           <li>Acceso instantáneo</li>
           <li>Créditos sin caducidad</li>
           <li>Soporte técnico 24/7</li>
-          
+          <li>Convertidor de créditos a soles</li>
         </ul>
-        <a href="https://wa.me/message/LEEIPCTGLOHIL1" class="btn">Seleccionar Plan</a>
+        <button class="btn btn-checkout"
+          data-plan="Plan Oro" data-precio="60" data-url="pagos/pago2">
+          Seleccionar Plan
+        </button>
       </div>
 
       <div class="plan">
@@ -204,9 +191,12 @@
           <li>Acceso instantáneo</li>
           <li>Créditos sin caducidad</li>
           <li>Soporte técnico 24/7</li>
-          
+          <li>Cursos</li>
         </ul>
-        <a href="https://wa.me/message/LEEIPCTGLOHIL1" class="btn">Seleccionar Plan</a>
+        <button class="btn btn-checkout"
+          data-plan="Plan Premium" data-precio="100" data-url="pagos/pago3">
+          Seleccionar Plan
+        </button>
       </div>
 
       <div class="plan">
@@ -219,7 +209,10 @@
           <li>Soporte técnico 24/7</li>
           <li>Compartir créditos</li>
         </ul>
-        <a href="https://wa.me/message/LEEIPCTGLOHIL1" class="btn">Seleccionar Plan</a>
+        <button class="btn btn-checkout"
+          data-plan="Plan VIP" data-precio="150" data-url="pagos/pago4">
+          Seleccionar Plan
+        </button>
       </div>
 
       <div class="plan">
@@ -231,105 +224,92 @@
           <li>Acceso instantáneo</li>
           <li>Créditos sin caducidad</li>
           <li>Soporte técnico 24/7</li>
-          
+          <li>yape fake apk</li>
         </ul>
-        <a href="https://wa.me/message/LEEIPCTGLOHIL1" class="btn">Seleccionar Plan</a>
+        <button class="btn btn-checkout"
+          data-plan="Plan Diamante" data-precio="400" data-url="pagos/pago5">
+          Seleccionar Plan
+        </button>
       </div>
     </div>
   </div>
-  <!-- POP-UP 40% Descuento Responsive (con vencimiento al 31 de agosto) -->
-<style>
-  #popupDescuento {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    max-width: 400px;
-    background: linear-gradient(135deg, #1e90ff, #ffffff, #1e90ff);
-    color: #000;
-    padding: 6vw;
-    border-radius: 16px;
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
-    font-family: 'Segoe UI', sans-serif;
-    z-index: 99999;
-    text-align: center;
-    animation: fadeIn 0.5s ease-in-out;
-  }
 
-  #popupDescuento h2 {
-    font-size: 1.5rem;
-    margin-top: 0;
-  }
+  <!-- Popup de descuento -->
+  <div id="popupDescuento">
+    <button class="close-btn" onclick="document.getElementById('popupDescuento').style.display='none'">×</button>
+    <h2>🎉 ¡40% de Descuento en Planes! 🎉</h2>
+    <p>Solo por tiempo limitado, obtén <strong>40% OFF</strong> en todos nuestros planes premium. 💡</p>
+    <p style="color: #d80000; font-weight: bold;">
+      ⏳ ¡Quedan <span id="diasDescuento"></span> días!
+    </p>
+    <a href="promociones" target="_blank">🚀 ¡Aprovecha Ahora!</a>
+    <p style="font-size: 0.9rem;">🔒 Válido hasta el <strong>31 de julio de 2025</strong>.</p>
+  </div>
 
-  #popupDescuento p {
-    font-size: 1rem;
-    margin: 0.6em 0;
-  }
+  <!-- Modal de Checkout con iframe -->
+  <div id="modalCheckout" aria-hidden="true">
+    <div class="box" role="dialog" aria-modal="true" aria-label="Modal de Checkout">
+      <header>
+        <div class="title" id="modalTitle">Checkout</div>
+        <div class="muted" id="modalSub">Procesa tu compra de forma segura</div>
+        <div class="actions">
+          <button class="close" onclick="cerrarCheckout()">✖</button>
+        </div>
+      </header>
+      <iframe id="iframeCheckout" src=""></iframe>
+    </div>
+  </div>
 
-  #popupDescuento a {
-    display: inline-block;
-    background: #1e90ff;
-    color: #fff;
-    padding: 0.7em 1.5em;
-    border-radius: 10px;
-    text-decoration: none;
-    font-size: 1rem;
-    margin-top: 0.7em;
-    transition: background 0.3s ease;
-  }
+  <script>
+    // --- Descuento popup ---
+    (function () {
+      const hoy = new Date();
+      const finDescuento = new Date('2025-07-31T23:59:59');
+      if (hoy <= finDescuento) {
+        document.getElementById('popupDescuento').style.display = 'block';
+        const diferencia = finDescuento - hoy;
+        const dias = Math.ceil(diferencia / (1000 * 60 * 60 * 24));
+        document.getElementById('diasDescuento').textContent = dias > 0 ? dias : 0;
+      }
+    })();
 
-  #popupDescuento a:hover {
-    background: #006fdc;
-  }
+    // --- Modal Checkout con rutas por plan ---
+    const btns = document.querySelectorAll('.btn-checkout');
+    const modal = document.getElementById('modalCheckout');
+    const iframe = document.getElementById('iframeCheckout');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalSub = document.getElementById('modalSub');
 
-  #popupDescuento button.close-btn {
-    position: absolute;
-    top: 12px;
-    right: 16px;
-    background: transparent;
-    border: none;
-    font-size: 1.4rem;
-    cursor: pointer;
-    color: #000;
-  }
+    btns.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const plan = btn.getAttribute('data-plan') || 'Plan';
+        const precio = btn.getAttribute('data-precio') || '';
+        const url = btn.getAttribute('data-url') || 'veri/comprobante1'; // fallback opcional
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translate(-50%, -60%); }
-    to { opacity: 1; transform: translate(-50%, -50%); }
-  }
-</style>
+        modalTitle.textContent = plan;
+        modalSub.textContent = precio ? `S/ ${precio} · Procesa tu compra de forma segura` : 'Procesa tu compra de forma segura';
 
-<div id="popupDescuento">
-  <button class="close-btn" onclick="document.getElementById('popupDescuento').style.display='none'">×</button>
-  <h2>🎉 ¡40% de Descuento en Planes! 🎉</h2>
-  <p>Solo por tiempo limitado, obtén <strong>40% OFF</strong> en todos nuestros planes premium. 💡</p>
-  <p style="color: #d80000; font-weight: bold;">
-    ⏳ ¡Quedan <span id="diasDescuento"></span> días!
-  </p>
-  <a href="promociones" target="_blank">
-    🚀 ¡Aprovecha Ahora!
-  </a>
-  <p style="font-size: 0.9rem;">🔒 Válido hasta el <strong>31 de julio de 2025</strong>.</p>
-</div>
+        iframe.src = url;                 // ← Carga la ruta específica del plan
+        modal.style.display = 'flex';
+        modal.setAttribute('aria-hidden','false');
+      });
+    });
 
-<script>
-  (function () {
-    const hoy = new Date();
-    const finDescuento = new Date('2025-07-31T23:59:59');
-
-    if (hoy <= finDescuento) {
-      // Mostrar el pop-up si aún está vigente
-      document.getElementById('popupDescuento').style.display = 'block';
-
-      // Calcular y mostrar días restantes
-      const diferencia = finDescuento - hoy;
-      const dias = Math.ceil(diferencia / (1000 * 60 * 60 * 24));
-      document.getElementById('diasDescuento').textContent = dias > 0 ? dias : 0;
+    function cerrarCheckout(){
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden','true');
+      iframe.src = '';
     }
-    // Si ha vencido, no se muestra
-  })();
-</script>
+
+    // Cerrar al hacer clic fuera del cuadro
+    modal.addEventListener('click', (e)=>{
+      if (e.target === modal) cerrarCheckout();
+    });
+
+    // Cerrar con ESC
+    window.addEventListener('keydown', (e)=>{
+      if (e.key === 'Escape' && modal.style.display === 'flex') cerrarCheckout();
+    });
+  </script>
 </body>
 </html>
