@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tutorial</title>
+  <link rel="icon" href="3440119_ico.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#121212" />
+  <link rel="icon" type="image/png" href="3440119_ico.png">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="¡Únete a Transferencia VIP y gana créditos!" />
+  <meta property="og:description" content="Regístrate con este enlace de referido y recibe hasta 10 créditos gratis. Empieza a ganar hoy." />
+  <meta property="og:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  <meta property="og:url" content="https://transferenciavip.xyz" />
+  <meta property="og:type" content="website" />
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="¡Gana créditos con Transferencia VIP!" />
+  <meta name="twitter:description" content="Regístrate con un referido y recibe bonificaciones instantáneas." />
+  <meta name="twitter:image" content="https://transferenciavip.xyz/3440119_ico.png" />
+  
+  <style>
+    :root {
+      --color-bg: #2c2f48;
+      --color-header: #1e2035;
+      --color-primary: #8c5de1;
+      --color-card: #383c57;
+      --color-text: #ffffff;
+      --color-subtext: #dddddd;
+    }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--color-bg);
+      color: var(--color-text);
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--color-header);
+      padding: 15px 20px;
+      flex-wrap: wrap;
+    }
+    .header h2 { margin: 0; font-size: 1.5em; }
+    .header button {
+      background-color: var(--color-primary);
+      color: var(--color-text);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .container {
+      padding: 20px;
+      text-align: center;
+    }
+    .video-card {
+      background-color: var(--color-card);
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    video {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    .description {
+      margin-top: 15px;
+      font-weight: bold;
+      color: var(--color-subtext);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2 id="titulo">TUTORIAL</h2>
+    <button onclick="window.location.href='curso.html'">Regresar</button>
+  </div>
+
+  <div class="container" id="content" style="display: none;">
+    <div class="video-card">
+      <video id="videoPlayer" controls style="display: none;">
+        <source id="videoSrc" src="" type="video/mp4" />
+        Tu navegador no soporta la reproducción de video.
+      </video>
+      <div class="description" id="descripcion" style="display: none;"></div>
+      <div class="description" id="botonDescarga" style="display: none;"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbL1fRbwVZRhdD88TeQSFgpvfjZOMwfIg",
+    authDomain: "multidoxnetfree.firebaseapp.com",
+    databaseURL: "https://multidoxnetfree-default-rtdb.firebaseio.com",
+    projectId: "multidoxnetfree",
+    storageBucket: "multidoxnetfree.firebasestorage.app",
+    messagingSenderId: "248995370956",
+    appId: "1:248995370956:web:455823a3778859bd4d2f69",
+    measurementId: "G-HDE68S5TYS"
+  };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    const id = new URLSearchParams(window.location.search).get('id');
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return window.location.href = "loginvip.html";
+
+      const planSnap = await get(ref(db, `usuarios/${user.uid}/plan`));
+      const plan = planSnap.exists() ? planSnap.val() : 'FREE';
+
+      if (!['PREMIUM', 'VIP', 'DIAMANTE'].includes(plan)) {
+        alert("⛔ Acceso denegado. Solo usuarios PREMIUM.");
+        return window.location.href = "curso.html";
+      }
+
+      const snap = await get(ref(db, 'contenido/' + id));
+      if (!snap.exists()) return alert("Contenido no encontrado");
+
+      const data = snap.val();
+      document.getElementById("titulo").textContent = data.titulo || "Tutorial";
+      document.getElementById("content").style.display = "block";
+
+      if (data.video) {
+        document.getElementById("videoSrc").src = data.video;
+        document.getElementById("videoPlayer").style.display = "block";
+        document.getElementById("videoPlayer").load();
+      }
+
+      if (data.descripcion) {
+        const desc = document.getElementById("descripcion");
+        desc.innerText = data.descripcion;
+        desc.style.display = "block";
+      }
+
+      if (data.descarga && data.boton) {
+        const btn = document.getElementById("botonDescarga");
+        btn.innerHTML = `<a href="${data.descarga}" target="_blank" style="color:#8c5de1">${data.boton}</a>`;
+        btn.style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>

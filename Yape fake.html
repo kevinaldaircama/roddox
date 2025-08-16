@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Comprobante Yape Fake</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: white;
+      color: #000;
+    }
+    .container {
+      max-width: 400px;
+      margin: auto;
+      padding: 15px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      background-color: white;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      border: 2px solid #000;
+    }
+    .mensaje {
+      color: #333;
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    .logo {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .logo img {
+      height: 40px;
+    }
+    .cerrar {
+      width: 35px;
+      height: 35px;
+      background-color: rgba(0,0,0,0.1);
+      border-radius: 50%;
+      color: #000;
+      font-size: 20px;
+      text-align: center;
+      line-height: 35px;
+      cursor: pointer;
+    }
+    .card {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+    .card h2 {
+      color: #650D89;
+      font-size: 18px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .monto {
+      font-size: 30px;
+      margin: 5px 0;
+      font-weight: bold;
+    }
+    .nombre {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .datos {
+      font-size: 14px;
+      color: gray;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .transaccion-title {
+      font-size: 13px;
+      color: gray;
+      font-weight: bold;
+      margin-bottom: 8px;
+      margin-top: 5px;
+    }
+    .info {
+      font-size: 13px;
+      color: gray;
+      padding-top: 10px;
+    }
+    .info p {
+      margin: 5px 0;
+    }
+    .info p span {
+      float: right;
+      font-weight: bold;
+      color: #666;
+    }
+    .share {
+      color: #00bfa5;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .share i {
+      margin-right: 4px;
+    }
+    .footer-img {
+      width: 100%;
+      border-radius: 15px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="mensaje" id="mensajeBienvenida">¡Bienvenido! Genera tu comprobante de Yape fake fácilmente.</div>
+    <div id="formulario">
+      <input type="text" id="numero" placeholder="Número de celular" required>
+      <input type="text" id="nombre" placeholder="Nombre" required>
+      <input type="number" id="monto" placeholder="Monto (S/.)" required>
+      <select id="destino" required>
+        <option value="">Selecciona destino</option>
+        <option value="Yape">Yape</option>
+        <option value="Plin">Plin</option>
+        <option value="Agora">Agora</option>
+      </select>
+      <button onclick="generarComprobante()">Generar</button>
+      <div class="mensaje" id="mensaje"></div>
+    </div>
+
+    <div id="comprobante" style="display: none;">
+      <div style="padding: 15px; background-color: #650D89;">
+        <div class="logo">
+          <img src="https://yapelite.netlify.app/imagen/yapelog.png" alt="Yape">
+          <div class="cerrar" onclick="cerrarComprobante()">×</div>
+        </div>
+        <div class="card" id="comprobanteCard">
+          <h2>¡Yapeaste!
+            <span class="share" onclick="mostrarModal()">
+              <i class="fas fa-share-alt"></i> COMPARTIR
+            </span>
+          </h2>
+          <div class="monto" id="verMonto">S/0</div>
+          <div class="nombre" id="verNombre">Nombre</div>
+          <div class="datos" id="verFechaHora">
+            <i class="fas fa-calendar"></i> fecha &nbsp; | &nbsp; <i class="fas fa-clock"></i> hora
+          </div>
+
+          <!-- Código de seguridad -->
+          <div style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; padding: 10px 0; margin: 20px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="font-size: 13px; font-weight: 500; color: gray; display: flex; align-items: center; gap: 6px;">
+                <span>CÓDIGO DE SEGURIDAD</span>
+                <img src="https://yapelite.netlify.app/imagen/sello.jpg" alt="Sello" style="height: 20px; width: auto; border-radius: 4px;">
+              </div>
+              <div id="verCodigo" style="display: flex; gap: 6px;"></div>
+            </div>
+          </div>
+
+          <div class="transaccion-title">DATOS DE LA TRANSACCIÓN</div>
+          <div class="info">
+            <p>Nro. de celular <span id="verNumero">*** ***000</span></p>
+            <p>Destino <span id="verDestino">Yape</span></p>
+            <p>Nro. de operación <span id="operacionId">00000000</span></p>
+          </div>
+        </div>
+        <img id="bannerPromo" class="footer-img" src="" alt="Promoción">
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore, doc, updateDoc, increment, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    // ⚠️ Pega aquí tu configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "TU_API_KEY",
+      authDomain: "TU_AUTH_DOMAIN",
+      projectId: "sistem-86419",
+      storageBucket: "TU_BUCKET",
+      messagingSenderId: "TU_SENDER",
+      appId: "TU_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUid = null;
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUid = user.uid;
+      } else {
+        alert("Debes iniciar sesión para usar esta función.");
+      }
+    });
+
+    const banners = [
+      "https://yapelite.netlify.app/imagen/1.jpg",
+      "https://yapelite.netlify.app/imagen/2.jpg",
+      "https://yapelite.netlify.app/imagen/3.jpg"
+    ];
+
+    window.generarComprobante = async function () {
+      if (!currentUid) {
+        alert("Debes iniciar sesión para generar comprobantes.");
+        return;
+      }
+
+      const numero = document.getElementById('numero').value.trim();
+      const nombre = document.getElementById('nombre').value.trim();
+      const monto = document.getElementById('monto').value.trim();
+      const destino = document.getElementById('destino').value;
+
+      if (!numero || !nombre || !monto || !destino) {
+        alert("Por favor, completa todos los campos.");
+        return;
+      }
+
+      try {
+        const userRef = doc(db, "usuarios", currentUid);
+        const userSnap = await getDoc(userRef);
+
+        if (!userSnap.exists()) {
+          alert("El usuario no existe en la base de datos.");
+          return;
+        }
+
+        let comisionesTotales = userSnap.data().comisionesTotales || 0;
+
+        if (comisionesTotales < 5) {
+          alert("No tienes suficientes créditos para generar un comprobante.");
+          return;
+        }
+
+        await updateDoc(userRef, {
+          comisionesTotales: increment(-5)
+        });
+
+        document.getElementById('mensaje').innerText = "Generando datos...";
+
+        setTimeout(() => {
+          const now = new Date();
+          const fecha = now.toLocaleDateString('es-PE', { day: 'numeric', month: 'short', year: 'numeric' });
+          const hora = now.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
+          const codigo = Math.floor(100 + Math.random() * 900);
+          const operacion = Math.floor(10000000 + Math.random() * 90000000);
+
+          document.getElementById('verMonto').innerText = `S/${parseFloat(monto).toFixed(2)}`;
+          document.getElementById('verNombre').innerText = nombre;
+          document.getElementById('verFechaHora').innerHTML = `
+            <i class="fas fa-calendar"></i> ${fecha} &nbsp; | &nbsp; <i class="fas fa-clock"></i> ${hora}
+          `;
+
+          const codigoContainer = document.getElementById('verCodigo');
+          codigoContainer.innerHTML = '';
+          String(codigo).split('').forEach(digito => {
+            const box = document.createElement('div');
+            box.textContent = digito;
+            box.style.padding = '4px 8px';
+            box.style.borderRadius = '6px';
+            box.style.backgroundColor = '#f1f1f1';
+            box.style.color = '#000';
+            box.style.fontWeight = 'bold';
+            box.style.fontSize = '14px';
+            box.style.boxShadow = 'inset 0 0 1px rgba(0,0,0,0.2)';
+            codigoContainer.appendChild(box);
+          });
+
+          document.getElementById('verNumero').innerText = `*** ***${numero.slice(-3)}`;
+          document.getElementById('operacionId').innerText = operacion;
+          document.getElementById('verDestino').innerText = destino;
+
+          const bienvenida = document.getElementById('mensajeBienvenida');
+          if (bienvenida) bienvenida.style.display = "none";
+
+          const bannerAleatorio = banners[Math.floor(Math.random() * banners.length)];
+          document.getElementById('bannerPromo').src = bannerAleatorio;
+
+          document.body.style.backgroundColor = "#650D89";
+          document.getElementById('formulario').style.display = "none";
+          document.getElementById('comprobante').style.display = "block";
+        }, 1000);
+
+      } catch (error) {
+        console.error("Error al descontar créditos:", error);
+        alert("Ocurrió un error al descontar los créditos.");
+      }
+    }
+
+    window.cerrarComprobante = function () {
+      document.getElementById('comprobante').style.display = "none";
+      document.getElementById('formulario').style.display = "block";
+      document.getElementById('mensajeBienvenida').style.display = "block";
+      document.body.style.backgroundColor = "white";
+    }
+
+    window.mostrarModal = function () {
+      alert("¡Funcionalidad de compartir en desarrollo!");
+    }
+  </script>
+</body>
+  </html>

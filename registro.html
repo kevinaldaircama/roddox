@@ -4,245 +4,328 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Registro</title>
+
   <link rel="icon" href="3440119_ico.png" />
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#121212" />
-  <link rel="icon" type="image/png" href="3440119_ico.png">
+  <meta name="theme-color" content="#0f2027" />
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="¡Únete a Transferencia VIP y gana créditos!" />
-  <meta property="og:description" content="Regístrate con este enlace de referido y recibe hasta 10 créditos gratis. Empieza a ganar hoy." />
+  <!-- OG/Twitter (opcional, ya sin referidos) -->
+  <meta property="og:title" content="¡Únete a multidox-netfree y gana créditos!" />
+  <meta property="og:description" content="Crea tu cuenta y recibe créditos de bienvenida." />
   <meta property="og:image" content="https://transferenciavip.xyz/3440119_ico.png" />
-  <meta property="og:url" content="https://transferenciavip.xyz" />
-  <meta property="og:type" content="website" />
-  <!-- Twitter Cards -->
+  <meta property="og:url" content="https://transferenciavip.xyz/registro.html" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="¡Gana créditos con Transferencia VIP!" />
-  <meta name="twitter:description" content="Regístrate con un referido y recibe bonificaciones instantáneas." />
-  <meta name="twitter:image" content="https://transferenciavip.xyz/3440119_ico.png" />
 
-    <style>      
-    * { box-sizing: border-box; }      
-    body {      
-      font-family: 'Segoe UI', sans-serif;      
-      background: linear-gradient(to right, #a1c4fd, #c2e9fb);      
-      margin: 0;      
-      display: flex;      
-      height: 100vh;      
-      justify-content: center;      
-      align-items: center;      
-    }      
-    .container {      
-      background: white;      
-      padding: 40px 30px;      
-      border-radius: 16px;      
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);      
-      width: 100%;      
-      max-width: 400px;      
-      text-align: center;      
-    }      
-    h2 { margin: 10px 0 25px; color: #333; }      
-    input {      
-      width: 100%;      
-      padding: 12px;      
-      margin-bottom: 16px;      
-      border: 1px solid #ccc;      
-      border-radius: 8px;      
-      font-size: 15px;      
-    }      
-    button {      
-      width: 100%;      
-      background-color: #007bff;      
-      color: white;      
-      padding: 14px;      
-      border: none;      
-      border-radius: 8px;      
-      font-size: 16px;      
-      cursor: pointer;      
-      transition: background-color 0.3s ease;      
-    }      
-    button:hover { background-color: #0056b3; }      
-    .google-btn {      
-      display: flex;      
-      align-items: center;      
-      justify-content: center;      
-      background: #ffffff;      
-      border: 1px solid #ddd;      
-      border-radius: 8px;      
-      font-size: 15px;      
-      padding: 10px;      
-      width: 100%;      
-      cursor: pointer;      
-      transition: box-shadow 0.3s ease;      
-      margin-top: 15px;      
-    }      
-    .google-btn:hover {      
-      box-shadow: 0 0 8px rgba(0,0,0,0.2);      
-    }      
-    .google-icon {      
-      height: 20px;      
-      margin-right: 10px;      
-    }      
-    .g-recaptcha {      
-      margin: 10px 0 20px;      
-    }      
-    .checkbox-container {      
-      text-align: left;      
-      margin-bottom: 15px;      
-    }      
-    .logo {      
-  width: 80px;      
-  height: auto;      
-  margin-bottom: 15px;      
-    }      
-    </style>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <!-- Fuente -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root{
+      --bg1:#0f2027; --bg2:#203a43; --bg3:#2c5364;
+      --card:#ffffff; --text:#0b1220; --muted:#5b708b;
+      --primary:#007bff; --primaryHover:#0056b3; --ring: rgba(0,123,255,.25);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: linear-gradient(-45deg, var(--bg1), var(--bg2), var(--bg3), var(--bg1));
+      background-size: 400% 400%;
+      animation: bgmove 18s ease infinite;
+      margin: 0; display: grid; place-items: center; padding: 16px;
+    }
+    .container {
+      background: var(--card);
+      padding: 28px 24px;
+      border-radius: 16px;
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.22);
+      width: 100%;
+      max-width: 420px;
+      color: var(--text);
+    }
+    .brand { display:flex; gap:12px; align-items:center; justify-content:center; margin-bottom:10px; }
+    .brand img { width:54px; height:54px; border-radius:12px; }
+    h1 { font-size:1.35rem; margin:0; }
+    p.sub { color: var(--muted); margin:6px 0 18px; text-align:center; }
+
+    form { display:grid; gap:12px; }
+    .field { display:grid; gap:6px; text-align:left; }
+    label { font-size:.92rem; font-weight:600; }
+    input[type="text"], input[type="email"], input[type="password"]{
+      width:100%; padding:12px 14px; border:1px solid #d7dce3; border-radius:10px; font-size:15px;
+      outline:none; transition: box-shadow .15s ease, border-color .15s ease;
+    }
+    input:focus{ border-color:var(--primary); box-shadow:0 0 0 4px var(--ring) }
+    .password-wrap{ position:relative; }
+    .toggle-pass{
+      position:absolute; right:10px; top:50%; transform: translateY(-50%);
+      border:none; background:transparent; cursor:pointer; padding:6px; line-height:0;
+    }
+    .g-recaptcha { margin: 6px 0 6px; }
+
+    .checkbox-container { text-align:left; font-size:.95rem; color:#203; display:flex; gap:8px; align-items:flex-start; }
+    .checkbox-container a { color: var(--primary); text-decoration: none; }
+    .checkbox-container a:hover { text-decoration: underline; }
+
+    button[type="submit"], .google-btn{
+      width:100%; border:none; border-radius:10px; padding:12px 14px; font-size:16px; font-weight:700; cursor:pointer;
+      transition: transform .1s ease, background .2s ease, box-shadow .2s ease;
+    }
+    button[type="submit"]{ background: var(--primary); color:white; box-shadow: 0 8px 18px rgba(0,123,255,.25); }
+    button[type="submit"]:hover{ background: var(--primaryHover); transform:translateY(-1px); }
+    button[disabled]{ opacity:.65; cursor:not-allowed; transform:none; }
+
+    .google-btn{
+      background:#fff; border:1px solid #d7dce3; display:flex; align-items:center; justify-content:center; gap:10px; margin-top:8px;
+    }
+    .google-btn:hover{ box-shadow:0 0 0 4px rgba(0,0,0,.05) }
+    .google-icon{ width:20px; height:20px; }
+
+    .alert{ display:none; margin:6px 0 2px; padding:10px 12px; border-radius:10px; font-size:.95rem;
+      background:#fff4f4; color:#8a1f1f; border:1px solid #ffd6d6; }
+    .alert.show{ display:block; }
+
+    @keyframes bgmove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    @media (prefers-reduced-motion: reduce){ body{ animation:none; } }
+  </style>
+
+  <!-- Firebase compat + Recaptcha -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js" defer></script>
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
 
-<div class="container">
-  <h2>Registro</h2>
-  <img src="logo.jpg" alt="Logo" class="logo" />
+<div class="container" role="region" aria-label="Formulario de registro">
+  <div class="brand">
+    <img src="3440119_ico.png" alt="Logo Transferencia VIP" loading="lazy" decoding="async"/>
+    <h1>Registro</h1>
+  </div>
+  <p class="sub">Crea tu cuenta y recibe tus créditos de bienvenida.</p>
 
-  <form id="registerForm">
-    <input type="text" id="regUsername" placeholder="Nombre de usuario" required />
-    <input type="text" id="regFullName" placeholder="Tu nombre completo" required />
-    <input type="email" id="regEmail" placeholder="Correo electrónico" required />
-    <input type="password" id="regPass" placeholder="Contraseña" required />
-    <div class="g-recaptcha" data-sitekey="6LeZbpgrAAAAAN7hf7NYCGsEBvqTNvfxvERnuxi_"></div>
+  <div class="alert" id="alertBox" role="alert" aria-live="polite"></div>
+
+  <form id="registerForm" autocomplete="on" novalidate>
+    <div class="field">
+      <label for="regUsername">Nombre de usuario</label>
+      <input type="text" id="regUsername" placeholder="Tu usuario único" minlength="3" maxlength="30" required />
+    </div>
+
+    <div class="field">
+      <label for="regFullName">Nombre completo</label>
+      <input type="text" id="regFullName" placeholder="Tu nombre completo" minlength="3" required />
+    </div>
+
+    <div class="field">
+      <label for="regEmail">Correo electrónico</label>
+      <input type="email" id="regEmail" placeholder="correo@dominio.com" autocomplete="email" required />
+    </div>
+
+    <div class="field password-wrap">
+      <label for="regPass">Contraseña</label>
+      <input type="password" id="regPass" placeholder="Mínimo 6 caracteres" minlength="6" autocomplete="new-password" required />
+      <button class="toggle-pass" type="button" aria-label="Mostrar u ocultar contraseña" id="togglePass">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z" fill="#243"/></svg>
+      </button>
+    </div>
+
+    <div class="g-recaptcha" data-sitekey="6LcXu4IrAAAAAKC8vZ5ALC0BeHZRqeA25RTkX1sI"></div>
+
     <div class="checkbox-container">
       <input type="checkbox" id="acceptPolicy" required />
-      <label for="acceptPolicy">
-        Acepto la <a href="politica" target="_blank">Política de privacidad</a>.
-      </label>
+      <label for="acceptPolicy">Acepto la <a href="politica.html" target="_blank" rel="noopener">Política de privacidad</a>.</label>
     </div>
-    <button type="submit">Registrarse</button>
+
+    <button type="submit" id="submitBtn"><span class="btn-text">Registrarse</span></button>
   </form>
 
-  <button id="googleRegisterBtn" class="google-btn">
-    <img class="google-icon" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
+  <button id="googleRegisterBtn" class="google-btn" aria-label="Registrarse con Google">
+    <img class="google-icon" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="">
     Registrarse con Google
   </button>
 </div>
 
 <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDFxkNJCVxwddZFsqPeXSdeYe87ExEdhQk",
-    authDomain: "roddox-27e1b.firebaseapp.com",
-    databaseURL: "https://roddox-27e1b-default-rtdb.firebaseio.com",
-    projectId: "roddox-27e1b",
-    storageBucket: "roddox-27e1b.firebasestorage.app",
-    messagingSenderId: "108259944325",
-    appId: "1:108259944325:web:4ffd0c6e7815822eb1c6ec",
-    measurementId: "G-MBQ5X9PLF8"
-  };
+  // ---------- Helpers ----------
+  const $ = (s) => document.querySelector(s);
+  const showAlert = (msg) => { const b = $('#alertBox'); b.textContent = msg; b.classList.add('show'); };
+  const clearAlert = () => { const b = $('#alertBox'); b.textContent = ''; b.classList.remove('show'); };
 
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.database();
-
-  function obtenerIdReferido() {
-    const path = window.location.pathname;
-    const partes = path.split('/');
-    let rawId = partes[partes.length - 1];
-    let limpio = rawId.replace(/[.#$[\]/]/g, '');
-    return limpio.length >= 20 ? limpio : null;
-  }
-
-  let idReferido = localStorage.getItem('idReferido');
-  if (!idReferido) {
-    idReferido = obtenerIdReferido();
-    if (idReferido) localStorage.setItem('idReferido', idReferido);
-  }
-
-  function registrarUsuario(email, nombre, nombreCompleto, uid, isGoogle = false) {
-    const fecha = new Date().toISOString().split('T')[0];
-    const comisionesIniciales = idReferido ? 10 : 5;
-
-    const data = {
-      correo: email,
-      nombre: nombre,
-      nombreCompleto: nombreCompleto,
-      fecha: fecha,
-      estado: 'activo',
-      recargas: 0,
-      comision: '10.00',
-      comisionesTotales: comisionesIniciales,
-      ultima: '-',
-    };
-
-    if (isGoogle) data.google = true;
-
-    const updates = {};
-    updates[`usuarios/${uid}`] = data;
-
-    const finalizarRegistro = () => {
-      db.ref().update(updates)
-        .then(() => {
-          alert('Registro exitoso. Ahora puedes iniciar sesión.');
-          auth.signOut();
-          window.location.href = "login";
-        })
-        .catch(error => alert('Error al guardar datos: ' + error.message));
-    };
-
-    if (idReferido) {
-      db.ref(`usuarios/${idReferido}`).once('value').then(snapshot => {
-        if (snapshot.exists()) {
-          updates[`referidos/${idReferido}/${uid}`] = data;
-          updates[`usuarios/${idReferido}/comisionesTotales`] = firebase.database.ServerValue.increment(2);
-        }
-        finalizarRegistro();
-      }).catch(error => {
-        console.error('Error verificando referido:', error);
-        finalizarRegistro(); // igual continúa aunque falle la verificación
-      });
-    } else {
-      finalizarRegistro();
-    }
-  }
-
-  // Registro con correo
-  document.getElementById('registerForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const username = document.getElementById('regUsername').value.trim();
-    const fullName = document.getElementById('regFullName').value.trim();
-    const email = document.getElementById('regEmail').value.trim();
-    const password = document.getElementById('regPass').value;
-    const accepted = document.getElementById('acceptPolicy').checked;
-    const recaptchaResponse = grecaptcha.getResponse();
-
-    if (!recaptchaResponse) {
-      alert('Por favor verifica que no eres un robot.');
-      return;
-    }
-
-    if (!accepted) {
-      alert('Debes aceptar la política de privacidad.');
-      return;
-    }
-
-    auth.createUserWithEmailAndPassword(email, password)
-      .then(userCredential => {
-        const user = userCredential.user;
-        registrarUsuario(email, username, fullName, user.uid);
-      })
-      .catch(error => alert('Error: ' + error.message));
+  // Toggle pass
+  $('#togglePass')?.addEventListener('click', () => {
+    const i = $('#regPass'); i.type = (i.type === 'password') ? 'text' : 'password';
   });
 
-  // Registro con Google
-  document.getElementById('googleRegisterBtn').addEventListener('click', () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider)
-      .then(result => {
-        const user = result.user;
-        registrarUsuario(user.email, user.displayName, user.displayName, user.uid, true);
-      })
-      .catch(error => alert("Error con Google: " + error.message));
+  // ---------- Firebase ----------
+  window.addEventListener('DOMContentLoaded', () => {
+    const firebaseConfig = {
+      apiKey: "AIzaSyB28uLNC-7NBDBSJeQJ1Li_bYR6ygbf0DI",
+      apiKey: "AIzaSyCbL1fRbwVZRhdD88TeQSFgpvfjZOMwfIg",
+    authDomain: "multidoxnetfree.firebaseapp.com",
+    databaseURL: "https://multidoxnetfree-default-rtdb.firebaseio.com",
+    projectId: "multidoxnetfree",
+    storageBucket: "multidoxnetfree.firebasestorage.app",
+    messagingSenderId: "248995370956",
+    appId: "1:248995370956:web:455823a3778859bd4d2f69",
+    measurementId: "G-HDE68S5TYS"
+  };
+    firebase.initializeApp(firebaseConfig);
+
+    const auth = firebase.auth();
+    const db   = firebase.database();
+
+    // Si ya hay sesión, envía a inicio directo (evita registrarse dos veces)
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        location.replace('inicio');
+      }
+    });
+
+    // Verifica si username ya existe en /usuarios (campo nombre)
+    async function isUsernameTaken(username){
+      const snap = await db.ref('usuarios').orderByChild('nombre').equalTo(username).limitToFirst(1).once('value');
+      return snap.exists();
+    }
+
+    // Guarda usuario y asigna créditos de bienvenida (5 email/contraseña, 10 Google)
+    async function registrarUsuario({email, username, fullName, uid, isGoogle=false}){
+      const fecha = new Date().toISOString().split('T')[0];
+      const bonos = isGoogle ? 10 : 5;
+
+      const data = {
+        correo: email,
+        nombre: username,
+        nombreCompleto: fullName,
+        fecha,
+        estado: 'activo',
+        recargas: 0,
+        comision: '10.00',
+        comisionesTotales: bonos,  // ← créditos de bienvenida
+        ultima: '-',
+        google: !!isGoogle
+      };
+
+      await db.ref(`usuarios/${uid}`).set(data);
+    }
+
+    // Redirige a login
+    function goLogin(){
+      try { grecaptcha.reset(); } catch(e){}
+      location.assign('login.html');
+    }
+
+    // ------- Registro con correo -------
+    const form = $('#registerForm');
+    const submitBtn = $('#submitBtn');
+    const btnTxt = submitBtn.querySelector('.btn-text');
+    const setLoading = (v)=>{ submitBtn.disabled = v; btnTxt.textContent = v ? 'Creando cuenta…' : 'Registrarse'; };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault(); clearAlert(); setLoading(true);
+      try {
+        const username = $('#regUsername').value.trim();
+        const fullName = $('#regFullName').value.trim();
+        const email    = $('#regEmail').value.trim().toLowerCase();
+        const pass     = $('#regPass').value;
+        const accepted = $('#acceptPolicy').checked;
+        const recaptchaResponse = grecaptcha.getResponse();
+
+        if (!recaptchaResponse) throw new Error('Por favor verifica que no eres un robot.');
+        if (!accepted) throw new Error('Debes aceptar la política de privacidad.');
+        if (username.length < 3) throw new Error('El nombre de usuario debe tener al menos 3 caracteres.');
+        if (pass.length < 6) throw new Error('La contraseña debe tener al menos 6 caracteres.');
+
+        // Username único
+        if (await isUsernameTaken(username)) {
+          throw new Error('Ese nombre de usuario ya está en uso. Elige otro.');
+        }
+
+        const cred = await auth.createUserWithEmailAndPassword(email, pass);
+        await registrarUsuario({ email, username, fullName, uid: cred.user.uid, isGoogle:false });
+
+        alert('Registro exitoso. Se acreditaron 5 créditos de bienvenida. Ahora puedes iniciar sesión.');
+        await auth.signOut();
+        goLogin();
+      } catch(err){
+        console.error('[Registro error]', err);
+        let msg = 'No se pudo completar el registro.';
+        if (err.code === 'auth/email-already-in-use') msg = 'Ese correo ya está registrado.';
+        else if (err.code === 'auth/invalid-email') msg = 'El correo no es válido.';
+        else if (err.code === 'auth/weak-password') msg = 'La contraseña es muy débil.';
+        else if (err.message) msg = err.message;
+        showAlert(msg);
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    // ------- Registro con Google -------
+    $('#googleRegisterBtn').addEventListener('click', async () => {
+      clearAlert(); setLoading(true);
+      try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        try {
+          const result = await auth.signInWithPopup(provider);
+          const user = result.user;
+
+          // username base
+          const base = (user.email?.split('@')[0] || 'user');
+          let username = base + Math.random().toString(36).slice(2,6);
+
+          // evitar choque de username
+          while (await isUsernameTaken(username)) {
+            username = base + Math.random().toString(36).slice(2,6);
+          }
+
+          await registrarUsuario({
+            email: user.email || user.providerData?.[0]?.email || '',
+            username,
+            fullName: user.displayName || username,
+            uid: user.uid,
+            isGoogle: true
+          });
+
+          alert('Cuenta creada con Google. Se acreditaron 10 créditos de bienvenida. Ahora puedes iniciar sesión.');
+          await auth.signOut();
+          goLogin();
+        } catch(popupErr){
+          console.warn('[Popup error] Intento con redirect…', popupErr?.message);
+          const provider2 = new firebase.auth.GoogleAuthProvider();
+          await auth.signInWithRedirect(provider2);
+        }
+      } catch(err){
+        console.error('[Google registro error]', err);
+        showAlert('Error con Google: ' + (err.message || 'Intenta de nuevo.'));
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    // Completar flujo si venimos de redirect (iOS/Safari)
+    auth.getRedirectResult?.().then(async (res) => {
+      if (res && res.user) {
+        const user = res.user;
+        const base = (user.email?.split('@')[0] || 'user');
+        let username = base + Math.random().toString(36).slice(2,6);
+        while (await isUsernameTaken(username)) {
+          username = base + Math.random().toString(36).slice(2,6);
+        }
+        await registrarUsuario({
+          email: user.email || user.providerData?.[0]?.email || '',
+          username,
+          fullName: user.displayName || username,
+          uid: user.uid,
+          isGoogle: true
+        });
+        alert('Cuenta creada con Google. Se acreditaron 10 créditos de bienvenida. Ahora puedes iniciar sesión.');
+        await auth.signOut();
+        goLogin();
+      }
+    }).catch(err => console.error('[RedirectResult]', err));
   });
 </script>
 </body>
-</html>
+  </html>

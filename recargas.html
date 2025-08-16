@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mis Recargas · Transferencia VIP</title>
+
+  <link rel="icon" href="3440119_ico.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0f2027" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root{
+      --bg1:#0f2027; --bg2:#203a43; --bg3:#2c5364;
+      --card:#ffffff; --text:#0b1220; --muted:#5b708b; --border:#e5eaf0;
+      --brand1:#5c6bc0; --brand2:#3f51b5; --ring: rgba(92,107,192,.25);
+      --good1:#43a047; --good2:#66bb6a;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:linear-gradient(-45deg,var(--bg1),var(--bg2),var(--bg3),var(--bg1));
+      background-size:400% 400%; animation:bgmove 18s ease infinite;
+      margin:0; color:var(--text);
+    }
+    .container{
+      max-width:1140px; margin:32px auto; padding:24px;
+      background:#ffffffee; backdrop-filter: blur(8px);
+      border:1px solid var(--border); border-radius:16px;
+      box-shadow:0 18px 42px rgba(0,0,0,.22)
+    }
+    h2{ margin:8px 0 18px; text-align:center }
+    .grid{ display:grid; gap:14px; grid-template-columns:repeat(12,1fr) }
+    .card{ grid-column: span 12; padding:18px; border-radius:14px; color:#fff }
+    .blue{ background:linear-gradient(135deg,var(--brand2),var(--brand1)) }
+    .green{ background:linear-gradient(135deg,var(--good1),var(--good2)) }
+    .white{ background:#fff; color:var(--text); border:1px solid var(--border) }
+
+    .controls{ display:flex; gap:10px; flex-wrap:wrap; margin:8px 0 14px }
+    .controls input,.controls select{
+      padding:10px 12px; border:1px solid #cfd7e3; border-radius:10px; outline:none;
+    }
+    .controls input:focus,.controls select:focus{
+      border-color:var(--brand1); box-shadow:0 0 0 4px var(--ring)
+    }
+    .btn{
+      background:linear-gradient(135deg,var(--brand1),var(--brand2)); color:#fff; border:none;
+      padding:10px 14px; border-radius:10px; cursor:pointer; transition:transform .15s ease, filter .2s ease;
+    }
+    .btn:hover{ transform:translateY(-1px); filter:saturate(1.05) }
+    .btn.secondary{ background:#fff; color:#102033; border:1px solid #cfd7e3 }
+
+    .table-wrap{ overflow-x:auto; border-radius:10px }
+    table{ width:100%; border-collapse:collapse; background:#fff; }
+    thead th{ background:var(--brand1); color:#fff; text-align:left; padding:12px; position:sticky; top:0 }
+    tbody td{ padding:12px; border-bottom:1px solid #eef1f6; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+    .no-data{ text-align:center; padding:32px; color:#7b8aa5; font-style:italic }
+
+    @media(min-width:720px){ .card{ grid-column: span 4 } .white{ grid-column: span 12 } }
+    @keyframes bgmove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  </style>
+
+  <!-- Firebase compat -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h2>Mis Recargas</h2>
+
+    <div class="grid" aria-label="Resumen">
+      <div class="card blue">
+        <strong>Total de créditos recargados</strong>
+        <div id="sumCreditos" style="font-size:1.6rem; margin-top:6px">0.00</div>
+      </div>
+      <div class="card green">
+        <strong>Número de recargas</strong>
+        <div id="countRecargas" style="font-size:1.6rem; margin-top:6px">0</div>
+      </div>
+      <div class="card blue">
+        <strong>Última recarga (día y hora)</strong>
+        <div id="lastRecharge" style="font-size:1rem; margin-top:6px">—</div>
+      </div>
+
+      <div class="white" style="grid-column:1/-1">
+        <div class="controls">
+          <input type="search" id="q" placeholder="Buscar por método/estado/ID…" aria-label="Buscar" />
+          <select id="rango"> <!-- NUEVO -->
+            <option value="todos">Todos</option>
+            <option value="hoy">Hoy</option>
+            <option value="ult7">Últimos 7 días</option>
+            <option value="ult30">Últimos 30 días</option>
+            <option value="mes">Mes actual</option>
+            <option value="anio">Año actual</option>
+            <option value="custom">Personalizado…</option>
+          </select>
+          <input type="date" id="desde" aria-label="Desde" hidden /> <!-- NUEVO -->
+          <input type="date" id="hasta" aria-label="Hasta"  hidden /> <!-- NUEVO -->
+
+          <select id="orden">
+            <option value="recientes">Más recientes</option>
+            <option value="antiguos">Más antiguos</option>
+            <option value="mayor">Mayor crédito</option>
+            <option value="menor">Menor crédito</option>
+          </select>
+          <button class="btn secondary" id="csvBtn">Exportar CSV</button>
+        </div>
+
+        <div class="table-wrap">
+          <table aria-label="Historial de recargas">
+            <thead>
+              <tr>
+                <th>Día</th>
+                <th>Hora</th>
+                <th>Créditos</th>
+                <th>Método</th>
+                <th>Estado</th>
+                <th>ID</th>
+              </tr>
+            </thead>
+            <tbody id="tbody">
+              <tr><td colspan="6" class="no-data">Aún no tienes recargas</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+  // --- Utilidades UI ---
+  const $  = (s)=>document.querySelector(s);
+  const $$ = (s)=>document.querySelectorAll(s);
+  const TZ  = 'America/Lima';
+  const fmtDay  = new Intl.DateTimeFormat('es-PE', { timeZone: TZ, weekday:'long', day:'2-digit', month:'long', year:'numeric' });
+  const fmtTime = new Intl.DateTimeFormat('es-PE', { timeZone: TZ, hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false });
+
+  function toNumber(x){ const n = typeof x==='number'?x:parseFloat(String(x).replace(',', '.')); return isFinite(n)?n:0; }
+  function capitalize(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+  function limaNow(){ return new Date(new Date().toLocaleString('en-US', { timeZone: TZ })); } // NUEVO
+  function startOfDay(d){ const x = new Date(d); x.setHours(0,0,0,0); return x; }             // NUEVO
+  function endOfDay(d){ const x = new Date(d); x.setHours(23,59,59,999); return x; }          // NUEVO
+  function dtParts(ts){
+    const d = ts ? new Date(ts) : new Date();
+    return { day: capitalize(fmtDay.format(d)), time: fmtTime.format(d) };
+  }
+
+  // --- Estado ---
+  let uid = null;
+  let items = []; // {id, ts, creditos, metodo, estado}
+
+  // --- Filtros por rango (NUEVO) ---
+  function getRangeBounds(){                                      // NUEVO
+    const tipo = $('#rango').value;
+    const now = limaNow();
+    const y = now.getFullYear();
+    const m = now.getMonth();
+
+    if (tipo === 'hoy'){
+      return { from: startOfDay(now).getTime(), to: endOfDay(now).getTime() };
+    }
+    if (tipo === 'ult7'){
+      const from = startOfDay(new Date(now.getFullYear(), now.getMonth(), now.getDate()-6));
+      return { from: from.getTime(), to: endOfDay(now).getTime() };
+    }
+    if (tipo === 'ult30'){
+      const from = startOfDay(new Date(now.getFullYear(), now.getMonth(), now.getDate()-29));
+      return { from: from.getTime(), to: endOfDay(now).getTime() };
+    }
+    if (tipo === 'mes'){
+      const from = startOfDay(new Date(y, m, 1));
+      const to   = endOfDay(new Date(y, m+1, 0));
+      return { from: from.getTime(), to: to.getTime() };
+    }
+    if (tipo === 'anio'){
+      const from = startOfDay(new Date(y, 0, 1));
+      const to   = endOfDay(new Date(y, 11, 31));
+      return { from: from.getTime(), to: to.getTime() };
+    }
+    if (tipo === 'custom'){
+      const d1 = $('#desde').value ? new Date($('#desde').value) : null;
+      const d2 = $('#hasta').value ? new Date($('#hasta').value) : null;
+      if (d1 && d2){
+        return { from: startOfDay(d1).getTime(), to: endOfDay(d2).getTime() };
+      }
+      // Si aún no eligieron ambas fechas, no filtramos
+      return null;
+    }
+    // 'todos'
+    return null;
+  }
+
+  // Mostrar/ocultar inputs de fecha (NUEVO)
+  $('#rango').addEventListener('change', ()=>{
+    const isCustom = $('#rango').value === 'custom';
+    $('#desde').hidden = !isCustom;
+    $('#hasta').hidden = !isCustom;
+    render();
+  });
+  $('#desde').addEventListener('change', render);
+  $('#hasta').addEventListener('change', render);
+
+  // --- Render ---
+  function render(){
+    const tbody = $('#tbody');
+    const q = ($('#q').value || '').toLowerCase().trim();
+    const ord = $('#orden').value;
+
+    let list = [...items];
+
+    // Filtro por búsqueda
+    if (q){
+      list = list.filter(r =>
+        (r.metodo||'').toLowerCase().includes(q) ||
+        (r.estado||'').toLowerCase().includes(q) ||
+        (r.id||'').toLowerCase().includes(q)
+      );
+    }
+
+    // Filtro por rango (NUEVO)
+    const bounds = getRangeBounds();
+    if (bounds){
+      list = list.filter(r=>{
+        const t = r.ts || 0;
+        return t >= bounds.from && t <= bounds.to;
+      });
+    }
+
+    // Orden
+    list.sort((a,b)=>{
+      if (ord==='recientes') return (b.ts||0) - (a.ts||0);
+      if (ord==='antiguos')  return (a.ts||0) - (b.ts||0);
+      if (ord==='mayor')     return toNumber(b.creditos) - toNumber(a.creditos);
+      if (ord==='menor')     return toNumber(a.creditos) - toNumber(b.creditos);
+      return 0;
+    });
+
+    // Resumen
+    const total = list.reduce((acc,r)=> acc + toNumber(r.creditos), 0);
+    $('#sumCreditos').textContent = total.toFixed(2);
+    $('#countRecargas').textContent = list.length;
+    if (list.length){
+      const last = [...list].sort((a,b)=> (b.ts||0)-(a.ts||0))[0];
+      const p = dtParts(last.ts);
+      $('#lastRecharge').textContent = `${p.day} · ${p.time}`;
+    }else{
+      $('#lastRecharge').textContent = '—';
+    }
+
+    // Tabla
+    tbody.innerHTML = '';
+    if (!list.length){
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 6; td.className = 'no-data';
+      td.textContent = 'No hay recargas para el filtro seleccionado';
+      tr.appendChild(td); tbody.appendChild(tr); return;
+    }
+
+    for (const r of list){
+      const tr = document.createElement('tr');
+      const p  = dtParts(r.ts);
+      tr.innerHTML = `
+        <td>${p.day}</td>
+        <td>${p.time}</td>
+        <td>${toNumber(r.creditos).toFixed(2)}</td>
+        <td>${r.metodo || '-'}</td>
+        <td>${r.estado || '-'}</td>
+        <td title="${r.id || ''}">${r.id || '-'}</td>
+      `;
+      tbody.appendChild(tr);
+    }
+  }
+
+  // --- CSV ---
+  function toCSV(rows){
+    const header = ['Dia','Hora','Creditos','Metodo','Estado','ID'];
+    const data = rows.map(r=>{
+      const p = dtParts(r.ts);
+      return [p.day, p.time, toNumber(r.creditos).toFixed(2), r.metodo||'', r.estado||'', r.id||''];
+    });
+    return [header, ...data].map(line => line.map(v=>{
+      const s = String(v).replace(/"/g,'""');
+      return /[",\n]/.test(s) ? `"${s}"` : s;
+    }).join(',')).join('\n');
+  }
+  function downloadCSV(){
+    // Exporta lo que ves (aplicando filtros y orden)
+    const qBak = ($('#q').value||'').toLowerCase().trim();
+    const ordBak = $('#orden').value;
+    const boundsBak = getRangeBounds();
+
+    let list = [...items];
+    if (qBak){
+      list = list.filter(r =>
+        (r.metodo||'').toLowerCase().includes(qBak) ||
+        (r.estado||'').toLowerCase().includes(qBak) ||
+        (r.id||'').toLowerCase().includes(qBak)
+      );
+    }
+    if (boundsBak){
+      list = list.filter(r=> (r.ts||0) >= boundsBak.from && (r.ts||0) <= boundsBak.to );
+    }
+    list.sort((a,b)=>{
+      if (ordBak==='recientes') return (b.ts||0) - (a.ts||0);
+      if (ordBak==='antiguos')  return (a.ts||0) - (b.ts||0);
+      if (ordBak==='mayor')     return toNumber(b.creditos) - toNumber(a.creditos);
+      if (ordBak==='menor')     return toNumber(a.creditos) - toNumber(b.creditos);
+      return 0;
+    });
+
+    const csv = toCSV(list);
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'mis_recargas.csv'; a.click();
+    URL.revokeObjectURL(url);
+  }
+  $('#csvBtn').addEventListener('click', downloadCSV);
+  $('#q').addEventListener('input', render);
+  $('#orden').addEventListener('change', render);
+
+  // --- Firebase ---
+  const firebaseConfig = {
+    apiKey: "AIzaSyCbL1fRbwVZRhdD88TeQSFgpvfjZOMwfIg",
+    authDomain: "multidoxnetfree.firebaseapp.com",
+    databaseURL: "https://multidoxnetfree-default-rtdb.firebaseio.com",
+    projectId: "multidoxnetfree",
+    storageBucket: "multidoxnetfree.firebasestorage.app",
+    messagingSenderId: "248995370956",
+    appId: "1:248995370956:web:455823a3778859bd4d2f69",
+    measurementId: "G-HDE68S5TYS"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db   = firebase.database();
+
+  auth.onAuthStateChanged(async (user)=>{
+    if (!user) return location.replace('login.html');
+    const uid = user.uid;
+
+    // Escenario 1: recargas/{uid}
+    db.ref(`recargas/${uid}`).on('value', (snap)=>{
+      const data = snap.val();
+      if (data){
+        items = Object.entries(data).map(([id, v])=> normalizeRecharge(id, v));
+        render();
+      }else{
+        items = []; render();
+      }
+    });
+
+    // Escenario 2 (fallback): usuarios/{uid}/historialRecargas
+    db.ref(`usuarios/${uid}/historialRecargas`).on('value', (snap)=>{
+      const data = snap.val() || {};
+      const merged = Object.entries(data).map(([id, v])=> normalizeRecharge(id, v));
+      const map = new Map(items.map(x=>[x.id,x]));
+      for (const x of merged){ map.set(x.id, x); }
+      items = Array.from(map.values());
+      render();
+    });
+  });
+
+  // Normaliza {id, ts, creditos, metodo, estado}
+  function normalizeRecharge(id, v){
+    const ts = v?.ts || v?.timestamp || v?.fechaMs || guessTsFromString(v?.fecha);
+    const creditos = v?.creditos ?? v?.monto ?? v?.cantidad ?? 0;
+    const metodo   = v?.metodo || v?.medio || v?.origen || '';
+    const estado   = v?.estado || v?.status || 'confirmado';
+    return { id, ts, creditos, metodo, estado };
+  }
+  function guessTsFromString(s){
+    if (!s) return Date.now();
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? Date.now() : d.getTime();
+  }
+</script>
+</body>
+</html>
